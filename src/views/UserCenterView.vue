@@ -1,7 +1,9 @@
 <script setup lang="ts">
+const avatarSvg = encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><rect width="100" height="100" fill="#409EFF"/><text x="50" y="68" font-size="48" text-anchor="middle" fill="#ffffff" font-family="Arial,sans-serif" font-weight="bold">张</text></svg>`)
+
 const userInfo = {
   name: '张同学',
-  avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=zhangstudent',
+  avatar: `data:image/svg+xml,${avatarSvg}`,
   college: '计算机科学学院',
   major: '软件工程专业',
   grade: '2023级',
@@ -69,7 +71,7 @@ const recentActivities = [
         <div class="profile-right">
           <div class="credit-card">
             <div class="credit-header">
-              <span class="credit-icon">🎯</span>
+              <span class="credit-icon">★</span>
               <span class="credit-label">信用分</span>
             </div>
             <div class="credit-score">{{ userInfo.creditScore }}</div>
@@ -307,6 +309,7 @@ const recentActivities = [
 
 .credit-icon {
   font-size: 20px;
+  color: #fff;
 }
 
 .credit-label {

@@ -2,7 +2,6 @@
 import { ref, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
-import { ChatDotRound, Star, Discount, ArrowLeft, ArrowRight } from '@element-plus/icons-vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -150,10 +149,10 @@ const goToMessage = () => {
             />
             <!-- 左右切换按钮 -->
             <button class="carousel-btn prev-btn" @click="prevImage" :disabled="isAnimating">
-              <el-icon><ArrowLeft /></el-icon>
+              <span class="carousel-arrow">←</span>
             </button>
             <button class="carousel-btn next-btn" @click="nextImage" :disabled="isAnimating">
-              <el-icon><ArrowRight /></el-icon>
+              <span class="carousel-arrow">→</span>
             </button>
             <!-- 图片计数器 -->
             <div class="image-counter">
@@ -245,7 +244,7 @@ const goToMessage = () => {
           <!-- 操作按钮 -->
           <div class="action-buttons">
             <el-button type="primary" size="large" @click="goToMessage">
-              <el-icon><ChatDotRound /></el-icon>
+              <span class="btn-emoji">💬</span>
               联系发布者
             </el-button>
             <el-button 
@@ -253,16 +252,16 @@ const goToMessage = () => {
               type="warning" 
               size="large" 
               @click="openBargainDialog"
-              :icon="Discount"
             >
+              <span class="btn-emoji">💰</span>
               发起砍价
             </el-button>
             <el-button
               :type="itemDetail.isFavorite ? 'primary' : 'default'"
               size="large"
               @click="toggleFavorite"
-              :icon="itemDetail.isFavorite ? 'StarFilled' : 'Star'"
             >
+              <span class="btn-emoji">{{ itemDetail.isFavorite ? '⭐' : '☆' }}</span>
               {{ itemDetail.isFavorite ? '已收藏' : '收藏' }}
             </el-button>
           </div>
@@ -307,7 +306,7 @@ const goToMessage = () => {
 
           <!-- 收藏数显示 -->
           <div class="favorite-count">
-            <el-icon><Star /></el-icon>
+            <span class="favorite-star">⭐</span>
             <span>{{ itemDetail.favoriteCount }} 人收藏</span>
           </div>
 
@@ -364,7 +363,7 @@ const goToMessage = () => {
           <template #prefix>¥</template>
         </el-input>
         <p class="bargain-tip">
-          <el-icon><ChatDotRound /></el-icon>
+          <span class="bargain-icon">💬</span>
           砍价请求将发送至发布者，对方可以选择接受或拒绝
         </p>
       </div>
@@ -694,6 +693,29 @@ const goToMessage = () => {
 
 .favorite-count .el-icon {
   color: #409eff;
+}
+
+.carousel-arrow {
+  font-size: 18px;
+  font-weight: bold;
+  line-height: 1;
+}
+
+.btn-emoji {
+  margin-right: 6px;
+  font-size: 16px;
+  line-height: 1;
+}
+
+.favorite-star {
+  color: #409eff;
+  margin-right: 6px;
+  font-size: 16px;
+}
+
+.bargain-icon {
+  margin-right: 6px;
+  font-size: 16px;
 }
 
 .report-section {

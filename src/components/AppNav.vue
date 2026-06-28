@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 
 const route = useRoute()
@@ -39,35 +38,37 @@ const isActive = (path: string) => {
 <style scoped>
 .nav-menu {
   display: flex;
-  gap: 32px;
+  gap: 8px;
+  align-items: center;
 }
 
 .nav-item {
-  padding: 12px 0;
-  color: #606266;
-  font-size: 15px;
+  padding: 10px 20px;
+  color: #4b5563;
+  font-size: 16px;
+  font-weight: 500;
   text-decoration: none;
+  border-radius: 10px;
+  transition: all 0.25s ease;
   position: relative;
-  transition: color 0.2s;
+  white-space: nowrap;
 }
 
 .nav-item:hover {
   color: #409EFF;
+  background-color: #ecf5ff;
+  transform: translateY(-1px);
 }
 
 .nav-item.active {
-  color: #409EFF;
-  font-weight: 500;
+  color: #fff;
+  background: linear-gradient(135deg, #409EFF 0%, #66b1ff 100%);
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(64, 158, 255, 0.35);
 }
 
-.nav-item.active::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background: #409EFF;
-  border-radius: 2px 2px 0 0;
+.nav-item.active:hover {
+  background: linear-gradient(135deg, #409EFF 0%, #66b1ff 100%);
+  color: #fff;
 }
 </style>

@@ -38,7 +38,7 @@ const errands = ref([
     publisher: '小雷同学',
     time: '1小时前',
     status: 'pending',
-    image: 'https://picsum.photos/seed/milktea2/400/300',
+    image: 'https://picsum.photos/seed/tea2/400/300',
   },
   {
     id: 3,
@@ -94,7 +94,7 @@ const errands = ref([
     publisher: '小杰同学',
     time: '5小时前',
     status: 'completed',
-    image: 'https://picsum.photos/seed/food1/400/300',
+    image: 'https://picsum.photos/seed/food2/400/300',
   },
   {
     id: 7,

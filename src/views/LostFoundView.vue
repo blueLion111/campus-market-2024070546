@@ -21,7 +21,7 @@ const items = ref([
     avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=xiaoming',
     publisher: '王同学',
     campus: '狮子山校区',
-    image: 'https://picsum.photos/seed/lostbag1/400/300',
+    image: 'https://picsum.photos/seed/bag1/400/300',
   },
   {
     id: 2,
@@ -35,7 +35,7 @@ const items = ref([
     avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=lili',
     publisher: '李同学',
     campus: '成龙校区',
-    image: 'https://picsum.photos/seed/foundcard1/400/300',
+    image: 'https://picsum.photos/seed/card1/400/300',
   },
   {
     id: 3,
@@ -49,7 +49,7 @@ const items = ref([
     avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=zhanghua',
     publisher: '张同学',
     campus: '狮子山校区',
-    image: 'https://picsum.photos/seed/lostairpods1/400/300',
+    image: 'https://picsum.photos/seed/earbuds/400/300',
   },
   {
     id: 4,
@@ -63,7 +63,7 @@ const items = ref([
     avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=zhaolei',
     publisher: '赵同学',
     campus: '成龙校区',
-    image: 'https://picsum.photos/seed/foundkeys1/400/300',
+    image: 'https://picsum.photos/seed/keys1/400/300',
   },
   {
     id: 5,
@@ -77,7 +77,7 @@ const items = ref([
     avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=lixin',
     publisher: '李同学',
     campus: '狮子山校区',
-    image: 'https://picsum.photos/seed/lostid1/400/300',
+    image: 'https://picsum.photos/seed/idcard/400/300',
   },
   {
     id: 6,
@@ -91,7 +91,7 @@ const items = ref([
     avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=chenyu',
     publisher: '陈同学',
     campus: '狮子山校区',
-    image: 'https://picsum.photos/seed/foundumbrella1/400/300',
+    image: 'https://picsum.photos/seed/umbrella/400/300',
   },
 ])
 

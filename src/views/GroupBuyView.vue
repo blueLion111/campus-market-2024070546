@@ -25,7 +25,7 @@ const groupBuys = ref([
     avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=xiaohong',
     publisher: '小红同学',
     time: '30分钟前',
-    image: 'https://picsum.photos/seed/milktea1/400/300',
+    image: 'https://picsum.photos/seed/tea1/400/300',
   },
   {
     id: 2,
@@ -39,7 +39,7 @@ const groupBuys = ref([
     avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=xiaoming',
     publisher: '小明同学',
     time: '1小时前',
-    image: 'https://picsum.photos/seed/mcdonalds1/400/300',
+    image: 'https://picsum.photos/seed/food1/400/300',
   },
   {
     id: 3,
@@ -67,7 +67,7 @@ const groupBuys = ref([
     avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=xiaozhang',
     publisher: '小张同学',
     time: '3小时前',
-    image: 'https://picsum.photos/seed/badminton1/400/300',
+    image: 'https://picsum.photos/seed/sports1/400/300',
   },
   {
     id: 5,
@@ -81,7 +81,7 @@ const groupBuys = ref([
     avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=xiaowang',
     publisher: '小王同学',
     time: '4小时前',
-    image: 'https://picsum.photos/seed/luckin1/400/300',
+    image: 'https://picsum.photos/seed/coffee1/400/300',
   },
   {
     id: 6,
@@ -123,7 +123,7 @@ const groupBuys = ref([
     avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=xiaoliu',
     publisher: '小刘同学',
     time: '8小时前',
-    image: 'https://picsum.photos/seed/haidilao1/400/300',
+    image: 'https://picsum.photos/seed/hotpot/400/300',
   },
 ])
 

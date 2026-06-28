@@ -5,11 +5,11 @@ const userInfo = {
   name: '张同学',
   avatar: `data:image/svg+xml,${avatarSvg}`,
   college: '计算机科学学院',
-  major: '软件工程专业',
-  grade: '2023级',
+  major: '计算机科学与技术专业',
+  grade: '2024级',
   creditScore: 98,
-  studentId: '20230101001',
-  campus: '狮子山校区',
+  studentId: '20240101001',
+  campus: '成龙校区',
 }
 
 const stats = [

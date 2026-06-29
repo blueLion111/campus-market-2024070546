@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
@@ -102,6 +102,230 @@ const posts = ref([
     favoriteCount: 6,
     isFavorite: false,
   },
+  {
+    id: 7,
+    type: 'secondhand',
+    typeName: '二手交易',
+    typeColor: '#409EFF',
+    title: '山地自行车 8成新 毕业低价出',
+    price: 380,
+    campus: '狮子山校区',
+    location: '南门车棚',
+    image: 'https://picsum.photos/seed/bike2/400/300',
+    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=user7',
+    publisher: '孙同学',
+    time: '昨天',
+    favoriteCount: 22,
+    isFavorite: false,
+  },
+  {
+    id: 8,
+    type: 'group',
+    typeName: '拼单搭子',
+    typeColor: '#67C23A',
+    title: '考研自习搭子 图书馆三楼',
+    price: null,
+    campus: '狮子山校区',
+    location: '图书馆三楼',
+    image: 'https://picsum.photos/seed/study2/400/300',
+    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=user8',
+    publisher: '周同学',
+    time: '昨天',
+    favoriteCount: 15,
+    isFavorite: false,
+  },
+  {
+    id: 9,
+    type: 'errand',
+    typeName: '跑腿委托',
+    typeColor: '#F56C6C',
+    title: '代打印资料 10张A4 送到宿舍',
+    price: 5,
+    campus: '成龙校区',
+    location: '打印店→5号楼',
+    image: 'https://picsum.photos/seed/print2/400/300',
+    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=user9',
+    publisher: '吴同学',
+    time: '昨天',
+    favoriteCount: 4,
+    isFavorite: false,
+  },
+  {
+    id: 10,
+    type: 'secondhand',
+    typeName: '二手交易',
+    typeColor: '#409EFF',
+    title: '小米手环7 NFC版 9成新',
+    price: 149,
+    campus: '狮子山校区',
+    location: '宿舍楼下',
+    image: 'https://picsum.photos/seed/watch2/400/300',
+    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=user10',
+    publisher: '郑同学',
+    time: '2天前',
+    favoriteCount: 11,
+    isFavorite: false,
+  },
+  {
+    id: 11,
+    type: 'lost',
+    typeName: '失物招领',
+    typeColor: '#E6A23C',
+    title: '捡到蓝色雨伞 图书馆门口',
+    price: null,
+    campus: '成龙校区',
+    location: '图书馆服务台',
+    image: 'https://picsum.photos/seed/umbrella2/400/300',
+    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=user11',
+    publisher: '冯同学',
+    time: '2天前',
+    favoriteCount: 3,
+    isFavorite: false,
+  },
+  {
+    id: 12,
+    type: 'group',
+    typeName: '拼单搭子',
+    typeColor: '#67C23A',
+    title: '瑞幸咖啡拼单 9.9一杯',
+    price: null,
+    campus: '狮子山校区',
+    location: '教学楼楼下',
+    image: 'https://picsum.photos/seed/coffee2/400/300',
+    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=user12',
+    publisher: '陈同学',
+    time: '2天前',
+    favoriteCount: 20,
+    isFavorite: true,
+  },
+  {
+    id: 13,
+    type: 'errand',
+    typeName: '跑腿委托',
+    typeColor: '#F56C6C',
+    title: '代取顺丰快递 大件 送到宿舍',
+    price: 15,
+    campus: '成龙校区',
+    location: '校门口→5号楼',
+    image: 'https://picsum.photos/seed/package2/400/300',
+    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=user13',
+    publisher: '褚同学',
+    time: '2天前',
+    favoriteCount: 7,
+    isFavorite: false,
+  },
+  {
+    id: 14,
+    type: 'secondhand',
+    typeName: '二手交易',
+    typeColor: '#409EFF',
+    title: '宿舍床上书桌 可折叠 几乎全新',
+    price: 35,
+    campus: '狮子山校区',
+    location: '7号楼',
+    image: 'https://picsum.photos/seed/desk2/400/300',
+    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=user14',
+    publisher: '卫同学',
+    time: '3天前',
+    favoriteCount: 9,
+    isFavorite: false,
+  },
+  {
+    id: 15,
+    type: 'lost',
+    typeName: '失物招领',
+    typeColor: '#E6A23C',
+    title: '丢失学生证 文学院2023级',
+    price: null,
+    campus: '狮子山校区',
+    location: '文学院附近',
+    image: 'https://picsum.photos/seed/idcard2/400/300',
+    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=user15',
+    publisher: '蒋同学',
+    time: '3天前',
+    favoriteCount: 5,
+    isFavorite: false,
+  },
+  {
+    id: 16,
+    type: 'group',
+    typeName: '拼单搭子',
+    typeColor: '#67C23A',
+    title: '羽毛球搭子 每周三周五晚',
+    price: null,
+    campus: '成龙校区',
+    location: '体育馆羽毛球场',
+    image: 'https://picsum.photos/seed/sports2/400/300',
+    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=user16',
+    publisher: '沈同学',
+    time: '3天前',
+    favoriteCount: 14,
+    isFavorite: false,
+  },
+  {
+    id: 17,
+    type: 'errand',
+    typeName: '跑腿委托',
+    typeColor: '#F56C6C',
+    title: '代买食堂黄焖鸡米饭 送到宿舍',
+    price: 4,
+    campus: '狮子山校区',
+    location: '食堂二楼→8号楼',
+    image: 'https://picsum.photos/seed/food3/400/300',
+    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=user17',
+    publisher: '韩同学',
+    time: '3天前',
+    favoriteCount: 2,
+    isFavorite: false,
+  },
+  {
+    id: 18,
+    type: 'secondhand',
+    typeName: '二手交易',
+    typeColor: '#409EFF',
+    title: 'Nike Air Force 1 42码 9成新',
+    price: 399,
+    campus: '成龙校区',
+    location: '篮球场旁',
+    image: 'https://picsum.photos/seed/shoes2/400/300',
+    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=user18',
+    publisher: '杨同学',
+    time: '4天前',
+    favoriteCount: 25,
+    isFavorite: false,
+  },
+  {
+    id: 19,
+    type: 'group',
+    typeName: '拼单搭子',
+    typeColor: '#67C23A',
+    title: '麦当劳全家桶拼单 4人平分',
+    price: null,
+    campus: '狮子山校区',
+    location: '校门口',
+    image: 'https://picsum.photos/seed/food4/400/300',
+    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=user19',
+    publisher: '朱同学',
+    time: '4天前',
+    favoriteCount: 17,
+    isFavorite: false,
+  },
+  {
+    id: 20,
+    type: 'secondhand',
+    typeName: '二手交易',
+    typeColor: '#409EFF',
+    title: '电热水壶 1.8L 宿舍必备',
+    price: 29,
+    campus: '成龙校区',
+    location: '6号楼',
+    image: 'https://picsum.photos/seed/kettle2/400/300',
+    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=user20',
+    publisher: '秦同学',
+    time: '4天前',
+    favoriteCount: 8,
+    isFavorite: false,
+  },
 ])
 
 const notices = ref([
@@ -156,6 +380,12 @@ const categories = ref([
 
 const currentPage = ref(1)
 const pageSize = ref(6)
+
+const paginatedPosts = computed(() => {
+  const start = (currentPage.value - 1) * pageSize.value
+  const end = start + pageSize.value
+  return posts.value.slice(start, end)
+})
 
 const toggleFavorite = (post: any) => {
   post.isFavorite = !post.isFavorite
@@ -254,7 +484,7 @@ const handleSearch = () => {
 
         <div class="card-grid">
           <div
-            v-for="post in posts"
+            v-for="post in paginatedPosts"
             :key="post.id"
             class="post-card"
             @click="goToDetail(post.id)"
@@ -300,7 +530,7 @@ const handleSearch = () => {
           <el-pagination
             v-model:current-page="currentPage"
             v-model:page-size="pageSize"
-            :total="20"
+            :total="posts.length"
             layout="prev, pager, next"
             background
           />

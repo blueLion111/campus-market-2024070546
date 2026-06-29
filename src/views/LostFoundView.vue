@@ -1,102 +1,35 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
+import { getLostFounds, type LostFound } from '../api/lostFound'
+import EmptyState from '../components/EmptyState.vue'
 
 const activeTab = ref('lost')
+const loading = ref(false)
+const items = ref<LostFound[]>([])
 
 const tabs = [
   { key: 'lost', label: '寻物启事', icon: '🔍' },
   { key: 'found', label: '失物招领', icon: '📦' },
 ]
 
-const items = ref([
-  {
-    id: 1,
-    type: 'lost',
-    title: '丢失黑色双肩包 内有笔记本电脑',
-    description: '今天下午在图书馆三楼自习室丢失一个黑色双肩包，包内有一台MacBook Pro和一些课本，电脑里有很重要的论文资料，求好心人归还，必有重谢！',
-    location: '图书馆三楼',
-    time: '2小时前',
-    date: '6月28日',
-    contact: '138****8888',
-    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=xiaoming',
-    publisher: '王同学',
-    campus: '狮子山校区',
-    image: 'https://picsum.photos/seed/bag1/400/300',
-  },
-  {
-    id: 2,
-    type: 'found',
-    title: '在食堂一楼捡到一张校园卡',
-    description: '今天中午在食堂一楼靠窗的位置捡到一张校园卡，卡套是蓝色的，上面有个小熊挂件，请失主联系我认领。',
-    location: '食堂一楼',
-    time: '3小时前',
-    date: '6月28日',
-    contact: '139****6666',
-    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=lili',
-    publisher: '李同学',
-    campus: '成龙校区',
-    image: 'https://picsum.photos/seed/card1/400/300',
-  },
-  {
-    id: 3,
-    type: 'lost',
-    title: '丢失AirPods Pro 白色充电盒',
-    description: '昨天在操场跑步的时候弄丢了AirPods Pro，充电盒上有我贴的贴纸，是海贼王的，对我很重要，捡到的同学麻烦联系我，有偿！',
-    location: '学校操场',
-    time: '昨天',
-    date: '6月27日',
-    contact: '137****5555',
-    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=zhanghua',
-    publisher: '张同学',
-    campus: '狮子山校区',
-    image: 'https://picsum.photos/seed/earbuds/400/300',
-  },
-  {
-    id: 4,
-    type: 'found',
-    title: '捡到一串钥匙 有很多挂件',
-    description: '在教学楼B栋二楼卫生间门口捡到一串钥匙，上面有很多可爱的挂件，有玉桂狗和布丁狗，失主肯定很着急，快来认领吧！',
-    location: '教学楼B栋',
-    time: '5小时前',
-    date: '6月28日',
-    contact: '136****7777',
-    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=zhaolei',
-    publisher: '赵同学',
-    campus: '成龙校区',
-    image: 'https://picsum.photos/seed/keys1/400/300',
-  },
-  {
-    id: 5,
-    type: 'lost',
-    title: '丢失学生证 文学院2023级',
-    description: '今天上午在去上课的路上弄丢了学生证，姓名李某某，文学院汉语言文学专业2023级，捡到的同学麻烦联系我，非常感谢！',
-    location: '文学院附近',
-    time: '4小时前',
-    date: '6月28日',
-    contact: '135****9999',
-    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=lixin',
-    publisher: '李同学',
-    campus: '狮子山校区',
-    image: 'https://picsum.photos/seed/idcard/400/300',
-  },
-  {
-    id: 6,
-    type: 'found',
-    title: '捡到一把蓝色雨伞',
-    description: '昨天下雨在图书馆门口捡到一把蓝色的长柄雨伞，伞面有轻微破损，应该是哪位同学忘记拿了，请到图书馆服务台认领。',
-    location: '图书馆门口',
-    time: '昨天',
-    date: '6月27日',
-    contact: '图书馆服务台',
-    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=chenyu',
-    publisher: '陈同学',
-    campus: '狮子山校区',
-    image: 'https://picsum.photos/seed/umbrella/400/300',
-  },
-])
+const fetchLostFounds = async () => {
+  loading.value = true
+  try {
+    const res = await getLostFounds()
+    items.value = res.data
+  } catch (err) {
+    console.error('获取失物招领列表失败:', err)
+  } finally {
+    loading.value = false
+  }
+}
 
 const filteredItems = computed(() => {
   return items.value.filter(item => item.type === activeTab.value)
+})
+
+onMounted(() => {
+  fetchLostFounds()
 })
 </script>
 
@@ -183,7 +116,7 @@ const filteredItems = computed(() => {
             </div>
             <div class="item-footer">
               <div class="publisher-info">
-                <img :src="item.avatar" :alt="item.publisher" class="publisher-avatar" />
+                <img :src="item.publisherAvatar" :alt="item.publisher" class="publisher-avatar" />
                 <span class="publisher-name">{{ item.publisher }}</span>
               </div>
               <button class="contact-btn">联系TA</button>
@@ -191,6 +124,7 @@ const filteredItems = computed(() => {
           </div>
         </div>
       </div>
+      <EmptyState v-if="!loading && filteredItems.length === 0" :title="activeTab === 'lost' ? '暂无寻物启事' : '暂无失物招领'" description="快来发布第一条信息吧~" />
     </section>
   </div>
 </template>

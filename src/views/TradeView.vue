@@ -1,8 +1,11 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import { ElTag } from 'element-plus'
+import { ref, onMounted, computed } from 'vue'
+import { getTrades, type Trade } from '../api/trade'
+import EmptyState from '../components/EmptyState.vue'
 
 const activeCategory = ref('all')
+const loading = ref(false)
+const products = ref<Trade[]>([])
 
 const categories = [
   { key: 'all', label: '全部' },
@@ -13,115 +16,36 @@ const categories = [
   { key: 'other', label: '其他' },
 ]
 
-const products = ref([
-  {
-    id: 1,
-    title: '高等数学同济第七版 教材全新未使用',
-    price: 25,
-    originalPrice: 45,
-    image: 'https://picsum.photos/seed/book1/400/400',
-    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=zhangwei',
-    publisher: '张同学',
-    campus: '狮子山校区',
-    time: '2小时前',
-    category: 'textbook',
-  },
-  {
-    id: 2,
-    title: 'iPad 2021款 64G 9成新 带原装充电器',
-    price: 1899,
-    originalPrice: 2999,
-    image: 'https://picsum.photos/seed/ipad/400/400',
-    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=liming',
-    publisher: '李同学',
-    campus: '成龙校区',
-    time: '3小时前',
-    category: 'textbook',
-  },
-  {
-    id: 3,
-    title: '捷安特山地自行车 毕业出 送锁和挡泥板',
-    price: 450,
-    originalPrice: 899,
-    image: 'https://picsum.photos/seed/bike/400/400',
-    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=wanghua',
-    publisher: '王同学',
-    campus: '狮子山校区',
-    time: '5小时前',
-    category: 'transport',
-  },
-  {
-    id: 4,
-    title: '宿舍床上书桌 可折叠 9成新',
-    price: 35,
-    originalPrice: 69,
-    image: 'https://picsum.photos/seed/desk/400/400',
-    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=zhaoming',
-    publisher: '赵同学',
-    campus: '成龙校区',
-    time: '6小时前',
-    category: 'daily',
-  },
-  {
-    id: 5,
-    title: 'Nike Air Force 1 42码 穿了两次',
-    price: 399,
-    originalPrice: 799,
-    image: 'https://picsum.photos/seed/shoes/400/400',
-    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=chenhao',
-    publisher: '陈同学',
-    campus: '狮子山校区',
-    time: '8小时前',
-    category: 'clothing',
-  },
-  {
-    id: 6,
-    title: '小米手环7 NFC版 功能正常',
-    price: 159,
-    originalPrice: 249,
-    image: 'https://picsum.photos/seed/watch/400/400',
-    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=liuyang',
-    publisher: '刘同学',
-    campus: '成龙校区',
-    time: '10小时前',
-    category: 'textbook',
-  },
-  {
-    id: 7,
-    title: '电热水壶 1.8L 宿舍必备 9成新',
-    price: 29,
-    originalPrice: 59,
-    image: 'https://picsum.photos/seed/kettle/400/400',
-    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=zhoujie',
-    publisher: '周同学',
-    campus: '狮子山校区',
-    time: '12小时前',
-    category: 'daily',
-  },
-  {
-    id: 8,
-    title: '阿迪达斯双肩背包 大容量 电脑包',
-    price: 129,
-    originalPrice: 299,
-    image: 'https://picsum.photos/seed/bag/400/400',
-    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=wulei',
-    publisher: '吴同学',
-    campus: '成龙校区',
-    time: '1天前',
-    category: 'clothing',
-  },
-])
+const fetchTrades = async () => {
+  loading.value = true
+  try {
+    const params = activeCategory.value !== 'all'
+      ? { category: activeCategory.value }
+      : undefined
+    const res = await getTrades(params)
+    products.value = res.data
+  } catch (err) {
+    console.error('获取二手商品列表失败:', err)
+  } finally {
+    loading.value = false
+  }
+}
 
-const filteredProducts = ref(products.value)
+const filteredProducts = computed(() => {
+  if (activeCategory.value === 'all') {
+    return products.value
+  }
+  return products.value.filter(p => p.category === activeCategory.value)
+})
 
 const handleCategoryChange = (key: string) => {
   activeCategory.value = key
-  if (key === 'all') {
-    filteredProducts.value = products.value
-  } else {
-    filteredProducts.value = products.value.filter(p => p.category === key)
-  }
+  fetchTrades()
 }
+
+onMounted(() => {
+  fetchTrades()
+})
 </script>
 
 <template>
@@ -194,7 +118,7 @@ const handleCategoryChange = (key: string) => {
             </div>
             <div class="product-footer">
               <div class="seller-info">
-                <img :src="product.avatar" :alt="product.publisher" class="seller-avatar" />
+                <img :src="product.publisherAvatar" :alt="product.publisher" class="seller-avatar" />
                 <span class="seller-name">{{ product.publisher }}</span>
               </div>
               <span class="product-campus">{{ product.campus }}</span>
@@ -202,6 +126,7 @@ const handleCategoryChange = (key: string) => {
           </div>
         </div>
       </div>
+      <EmptyState v-if="!loading && filteredProducts.length === 0" title="暂无商品" description="快来发布第一件闲置物品吧~" />
     </section>
   </div>
 </template>

@@ -1,7 +1,11 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed, onMounted } from 'vue'
+import { getGroupBuys, type GroupBuy } from '../api/groupBuy'
+import EmptyState from '../components/EmptyState.vue'
 
 const activeCategory = ref('all')
+const loading = ref(false)
+const groupBuys = ref<GroupBuy[]>([])
 
 const categories = [
   { key: 'all', label: '全部' },
@@ -12,135 +16,36 @@ const categories = [
   { key: 'other', label: '其他' },
 ]
 
-const groupBuys = ref([
-  {
-    id: 1,
-    title: '喜茶拼单 还差2人 免配送费',
-    category: 'milktea',
-    description: '喜茶金凤茶王系列拼单，目前已有3人，还差2人即可免配送费，送到狮子山校区宿舍楼下。',
-    currentPeople: 3,
-    totalPeople: 5,
-    deadline: '今天 18:00',
-    location: '狮子山校区',
-    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=xiaohong',
-    publisher: '小红同学',
-    time: '30分钟前',
-    image: 'https://picsum.photos/seed/tea1/400/300',
-  },
-  {
-    id: 2,
-    title: '麦当劳全家桶拼单 4人平分',
-    category: 'takeout',
-    description: '麦当劳全家桶拼单，4个人平分更划算，预计每人45元左右，送到成龙校区门口。',
-    currentPeople: 2,
-    totalPeople: 4,
-    deadline: '今天 12:30',
-    location: '成龙校区',
-    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=xiaoming',
-    publisher: '小明同学',
-    time: '1小时前',
-    image: 'https://picsum.photos/seed/food1/400/300',
-  },
-  {
-    id: 3,
-    title: '考研自习搭子 图书馆三楼',
-    category: 'study',
-    description: '找考研自习搭子，每天早上8点到晚上10点，图书馆三楼自习室，互相监督学习，一起上岸！',
-    currentPeople: 1,
-    totalPeople: 3,
-    deadline: '长期有效',
-    location: '狮子山校区',
-    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=xiaoli',
-    publisher: '小李同学',
-    time: '2小时前',
-    image: 'https://picsum.photos/seed/study1/400/300',
-  },
-  {
-    id: 4,
-    title: '羽毛球搭子 每周三周五晚',
-    category: 'sports',
-    description: '找羽毛球搭子，每周三周五晚上7-9点，体育馆羽毛球场，水平中等，一起锻炼身体！',
-    currentPeople: 2,
-    totalPeople: 4,
-    deadline: '长期有效',
-    location: '成龙校区',
-    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=xiaozhang',
-    publisher: '小张同学',
-    time: '3小时前',
-    image: 'https://picsum.photos/seed/sports1/400/300',
-  },
-  {
-    id: 5,
-    title: '瑞幸咖啡拼单 9.9元一杯',
-    category: 'milktea',
-    description: '瑞幸9.9元活动拼单，目前2人，还差3人免配送费，送到教学楼楼下。',
-    currentPeople: 2,
-    totalPeople: 5,
-    deadline: '今天 10:00',
-    location: '狮子山校区',
-    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=xiaowang',
-    publisher: '小王同学',
-    time: '4小时前',
-    image: 'https://picsum.photos/seed/coffee1/400/300',
-  },
-  {
-    id: 6,
-    title: '期末复习搭子 高数线代',
-    category: 'study',
-    description: '期末考试复习搭子，一起复习高数和线代，共享笔记和复习资料，互相讲题，目标不挂科！',
-    currentPeople: 2,
-    totalPeople: 4,
-    deadline: '本学期末',
-    location: '成龙校区',
-    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=xiaozhao',
-    publisher: '小赵同学',
-    time: '5小时前',
-    image: 'https://picsum.photos/seed/math1/400/300',
-  },
-  {
-    id: 7,
-    title: '健身房搭子 一起办卡优惠',
-    category: 'sports',
-    description: '学校附近健身房拼团办卡，5人以上8折优惠，找一起健身的小伙伴，互相督促！',
-    currentPeople: 3,
-    totalPeople: 5,
-    deadline: '本周日',
-    location: '狮子山校区',
-    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=xiaochen',
-    publisher: '小陈同学',
-    time: '6小时前',
-    image: 'https://picsum.photos/seed/gym1/400/300',
-  },
-  {
-    id: 8,
-    title: '海底捞拼单 6人以上88折',
-    category: 'takeout',
-    description: '周末海底捞聚餐拼单，6人以上88折，目前已有4人，还差2-3人，想吃的同学快来！',
-    currentPeople: 4,
-    totalPeople: 6,
-    deadline: '本周六 18:00',
-    location: '成龙校区',
-    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=xiaoliu',
-    publisher: '小刘同学',
-    time: '8小时前',
-    image: 'https://picsum.photos/seed/hotpot/400/300',
-  },
-])
+const fetchGroupBuys = async () => {
+  loading.value = true
+  try {
+    const res = await getGroupBuys()
+    groupBuys.value = res.data
+  } catch (err) {
+    console.error('获取拼单搭子列表失败:', err)
+  } finally {
+    loading.value = false
+  }
+}
 
-const filteredGroupBuys = ref(groupBuys.value)
+const filteredGroupBuys = computed(() => {
+  if (activeCategory.value === 'all') {
+    return groupBuys.value
+  }
+  return groupBuys.value.filter(g => g.type === activeCategory.value)
+})
 
 const handleCategoryChange = (key: string) => {
   activeCategory.value = key
-  if (key === 'all') {
-    filteredGroupBuys.value = groupBuys.value
-  } else {
-    filteredGroupBuys.value = groupBuys.value.filter(g => g.category === key)
-  }
 }
 
 const getProgress = (current: number, total: number) => {
   return Math.round((current / total) * 100)
 }
+
+onMounted(() => {
+  fetchGroupBuys()
+})
 </script>
 
 <template>
@@ -203,10 +108,10 @@ const getProgress = (current: number, total: number) => {
           <div class="card-image-wrapper">
             <img :src="item.image" :alt="item.title" class="card-image" />
             <div class="card-category">
-              <span v-if="item.category === 'milktea'">🧋 奶茶</span>
-              <span v-else-if="item.category === 'takeout'">🍔 外卖</span>
-              <span v-else-if="item.category === 'study'">📚 学习</span>
-              <span v-else-if="item.category === 'sports'">🏃 运动</span>
+              <span v-if="item.type === 'milktea'">🧋 奶茶</span>
+              <span v-else-if="item.type === 'takeout'">🍔 外卖</span>
+              <span v-else-if="item.type === 'study'">📚 学习</span>
+              <span v-else-if="item.type === 'sports'">🏃 运动</span>
               <span v-else>✨ 其他</span>
             </div>
           </div>
@@ -237,7 +142,7 @@ const getProgress = (current: number, total: number) => {
             </div>
             <div class="card-footer">
               <div class="publisher-info">
-                <img :src="item.avatar" :alt="item.publisher" class="publisher-avatar" />
+                <img :src="item.publisherAvatar" :alt="item.publisher" class="publisher-avatar" />
                 <span class="publisher-name">{{ item.publisher }}</span>
               </div>
               <button class="join-btn">加入拼单</button>
@@ -245,6 +150,7 @@ const getProgress = (current: number, total: number) => {
           </div>
         </div>
       </div>
+      <EmptyState v-if="!loading && filteredGroupBuys.length === 0" title="暂无拼单" description="快来发起第一个拼单吧~" />
     </section>
   </div>
 </template>

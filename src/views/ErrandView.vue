@@ -1,7 +1,11 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed, onMounted } from 'vue'
+import { getErrands, type Errand } from '../api/errand'
+import EmptyState from '../components/EmptyState.vue'
 
 const activeCategory = ref('all')
+const loading = ref(false)
+const errands = ref<Errand[]>([])
 
 const categories = [
   { key: 'all', label: '全部' },
@@ -11,148 +15,60 @@ const categories = [
   { key: 'other', label: '其他' },
 ]
 
-const errands = ref([
-  {
-    id: 1,
-    title: '代取快递 菜鸟驿站 送到7号楼',
-    category: 'express',
-    description: '菜鸟驿站有2个快递，都是小件，帮忙送到7号楼302宿舍，谢谢！',
-    reward: 5,
-    deadline: '今天 18:00前',
-    location: '狮子山校区',
-    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=xiaofang',
-    publisher: '小芳同学',
-    time: '30分钟前',
-    status: 'pending',
-    image: 'https://picsum.photos/seed/express1/400/300',
-  },
-  {
-    id: 2,
-    title: '代买一杯珍珠奶茶 送到图书馆',
-    category: 'buy',
-    description: '帮忙在校门口奶茶店买一杯珍珠奶茶，三分糖少冰，送到图书馆三楼自习室，辛苦啦！',
-    reward: 3,
-    deadline: '今天 15:00前',
-    location: '成龙校区',
-    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=xiaolei',
-    publisher: '小雷同学',
-    time: '1小时前',
-    status: 'pending',
-    image: 'https://picsum.photos/seed/tea2/400/300',
-  },
-  {
-    id: 3,
-    title: '代打印复习资料 A4纸10张',
-    category: 'affair',
-    description: '帮忙打印10张A4复习资料，黑白双面，打印好送到文学院楼下，文件发你邮箱。',
-    reward: 8,
-    deadline: '明天 10:00前',
-    location: '狮子山校区',
-    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=xiaomei',
-    publisher: '小梅同学',
-    time: '2小时前',
-    status: 'accepted',
-    image: 'https://picsum.photos/seed/print1/400/300',
-  },
-  {
-    id: 4,
-    title: '代取顺丰快递 大件 送到宿舍',
-    category: 'express',
-    description: '顺丰快递在校门口，是个大箱子（约10kg），帮忙送到5号楼宿舍，女生宿舍楼下就行。',
-    reward: 15,
-    deadline: '今天 20:00前',
-    location: '成龙校区',
-    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=xiaoting',
-    publisher: '小婷同学',
-    time: '3小时前',
-    status: 'pending',
-    image: 'https://picsum.photos/seed/express2/400/300',
-  },
-  {
-    id: 5,
-    title: '代办请假手续 找辅导员签字',
-    category: 'affair',
-    description: '因为生病没法去学校，帮忙找辅导员签请假条，材料都准备好了，到时候联系我。',
-    reward: 20,
-    deadline: '明天 16:00前',
-    location: '狮子山校区',
-    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=xiaobin',
-    publisher: '小斌同学',
-    time: '4小时前',
-    status: 'accepted',
-    image: 'https://picsum.photos/seed/paper1/400/300',
-  },
-  {
-    id: 6,
-    title: '代买食堂二楼黄焖鸡米饭',
-    category: 'buy',
-    description: '帮忙带一份食堂二楼的黄焖鸡米饭，微辣，送到8号楼405宿舍，谢谢帅哥/美女！',
-    reward: 4,
-    deadline: '今天 12:30前',
-    location: '成龙校区',
-    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=xiaojie',
-    publisher: '小杰同学',
-    time: '5小时前',
-    status: 'completed',
-    image: 'https://picsum.photos/seed/food2/400/300',
-  },
-  {
-    id: 7,
-    title: '代取京东快递 近邻宝',
-    category: 'express',
-    description: '近邻宝有一个京东快递，中等大小，帮忙送到3号楼201宿舍，非常感谢！',
-    reward: 6,
-    deadline: '今天 19:00前',
-    location: '狮子山校区',
-    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=xiaodan',
-    publisher: '小丹同学',
-    time: '6小时前',
-    status: 'pending',
-    image: 'https://picsum.photos/seed/express3/400/300',
-  },
-  {
-    id: 8,
-    title: '代买一本书 书店在南门',
-    category: 'buy',
-    description: '帮忙在南门书店买一本《考研英语真题》，送到研究生院2号楼，书钱到时给你。',
-    reward: 10,
-    deadline: '后天 17:00前',
-    location: '成龙校区',
-    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=xiaoyang',
-    publisher: '小杨同学',
-    time: '8小时前',
-    status: 'pending',
-    image: 'https://picsum.photos/seed/book2/400/300',
-  },
-])
+const fetchErrands = async () => {
+  loading.value = true
+  try {
+    const res = await getErrands()
+    errands.value = res.data
+  } catch (err) {
+    console.error('获取跑腿委托列表失败:', err)
+  } finally {
+    loading.value = false
+  }
+}
 
-const filteredErrands = ref(errands.value)
+const filteredErrands = computed(() => {
+  if (activeCategory.value === 'all') {
+    return errands.value
+  }
+  return errands.value.filter(e => e.type === activeCategory.value)
+})
 
 const handleCategoryChange = (key: string) => {
   activeCategory.value = key
-  if (key === 'all') {
-    filteredErrands.value = errands.value
-  } else {
-    filteredErrands.value = errands.value.filter(e => e.category === key)
-  }
 }
 
 const getStatusText = (status: string) => {
   switch (status) {
-    case 'pending':
+    case 'open':
       return '待接单'
     case 'accepted':
       return '进行中'
-    case 'completed':
+    case 'done':
       return '已完成'
+    case 'closed':
+      return '已关闭'
     default:
       return ''
   }
 }
 
 const getStatusClass = (status: string) => {
-  return status
+  switch (status) {
+    case 'open':
+      return 'status-pending'
+    case 'accepted':
+      return 'status-accepted'
+    case 'done':
+      return 'status-completed'
+    default:
+      return ''
+  }
 }
+
+onMounted(() => {
+  fetchErrands()
+})
 </script>
 
 <template>
@@ -214,9 +130,9 @@ const getStatusClass = (status: string) => {
         >
           <div class="card-header">
             <div class="card-category">
-              <span v-if="errand.category === 'express'">📦 代取快递</span>
-              <span v-else-if="errand.category === 'buy'">🛒 代买物品</span>
-              <span v-else-if="errand.category === 'affair'">📋 代办事务</span>
+              <span v-if="errand.type === 'express'">📦 代取快递</span>
+              <span v-else-if="errand.type === 'buy'">🛒 代买物品</span>
+              <span v-else-if="errand.type === 'affair'">📋 代办事务</span>
               <span v-else>✨ 其他</span>
             </div>
             <div :class="['card-status', getStatusClass(errand.status)]">
@@ -233,16 +149,16 @@ const getStatusClass = (status: string) => {
               </div>
               <div class="meta-item">
                 <span class="meta-icon">📍</span>
-                <span class="meta-text">{{ errand.location }}</span>
+                <span class="meta-text">{{ errand.campus }}</span>
               </div>
             </div>
           </div>
           <div class="card-footer">
             <div class="publisher-info">
-              <img :src="errand.avatar" :alt="errand.publisher" class="publisher-avatar" />
+              <img :src="errand.publisherAvatar" :alt="errand.publisher" class="publisher-avatar" />
               <div class="publisher-detail">
                 <span class="publisher-name">{{ errand.publisher }}</span>
-                <span class="publish-time">{{ errand.time }}</span>
+                <span class="publish-time">{{ errand.publishTime }}</span>
               </div>
             </div>
             <div class="reward-section">
@@ -251,12 +167,13 @@ const getStatusClass = (status: string) => {
             </div>
           </div>
           <div class="card-action">
-            <button class="accept-btn" :disabled="errand.status !== 'pending'">
-              {{ errand.status === 'pending' ? '立即接单' : errand.status === 'accepted' ? '进行中' : '已完成' }}
+            <button class="accept-btn" :disabled="errand.status !== 'open'">
+              {{ errand.status === 'open' ? '立即接单' : errand.status === 'accepted' ? '进行中' : '已完成' }}
             </button>
           </div>
         </div>
       </div>
+      <EmptyState v-if="!loading && filteredErrands.length === 0" title="暂无委托" description="快来发布第一个跑腿委托吧~" />
     </section>
   </div>
 </template>

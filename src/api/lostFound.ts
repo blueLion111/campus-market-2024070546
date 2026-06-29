@@ -1,0 +1,26 @@
+import http from './http'
+
+export interface LostFound {
+  id: number
+  title: string
+  type: string
+  typeName: string
+  itemName: string
+  location: string
+  time: string
+  contact: string
+  description: string
+  publisher: string
+  publisherAvatar: string
+  campus: string
+  image: string
+  status: string
+}
+
+export const getLostFounds = (params?: { type?: string; campus?: string }) => {
+  return http.get<LostFound[]>('/lostFounds', { params })
+}
+
+export const getLostFoundById = (id: number) => {
+  return http.get<LostFound>(`/lostFounds/${id}`)
+}

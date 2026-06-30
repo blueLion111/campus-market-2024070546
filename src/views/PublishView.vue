@@ -2,22 +2,27 @@
 import { ref, reactive, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
+import FormField from '../components/FormField.vue'
+import { createTrade, type CreateTradeData } from '../api/trade'
+import { createLostFound, type CreateLostFoundData } from '../api/lostFound'
+import { createGroupBuy, type CreateGroupBuyData } from '../api/groupBuy'
+import { createErrand, type CreateErrandData } from '../api/errand'
 
 const router = useRouter()
+const loading = ref(false)
 
 const form = reactive({
   type: 'secondhand',
   title: '',
-  campus: 'shizi',
+  campus: '狮子山校区',
   location: '',
   description: '',
-  tags: [] as string[],
   price: '',
   condition: '九成新',
   lostOrFound: 'lost',
   eventTime: '',
   itemFeature: '',
-  targetCount: 5,
+  targetCount: 3,
   currentCount: 1,
   deadline: '',
   reward: '',
@@ -26,15 +31,15 @@ const form = reactive({
 })
 
 const typeOptions = [
-  { value: 'secondhand', label: '二手交易', color: '#409eff', icon: 'ShoppingCart' },
-  { value: 'lost', label: '失物招领', color: '#e6a23c', icon: 'Search' },
-  { value: 'group', label: '拼单搭子', color: '#67c23a', icon: 'UserPlus' },
-  { value: 'errand', label: '跑腿委托', color: '#f56c6c', icon: 'Van' },
+  { value: 'secondhand', label: '二手交易', color: '#409eff', icon: 'ShoppingCart', route: '/trade' },
+  { value: 'lost', label: '失物招领', color: '#e6a23c', icon: 'Search', route: '/lost-found' },
+  { value: 'group', label: '拼单搭子', color: '#67c23a', icon: 'UserPlus', route: '/group-buy' },
+  { value: 'errand', label: '跑腿委托', color: '#f56c6c', icon: 'Van', route: '/errand' },
 ]
 
 const campusOptions = [
-  { value: 'shizi', label: '狮子山校区' },
-  { value: 'chenglong', label: '成龙校区' },
+  { value: '狮子山校区', label: '狮子山校区' },
+  { value: '成龙校区', label: '成龙校区' },
 ]
 
 const conditionOptions = [
@@ -47,9 +52,7 @@ const conditionOptions = [
 
 const inputTag = ref('')
 const dynamicTags = ref<string[]>([])
-const imageList = ref<{ id: number; url: string }[]>([
-  { id: 1, url: 'https://picsum.photos/seed/textbook1/400/300' },
-])
+const imageList = ref<{ id: number; url: string }[]>([])
 
 const handleInputConfirm = () => {
   if (inputTag.value && dynamicTags.value.indexOf(inputTag.value) === -1) {
@@ -66,19 +69,108 @@ const removeImage = (id: number) => {
   imageList.value = imageList.value.filter(img => img.id !== id)
 }
 
-const submitPublish = () => {
-  if (!form.title) {
+const validateForm = () => {
+  if (!form.title.trim()) {
     ElMessage.warning('请填写标题')
-    return
+    return false
   }
-  if (!form.location) {
+  if (!form.location.trim()) {
     ElMessage.warning('请填写地点')
-    return
+    return false
   }
-  ElMessage.success('发布成功！')
-  setTimeout(() => {
-    router.push('/list')
-  }, 1000)
+  if (!form.description.trim()) {
+    ElMessage.warning('请填写详细描述')
+    return false
+  }
+  if (form.type === 'secondhand' && !form.price) {
+    ElMessage.warning('请填写价格')
+    return false
+  }
+  if (form.type === 'errand' && !form.reward) {
+    ElMessage.warning('请填写酬劳')
+    return false
+  }
+  return true
+}
+
+const getRedirectRoute = () => {
+  const typeOption = typeOptions.find(t => t.value === form.type)
+  return typeOption?.route || '/'
+}
+
+const submitPublish = async () => {
+  if (!validateForm()) return
+
+  loading.value = true
+  try {
+    const now = new Date().toLocaleString('zh-CN', { hour12: false }).replace(/\//g, '-')
+
+    if (form.type === 'secondhand') {
+      const data: CreateTradeData = {
+        title: form.title,
+        price: Number(form.price),
+        originalPrice: Number(form.price) * 1.5,
+        category: 'other',
+        categoryName: '其他',
+        condition: form.condition,
+        campus: form.campus,
+        location: form.location,
+        image: 'https://picsum.photos/seed/new/400/400',
+        description: form.description,
+      }
+      await createTrade(data)
+    } else if (form.type === 'lost') {
+      const data: CreateLostFoundData = {
+        title: form.title,
+        type: form.lostOrFound,
+        typeName: form.lostOrFound === 'lost' ? '寻物启事' : '失物招领',
+        itemName: form.itemFeature || '未填写',
+        location: form.location,
+        time: form.eventTime ? new Date(form.eventTime).toISOString() : now,
+        contact: '请站内联系',
+        campus: form.campus,
+        image: 'https://picsum.photos/seed/new/400/300',
+        description: form.description,
+      }
+      await createLostFound(data)
+    } else if (form.type === 'group') {
+      const data: CreateGroupBuyData = {
+        title: form.title,
+        type: 'other',
+        typeName: '其他',
+        description: form.description,
+        totalPeople: form.targetCount,
+        deadline: form.deadline ? new Date(form.deadline).toISOString() : now,
+        location: form.campus,
+        image: 'https://picsum.photos/seed/new/400/300',
+      }
+      await createGroupBuy(data)
+    } else if (form.type === 'errand') {
+      const data: CreateErrandData = {
+        title: form.title,
+        type: 'other',
+        typeName: '其他',
+        description: form.description,
+        reward: Number(form.reward),
+        pickupLocation: form.taskPlace || form.location,
+        deliveryLocation: form.location,
+        deadline: form.expectedTime ? new Date(form.expectedTime).toISOString() : now,
+        campus: form.campus,
+        image: 'https://picsum.photos/seed/new/400/300',
+      }
+      await createErrand(data)
+    }
+
+    ElMessage.success('发布成功！')
+    setTimeout(() => {
+      router.push(getRedirectRoute())
+    }, 1000)
+  } catch (error) {
+    console.error('发布失败:', error)
+    ElMessage.error('发布失败，请检查 Mock 服务是否启动')
+  } finally {
+    loading.value = false
+  }
 }
 
 const saveDraft = () => {
@@ -282,7 +374,7 @@ const currentType = computed(() => typeOptions.find(t => t.value === form.type))
 
           <div class="form-actions">
             <el-button size="large" @click="saveDraft">保存草稿</el-button>
-            <el-button type="primary" size="large" @click="submitPublish">
+            <el-button type="primary" size="large" :loading="loading" @click="submitPublish">
               立即发布
             </el-button>
           </div>
@@ -339,7 +431,7 @@ const currentType = computed(() => typeOptions.find(t => t.value === form.type))
                 {{ currentType.label }}
               </el-tag>
               <p class="preview-title">{{ form.title || '标题将在此处显示' }}</p>
-              <p class="preview-location">{{ form.campus === 'shizi' ? '狮子山校区' : '成龙校区' }} · {{ form.location || '地点' }}</p>
+              <p class="preview-location">{{ form.campus }} · {{ form.location || '地点' }}</p>
               <p v-if="form.price" class="preview-price">¥{{ form.price }}</p>
             </div>
           </div>

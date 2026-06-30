@@ -24,3 +24,20 @@ export const getLostFounds = (params?: { type?: string; campus?: string }) => {
 export const getLostFoundById = (id: number) => {
   return http.get<LostFound>(`/lostFounds/${id}`)
 }
+
+export interface CreateLostFoundData {
+  title: string
+  type: string
+  typeName: string
+  itemName: string
+  location: string
+  time: string
+  contact: string
+  campus: string
+  image?: string
+  description: string
+}
+
+export const createLostFound = (data: CreateLostFoundData) => {
+  return http.post<LostFound>('/lostFounds', data)
+}

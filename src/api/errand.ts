@@ -25,3 +25,20 @@ export const getErrands = (params?: { type?: string; campus?: string }) => {
 export const getErrandById = (id: number) => {
   return http.get<Errand>(`/errands/${id}`)
 }
+
+export interface CreateErrandData {
+  title: string
+  type: string
+  typeName: string
+  description: string
+  reward: number
+  pickupLocation: string
+  deliveryLocation: string
+  deadline: string
+  campus: string
+  image?: string
+}
+
+export const createErrand = (data: CreateErrandData) => {
+  return http.post<Errand>('/errands', data)
+}

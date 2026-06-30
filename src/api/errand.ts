@@ -22,7 +22,7 @@ export const getErrands = (params?: { type?: string; campus?: string }) => {
   return http.get<Errand[]>('/errands', { params })
 }
 
-export const getErrandById = (id: number) => {
+export const getErrandById = (id: string | number) => {
   return http.get<Errand>(`/errands/${id}`)
 }
 

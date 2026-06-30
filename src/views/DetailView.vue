@@ -10,7 +10,8 @@ import { getErrandById } from '../api/errand'
 const route = useRoute()
 const router = useRouter()
 
-const itemId = computed(() => Number(route.params.id))
+// 注意：json-server 新建记录会生成字符串 id（如 "IxcwsJ7DbjI"），不能用 Number() 转换
+const itemId = computed(() => route.params.id as string)
 const itemTypeFromQuery = computed(() => route.query.type as string)
 const loading = ref(false)
 const itemDetail = ref<any>(null)
@@ -69,7 +70,7 @@ const fetchDetail = async () => {
   }
 }
 
-const fetchByType = async (id: number, type: string) => {
+const fetchByType = async (id: string, type: string) => {
   switch (type) {
     case 'trade':
     case 'secondhand': {
@@ -116,20 +117,24 @@ const setTradeDetail = (data: any) => {
     ...data,
     type: 'secondhand',
     typeName: '二手交易',
-    images: [data.image],
-    tags: [data.categoryName, data.condition],
+    images: data.image ? [data.image] : ['https://picsum.photos/seed/trade-default/400/400'],
+    tags: [data.categoryName, data.condition].filter(Boolean),
     publisher: {
       id: 'user_' + data.id,
-      nickname: data.publisher,
-      avatar: data.publisherAvatar,
-      college: '数学与软件科学学院',
+      nickname: data.publisher || '校园用户',
+      avatar: data.publisherAvatar || 'https://picsum.photos/seed/avatar-default/100/100',
+      college: '校园用户',
       campus: data.campus,
       creditScore: 95,
-      publishCount: 8,
+      publishCount: 1,
       responseRate: '98%',
     },
-    createdAt: data.publishTime,
+    createdAt: data.publishTime || new Date().toISOString().replace('T', ' ').slice(0, 16),
     allowBargain: true,
+    status: data.status || 'open',
+    viewCount: data.viewCount || 0,
+    favoriteCount: data.favoriteCount || 0,
+    publisherName: data.publisher || '校园用户',
   }
   itemType.value = 'secondhand'
 }
@@ -137,25 +142,28 @@ const setTradeDetail = (data: any) => {
 const setLostFoundDetail = (data: any) => {
   itemDetail.value = {
     ...data,
-    type: data.type,
-    typeName: data.typeName,
-    images: [data.image],
-    tags: [data.typeName, data.location],
+    type: data.type || 'lost',
+    typeName: data.typeName || '失物招领',
+    images: data.image ? [data.image] : ['https://picsum.photos/seed/lost-default/400/400'],
+    tags: [data.typeName, data.location].filter(Boolean),
     publisher: {
       id: 'user_' + data.id,
-      nickname: data.publisher || '匿名用户',
-      avatar: 'https://picsum.photos/seed/avatar-user/100/100' + data.id,
-      college: '未知学院',
+      nickname: data.publisher || '校园用户',
+      avatar: data.publisherAvatar || 'https://picsum.photos/seed/avatar-default/100/100',
+      college: '校园用户',
       campus: data.campus,
       creditScore: 90,
-      publishCount: 3,
+      publishCount: 1,
       responseRate: '90%',
     },
-    createdAt: data.time,
+    createdAt: data.time || new Date().toISOString().replace('T', ' ').slice(0, 16),
     price: null,
     originalPrice: null,
     condition: '—',
     allowBargain: false,
+    status: data.status || 'open',
+    viewCount: data.viewCount || 0,
+    favoriteCount: data.favoriteCount || 0,
   }
   itemType.value = 'lost'
 }
@@ -165,23 +173,26 @@ const setGroupBuyDetail = (data: any) => {
     ...data,
     type: 'group',
     typeName: '拼单搭子',
-    images: [data.image],
-    tags: [data.typeName, data.location],
+    images: data.image ? [data.image] : ['https://picsum.photos/seed/group-default/400/400'],
+    tags: [data.typeName, data.location].filter(Boolean),
     publisher: {
       id: 'user_' + data.id,
-      nickname: data.publisher || '匿名用户',
-      avatar: 'https://picsum.photos/seed/avatar-user/100/100' + data.id,
-      college: '未知学院',
+      nickname: data.publisher || '校园用户',
+      avatar: data.publisherAvatar || 'https://picsum.photos/seed/avatar-default/100/100',
+      college: '校园用户',
       campus: data.location,
       creditScore: 88,
-      publishCount: 5,
+      publishCount: 1,
       responseRate: '85%',
     },
-    createdAt: data.deadline,
+    createdAt: data.deadline || new Date().toISOString().replace('T', ' ').slice(0, 16),
     price: null,
     originalPrice: null,
     condition: '—',
     allowBargain: false,
+    status: data.status || 'open',
+    viewCount: data.viewCount || 0,
+    favoriteCount: data.favoriteCount || 0,
   }
   itemType.value = 'group'
 }
@@ -191,23 +202,26 @@ const setErrandDetail = (data: any) => {
     ...data,
     type: 'errand',
     typeName: '跑腿委托',
-    images: [data.image],
-    tags: [data.typeName, data.campus],
+    images: data.image ? [data.image] : ['https://picsum.photos/seed/errand-default/400/400'],
+    tags: [data.typeName, data.campus].filter(Boolean),
     publisher: {
       id: 'user_' + data.id,
-      nickname: data.publisher || '匿名用户',
-      avatar: 'https://picsum.photos/seed/avatar-user/100/100' + data.id,
-      college: '未知学院',
+      nickname: data.publisher || '校园用户',
+      avatar: data.publisherAvatar || 'https://picsum.photos/seed/avatar-default/100/100',
+      college: '校园用户',
       campus: data.campus,
       creditScore: 92,
-      publishCount: 7,
+      publishCount: 1,
       responseRate: '95%',
     },
-    createdAt: data.deadline,
-    price: data.reward,
+    createdAt: data.deadline || new Date().toISOString().replace('T', ' ').slice(0, 16),
+    price: data.reward || 0,
     originalPrice: null,
     condition: '—',
     allowBargain: false,
+    status: data.status || 'open',
+    viewCount: data.viewCount || 0,
+    favoriteCount: data.favoriteCount || 0,
   }
   itemType.value = 'errand'
 }

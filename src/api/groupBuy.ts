@@ -21,7 +21,7 @@ export const getGroupBuys = (params?: { type?: string; location?: string }) => {
   return http.get<GroupBuy[]>('/groupBuys', { params })
 }
 
-export const getGroupBuyById = (id: number) => {
+export const getGroupBuyById = (id: string | number) => {
   return http.get<GroupBuy>(`/groupBuys/${id}`)
 }
 

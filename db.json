@@ -1,7 +1,7 @@
 {
   "trades": [
     {
-      "id": 1,
+      "id": "1",
       "title": "高等数学同济第七版 教材全新未使用",
       "price": 25,
       "originalPrice": 45,
@@ -20,7 +20,7 @@
       "favoriteCount": 12
     },
     {
-      "id": 2,
+      "id": "2",
       "title": "iPad 2021款 64G 9成新 带原装充电器",
       "price": 1899,
       "originalPrice": 2999,
@@ -39,7 +39,7 @@
       "favoriteCount": 28
     },
     {
-      "id": 3,
+      "id": "3",
       "title": "捷安特山地自行车 毕业出 送锁和挡泥板",
       "price": 450,
       "originalPrice": 899,
@@ -58,7 +58,7 @@
       "favoriteCount": 15
     },
     {
-      "id": 4,
+      "id": "4",
       "title": "宿舍床上书桌 可折叠 9成新",
       "price": 35,
       "originalPrice": 69,
@@ -77,7 +77,7 @@
       "favoriteCount": 6
     },
     {
-      "id": 5,
+      "id": "5",
       "title": "Nike Air Force 1 42码 穿了两次",
       "price": 399,
       "originalPrice": 799,
@@ -96,7 +96,7 @@
       "favoriteCount": 22
     },
     {
-      "id": 6,
+      "id": "6",
       "title": "小米手环7 NFC版 功能正常",
       "price": 159,
       "originalPrice": 249,
@@ -115,7 +115,7 @@
       "favoriteCount": 9
     },
     {
-      "id": 7,
+      "id": "7",
       "title": "电热水壶 1.8L 宿舍必备 9成新",
       "price": 29,
       "originalPrice": 59,
@@ -134,7 +134,7 @@
       "favoriteCount": 5
     },
     {
-      "id": 8,
+      "id": "8",
       "title": "阿迪达斯双肩背包 大容量 电脑包",
       "price": 129,
       "originalPrice": 299,
@@ -151,11 +151,24 @@
       "status": "open",
       "viewCount": 176,
       "favoriteCount": 11
+    },
+    {
+      "title": "旧书",
+      "price": 20,
+      "originalPrice": 30,
+      "category": "other",
+      "categoryName": "其他",
+      "condition": "八成新",
+      "campus": "成龙校区",
+      "location": "东3",
+      "image": "https://picsum.photos/seed/new/400/400",
+      "description": "知识就是力量",
+      "id": "IxcwsJ7DbjI"
     }
   ],
   "lostFounds": [
     {
-      "id": 1,
+      "id": "1",
       "title": "丢失黑色双肩包 内有笔记本电脑",
       "type": "lost",
       "typeName": "寻物启事",
@@ -171,7 +184,7 @@
       "status": "open"
     },
     {
-      "id": 2,
+      "id": "2",
       "title": "在食堂一楼捡到一张校园卡",
       "type": "found",
       "typeName": "失物招领",
@@ -187,7 +200,7 @@
       "status": "open"
     },
     {
-      "id": 3,
+      "id": "3",
       "title": "丢失AirPods Pro 白色充电盒",
       "type": "lost",
       "typeName": "寻物启事",
@@ -203,7 +216,7 @@
       "status": "open"
     },
     {
-      "id": 4,
+      "id": "4",
       "title": "捡到一串钥匙 有很多挂件",
       "type": "found",
       "typeName": "失物招领",
@@ -219,7 +232,7 @@
       "status": "closed"
     },
     {
-      "id": 5,
+      "id": "5",
       "title": "丢失学生证 文学院2023级",
       "type": "lost",
       "typeName": "寻物启事",
@@ -235,7 +248,7 @@
       "status": "open"
     },
     {
-      "id": 6,
+      "id": "6",
       "title": "捡到一把蓝色雨伞",
       "type": "found",
       "typeName": "失物招领",
@@ -253,7 +266,7 @@
   ],
   "groupBuys": [
     {
-      "id": 1,
+      "id": "1",
       "title": "喜茶拼单 还差2人 免配送费",
       "type": "milktea",
       "typeName": "奶茶拼单",
@@ -269,7 +282,7 @@
       "status": "open"
     },
     {
-      "id": 2,
+      "id": "2",
       "title": "麦当劳全家桶拼单 4人平分",
       "type": "takeout",
       "typeName": "外卖拼单",
@@ -285,7 +298,7 @@
       "status": "closed"
     },
     {
-      "id": 3,
+      "id": "3",
       "title": "考研自习搭子 图书馆三楼",
       "type": "study",
       "typeName": "学习搭子",
@@ -301,7 +314,7 @@
       "status": "open"
     },
     {
-      "id": 4,
+      "id": "4",
       "title": "羽毛球搭子 每周三周五晚",
       "type": "sports",
       "typeName": "运动搭子",
@@ -317,7 +330,7 @@
       "status": "open"
     },
     {
-      "id": 5,
+      "id": "5",
       "title": "瑞幸咖啡拼单 9.9元一杯",
       "type": "milktea",
       "typeName": "奶茶拼单",
@@ -333,7 +346,7 @@
       "status": "closed"
     },
     {
-      "id": 6,
+      "id": "6",
       "title": "期末复习搭子 高数线代",
       "type": "study",
       "typeName": "学习搭子",
@@ -349,7 +362,7 @@
       "status": "open"
     },
     {
-      "id": 7,
+      "id": "7",
       "title": "健身房搭子 一起办卡优惠",
       "type": "sports",
       "typeName": "运动搭子",
@@ -365,7 +378,7 @@
       "status": "open"
     },
     {
-      "id": 8,
+      "id": "8",
       "title": "海底捞拼单 6人以上88折",
       "type": "takeout",
       "typeName": "外卖拼单",
@@ -383,7 +396,7 @@
   ],
   "errands": [
     {
-      "id": 1,
+      "id": "1",
       "title": "代取快递 菜鸟驿站 送到7号楼",
       "type": "express",
       "typeName": "代取快递",
@@ -400,7 +413,7 @@
       "status": "open"
     },
     {
-      "id": 2,
+      "id": "2",
       "title": "代买一杯珍珠奶茶 送到图书馆",
       "type": "buy",
       "typeName": "代买物品",
@@ -417,7 +430,7 @@
       "status": "open"
     },
     {
-      "id": 3,
+      "id": "3",
       "title": "代打印复习资料 A4纸10张",
       "type": "affair",
       "typeName": "代办事务",
@@ -434,7 +447,7 @@
       "status": "accepted"
     },
     {
-      "id": 4,
+      "id": "4",
       "title": "代取顺丰快递 大件 送到宿舍",
       "type": "express",
       "typeName": "代取快递",
@@ -451,7 +464,7 @@
       "status": "open"
     },
     {
-      "id": 5,
+      "id": "5",
       "title": "代办请假手续 找辅导员签字",
       "type": "affair",
       "typeName": "代办事务",
@@ -468,7 +481,7 @@
       "status": "accepted"
     },
     {
-      "id": 6,
+      "id": "6",
       "title": "代买食堂二楼黄焖鸡米饭",
       "type": "buy",
       "typeName": "代买物品",
@@ -485,7 +498,7 @@
       "status": "done"
     },
     {
-      "id": 7,
+      "id": "7",
       "title": "代取京东快递 近邻宝",
       "type": "express",
       "typeName": "代取快递",
@@ -502,7 +515,7 @@
       "status": "open"
     },
     {
-      "id": 8,
+      "id": "8",
       "title": "代买一本书 书店在南门",
       "type": "buy",
       "typeName": "代买物品",
@@ -521,7 +534,7 @@
   ],
   "users": [
     {
-      "id": 1,
+      "id": "1",
       "username": "zhangtongxue",
       "nickname": "张同学",
       "avatar": "https://picsum.photos/seed/avatar-zhangwei/100/100",
@@ -541,7 +554,7 @@
       "email": "zhang@stu.edu.cn"
     },
     {
-      "id": 2,
+      "id": "2",
       "username": "litongxue",
       "nickname": "李同学",
       "avatar": "https://picsum.photos/seed/avatar-liming/100/100",
@@ -561,7 +574,7 @@
       "email": "li@stu.edu.cn"
     },
     {
-      "id": 3,
+      "id": "3",
       "username": "wangtongxue",
       "nickname": "王同学",
       "avatar": "https://picsum.photos/seed/avatar-wanghua/100/100",
@@ -583,7 +596,7 @@
   ],
   "conversations": [
     {
-      "id": 1,
+      "id": "1",
       "itemId": 1,
       "itemType": "trade",
       "itemTitle": "高等数学同济第七版 教材全新未使用",
@@ -599,7 +612,7 @@
       "currentUserId": 2
     },
     {
-      "id": 2,
+      "id": "2",
       "itemId": 1,
       "itemType": "lostFound",
       "itemTitle": "丢失黑色双肩包 内有笔记本电脑",
@@ -615,7 +628,7 @@
       "currentUserId": 1
     },
     {
-      "id": 3,
+      "id": "3",
       "itemId": 1,
       "itemType": "groupBuy",
       "itemTitle": "喜茶拼单 还差2人 免配送费",
@@ -631,7 +644,7 @@
       "currentUserId": 1
     },
     {
-      "id": 4,
+      "id": "4",
       "itemId": 1,
       "itemType": "errand",
       "itemTitle": "代取快递 菜鸟驿站 送到7号楼",
@@ -649,7 +662,7 @@
   ],
   "messages": [
     {
-      "id": 1,
+      "id": "1",
       "conversationId": 1,
       "senderId": 2,
       "content": "你好，请问这本书还在吗？",
@@ -657,7 +670,7 @@
       "isMe": false
     },
     {
-      "id": 2,
+      "id": "2",
       "conversationId": 1,
       "senderId": 1,
       "content": "在的，全新未使用",
@@ -665,7 +678,7 @@
       "isMe": true
     },
     {
-      "id": 3,
+      "id": "3",
       "conversationId": 1,
       "senderId": 2,
       "content": "可以便宜点吗？20块怎么样",
@@ -673,17 +686,33 @@
       "isMe": false
     },
     {
-      "id": 4,
+      "id": "4",
       "conversationId": 1,
       "senderId": 1,
       "content": "可以，25元不议价",
       "time": "2026-06-28 10:30",
       "isMe": true
+    },
+    {
+      "conversationId": "3",
+      "senderId": 1,
+      "content": "还在吗？",
+      "time": "15:00",
+      "isMe": true,
+      "id": "FamFS0fBV0o"
+    },
+    {
+      "conversationId": "2",
+      "senderId": 1,
+      "content": "还在吗？",
+      "time": "15:00",
+      "isMe": true,
+      "id": "Nz3UzM9xEtE"
     }
   ],
   "favorites": [
     {
-      "id": 1,
+      "id": "1",
       "userId": 1,
       "itemId": 1,
       "itemType": "trade",
@@ -696,7 +725,7 @@
       "status": "open"
     },
     {
-      "id": 2,
+      "id": "2",
       "userId": 1,
       "itemId": 2,
       "itemType": "trade",
@@ -709,7 +738,7 @@
       "status": "open"
     },
     {
-      "id": 3,
+      "id": "3",
       "userId": 1,
       "itemId": 1,
       "itemType": "lostFound",
@@ -722,7 +751,7 @@
       "status": "open"
     },
     {
-      "id": 4,
+      "id": "4",
       "userId": 1,
       "itemId": 1,
       "itemType": "groupBuy",
@@ -735,7 +764,7 @@
       "status": "open"
     },
     {
-      "id": 5,
+      "id": "5",
       "userId": 1,
       "itemId": 3,
       "itemType": "trade",
@@ -748,7 +777,7 @@
       "status": "open"
     },
     {
-      "id": 6,
+      "id": "6",
       "userId": 1,
       "itemId": 1,
       "itemType": "errand",
@@ -763,7 +792,7 @@
   ],
   "orders": [
     {
-      "id": 1,
+      "id": "1",
       "orderNo": "CM20260628001",
       "userId": 1,
       "itemId": 1,
@@ -780,7 +809,7 @@
       "campus": "狮子山校区"
     },
     {
-      "id": 2,
+      "id": "2",
       "orderNo": "CM20260627002",
       "userId": 1,
       "itemId": 6,
@@ -797,7 +826,7 @@
       "campus": "狮子山校区"
     },
     {
-      "id": 3,
+      "id": "3",
       "orderNo": "CM20260626003",
       "userId": 1,
       "itemId": 3,
@@ -814,7 +843,7 @@
       "campus": "狮子山校区"
     },
     {
-      "id": 4,
+      "id": "4",
       "orderNo": "CM20260625004",
       "userId": 1,
       "itemId": 5,
@@ -831,7 +860,7 @@
       "campus": "狮子山校区"
     },
     {
-      "id": 5,
+      "id": "5",
       "orderNo": "CM20260624005",
       "userId": 1,
       "itemId": 2,
@@ -850,7 +879,7 @@
   ],
   "wallets": [
     {
-      "id": 1,
+      "id": "1",
       "userId": 1,
       "balance": 256.5,
       "frozenAmount": 0,
@@ -862,7 +891,7 @@
   ],
   "walletRecords": [
     {
-      "id": 1,
+      "id": "1",
       "userId": 1,
       "type": "expense",
       "typeName": "支出",
@@ -873,7 +902,7 @@
       "createTime": "2026-06-28 10:35"
     },
     {
-      "id": 2,
+      "id": "2",
       "userId": 1,
       "type": "income",
       "typeName": "收入",
@@ -884,7 +913,7 @@
       "createTime": "2026-06-27 18:20"
     },
     {
-      "id": 3,
+      "id": "3",
       "userId": 1,
       "type": "income",
       "typeName": "收入",
@@ -895,7 +924,7 @@
       "createTime": "2026-06-25 20:30"
     },
     {
-      "id": 4,
+      "id": "4",
       "userId": 1,
       "type": "recharge",
       "typeName": "充值",
@@ -906,7 +935,7 @@
       "createTime": "2026-06-20 10:00"
     },
     {
-      "id": 5,
+      "id": "5",
       "userId": 1,
       "type": "expense",
       "typeName": "支出",
@@ -917,7 +946,7 @@
       "createTime": "2026-06-18 15:40"
     },
     {
-      "id": 6,
+      "id": "6",
       "userId": 1,
       "type": "withdraw",
       "typeName": "提现",
@@ -930,7 +959,7 @@
   ],
   "partners": [
     {
-      "id": 1,
+      "id": "1",
       "userId": 1,
       "partnerId": 2,
       "partnerName": "小李同学",
@@ -944,7 +973,7 @@
       "createTime": "2026-06-26 09:15"
     },
     {
-      "id": 2,
+      "id": "2",
       "userId": 1,
       "partnerId": 3,
       "partnerName": "小王同学",
@@ -958,7 +987,7 @@
       "createTime": "2026-06-22 20:30"
     },
     {
-      "id": 3,
+      "id": "3",
       "userId": 1,
       "partnerId": 4,
       "partnerName": "小陈同学",
@@ -972,7 +1001,7 @@
       "createTime": "2026-06-20 18:00"
     },
     {
-      "id": 4,
+      "id": "4",
       "userId": 1,
       "partnerId": 5,
       "partnerName": "小赵同学",
@@ -988,7 +1017,7 @@
   ],
   "creditRecords": [
     {
-      "id": 1,
+      "id": "1",
       "userId": 1,
       "type": "plus",
       "change": 5,
@@ -998,7 +1027,7 @@
       "createTime": "2026-06-27 18:20"
     },
     {
-      "id": 2,
+      "id": "2",
       "userId": 1,
       "type": "plus",
       "change": 3,
@@ -1008,7 +1037,7 @@
       "createTime": "2026-06-25 10:00"
     },
     {
-      "id": 3,
+      "id": "3",
       "userId": 1,
       "type": "plus",
       "change": 10,
@@ -1017,5 +1046,6 @@
       "balanceAfter": 90,
       "createTime": "2024-09-01 08:00"
     }
-  ]
+  ],
+  "$schema": "./node_modules/json-server/schema.json"
 }

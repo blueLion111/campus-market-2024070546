@@ -21,7 +21,7 @@ export const getLostFounds = (params?: { type?: string; campus?: string }) => {
   return http.get<LostFound[]>('/lostFounds', { params })
 }
 
-export const getLostFoundById = (id: number) => {
+export const getLostFoundById = (id: string | number) => {
   return http.get<LostFound>(`/lostFounds/${id}`)
 }
 

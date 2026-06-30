@@ -2,21 +2,35 @@
 import { ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { getUserById, type User } from '../api/user'
+import { getTrades } from '../api/trade'
+import { getLostFounds } from '../api/lostFound'
+import { getGroupBuys } from '../api/groupBuy'
+import { getErrands } from '../api/errand'
+import { getFavorites } from '../api/favorite'
+import { getOrders } from '../api/order'
+import { getConversations } from '../api/message'
 
 const router = useRouter()
 
 const loading = ref(false)
 const userInfo = ref<User | null>(null)
 
-const stats = computed(() => {
-  if (!userInfo.value) return []
-  return [
-    { label: '我的发布', value: userInfo.value.publishCount, icon: '📝', color: '#409EFF', route: '/profile', tab: 'published' },
-    { label: '我的收藏', value: userInfo.value.favoriteCount, icon: '⭐', color: '#E6A23C', route: '/profile', tab: 'favorites' },
-    { label: '我的订单', value: userInfo.value.orderCount, icon: '📦', color: '#67C23A', route: '/profile', tab: 'orders' },
-    { label: '消息通知', value: userInfo.value.messageCount, icon: '💬', color: '#F56C6C', route: '/message', tab: '' },
-  ]
+// 真实统计数据（与 ProfileView 保持一致，从实际数据中计算）
+const realStats = ref({
+  published: 0,
+  favorites: 0,
+  orders: 0,
+  messages: 0,
 })
+
+const recentActivities = ref<any[]>([])
+
+const stats = computed(() => [
+  { label: '我的发布', value: realStats.value.published, icon: '📝', color: '#409EFF', route: '/profile', tab: 'published' },
+  { label: '我的收藏', value: realStats.value.favorites, icon: '⭐', color: '#E6A23C', route: '/profile', tab: 'favorites' },
+  { label: '我的订单', value: realStats.value.orders, icon: '📦', color: '#67C23A', route: '/profile', tab: 'orders' },
+  { label: '消息通知', value: realStats.value.messages, icon: '💬', color: '#F56C6C', route: '/message', tab: '' },
+])
 
 const menuItems = [
   { icon: '📝', label: '我的发布', desc: '查看我发布的所有信息', color: '#ECF5FF', route: '/profile', tab: 'published' },
@@ -27,13 +41,6 @@ const menuItems = [
   { icon: '🤝', label: '我的搭子', desc: '一起拼单的小伙伴', color: '#ECF5FF', route: '/profile', tab: 'partners' },
   { icon: '🎯', label: '信用分', desc: '查看信用等级详情', color: '#FDF6EC', route: '/profile', tab: 'credit' },
   { icon: '⚙️', label: '账号设置', desc: '个人资料和隐私设置', color: '#F0F9EB', route: '/profile', tab: 'settings' },
-]
-
-const recentActivities = [
-  { type: 'publish', title: '发布了二手商品：iPad 2021款', time: '2小时前' },
-  { type: 'order', title: '完成了跑腿委托：代取快递', time: '5小时前' },
-  { type: 'favorite', title: '收藏了拼单：喜茶拼单', time: '昨天' },
-  { type: 'message', title: '收到一条新消息', time: '昨天' },
 ]
 
 const handleStatClick = (stat: any) => {
@@ -48,20 +55,75 @@ const handleMenuClick = (item: any) => {
   }
 }
 
-const fetchUserInfo = async () => {
+const fetchAllData = async () => {
   loading.value = true
   try {
-    const res = await getUserById(1)
-    userInfo.value = res.data
-  } catch (err) {
-    console.error('获取用户信息失败:', err)
+    const currentUserId = 1
+    const [userRes, tradesRes, lostFoundsRes, groupBuysRes, errandsRes, favRes, orderRes, convRes] = await Promise.all([
+      getUserById(currentUserId).catch(() => ({ data: null })),
+      getTrades().catch(() => ({ data: [] })),
+      getLostFounds().catch(() => ({ data: [] })),
+      getGroupBuys().catch(() => ({ data: [] })),
+      getErrands().catch(() => ({ data: [] })),
+      getFavorites({ userId: currentUserId }).catch(() => ({ data: [] })),
+      getOrders({ userId: currentUserId }).catch(() => ({ data: [] })),
+      getConversations({ currentUserId }).catch(() => ({ data: [] })),
+    ])
+
+    userInfo.value = userRes.data
+
+    // 与 ProfileView 同样的统计方式
+    const trades = (tradesRes as any).data || []
+    const lostFounds = (lostFoundsRes as any).data || []
+    const groupBuys = (groupBuysRes as any).data || []
+    const errands = (errandsRes as any).data || []
+    const favorites = (favRes as any).data || []
+    const orders = (orderRes as any).data || []
+    const conversations = (convRes as any).data || []
+
+    realStats.value = {
+      published: trades.length + lostFounds.length + groupBuys.length + errands.length,
+      favorites: favorites.length,
+      orders: orders.length,
+      messages: conversations.length,
+    }
+
+    // 构造最近动态：取最新的发布、收藏、订单、消息
+    const activities: any[] = []
+
+    trades.slice(0, 2).forEach((t: any) => {
+      activities.push({
+        type: 'publish',
+        title: `发布了二手商品：${t.title}`,
+        time: t.publishTime || '',
+      })
+    })
+    favorites.slice(0, 1).forEach((f: any) => {
+      activities.push({
+        type: 'favorite',
+        title: `收藏了：${f.title}`,
+        time: f.favoriteTime || '',
+      })
+    })
+    orders.slice(0, 1).forEach((o: any) => {
+      activities.push({
+        type: 'order',
+        title: `${o.typeName}：${o.title}`,
+        time: o.createTime || '',
+      })
+    })
+
+    // 按时间倒序，最多展示 4 条
+    recentActivities.value = activities
+      .sort((a, b) => (b.time || '').localeCompare(a.time || ''))
+      .slice(0, 4)
   } finally {
     loading.value = false
   }
 }
 
 onMounted(() => {
-  fetchUserInfo()
+  fetchAllData()
 })
 </script>
 

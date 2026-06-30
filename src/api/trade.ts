@@ -24,7 +24,7 @@ export const getTrades = (params?: { category?: string; campus?: string }) => {
   return http.get<Trade[]>('/trades', { params })
 }
 
-export const getTradeById = (id: number) => {
+export const getTradeById = (id: string | number) => {
   return http.get<Trade>(`/trades/${id}`)
 }
 

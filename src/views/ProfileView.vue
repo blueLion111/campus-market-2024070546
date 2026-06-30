@@ -179,7 +179,7 @@ const creditLevel = computed(() => {
               </p>
               <div class="user-stats">
                 <div class="stat" v-for="s in statCards" :key="s.label" @click="switchTab(s.tab)" style="cursor:pointer">
-                  <span class="stat-value" :style="{ color: s.color }">{{ s.value }}</span>
+                  <span class="stat-value">{{ s.value }}</span>
                   <span class="stat-label">{{ s.label }}</span>
                 </div>
               </div>
@@ -671,11 +671,12 @@ const creditLevel = computed(() => {
 .stat-value {
   font-size: 24px;
   font-weight: 600;
+  color: #ffffff;
 }
 
 .stat-label {
   font-size: 12px;
-  opacity: 0.9;
+  color: rgba(255, 255, 255, 0.9);
 }
 
 .user-actions {

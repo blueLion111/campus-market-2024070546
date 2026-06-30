@@ -1,6 +1,9 @@
 ﻿<script setup lang="ts">
 import { ref, nextTick, onMounted, computed, watch } from 'vue'
+import { useRouter } from 'vue-router'
 import { getConversations, getMessages, createMessage, type Conversation, type Message } from '../api/message'
+
+const router = useRouter()
 
 const currentUserId = 1
 const conversations = ref<Conversation[]>([])
@@ -106,6 +109,14 @@ const scrollToBottom = () => {
   }
 }
 
+const goToDetail = () => {
+  if (!activeConversation.value) return
+  router.push({
+    path: `/detail/${activeConversation.value.itemId}`,
+    query: { type: activeConversation.value.itemType }
+  })
+}
+
 const sendQuickReply = (text: string) => {
   inputMessage.value = text
   sendMessage()
@@ -186,7 +197,7 @@ onMounted(() => {
             <el-image :src="activeConversation?.itemImage" style="width: 44px; height: 44px; border-radius: 6px" fit="cover" />
             <div class="item-card-info">
               <span class="item-title">{{ activeConversation?.itemTitle }}</span>
-              <el-button type="primary" size="small" link>查看详情</el-button>
+              <el-button type="primary" size="small" link @click="goToDetail">查看详情</el-button>
             </div>
           </el-card>
         </div>

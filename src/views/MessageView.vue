@@ -1,67 +1,14 @@
-<script setup lang="ts">
-import { ref, nextTick, onMounted, computed } from 'vue'
+﻿<script setup lang="ts">
+import { ref, nextTick, onMounted, computed, watch } from 'vue'
+import { getConversations, getMessages, createMessage, type Conversation, type Message } from '../api/message'
 
-const conversations = ref([
-  {
-    id: 'conv1',
-    itemId: 1,
-    itemTitle: '高等数学同济第七版',
-    itemImage: 'https://picsum.photos/seed/mathbook/100/100',
-    otherUserId: 'user001',
-    otherUserName: '张同学',
-    otherAvatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Zhang',
-    lastMessage: '可以，25元不议价',
-    lastTime: '10:30',
-    unreadCount: 2,
-  },
-  {
-    id: 'conv2',
-    itemId: 2,
-    itemTitle: '捡到一张校园卡',
-    itemImage: 'https://picsum.photos/seed/campuscard/100/100',
-    otherUserId: 'user002',
-    otherUserName: '李同学',
-    otherAvatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Li',
-    lastMessage: '好的，谢谢你！',
-    lastTime: '昨天',
-    unreadCount: 0,
-  },
-  {
-    id: 'conv3',
-    itemId: 3,
-    itemTitle: '奶茶拼单 还差2人',
-    itemImage: 'https://picsum.photos/seed/milktea/100/100',
-    otherUserId: 'user003',
-    otherUserName: '王同学',
-    otherAvatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Wang',
-    lastMessage: '好，我在校门口等你',
-    lastTime: '昨天',
-    unreadCount: 0,
-  },
-  {
-    id: 'conv4',
-    itemId: 4,
-    itemTitle: '代取快递 酬劳10元',
-    itemImage: 'https://picsum.photos/seed/package/100/100',
-    otherUserId: 'user004',
-    otherUserName: '陈同学',
-    otherAvatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Chen',
-    lastMessage: '好的，麻烦了',
-    lastTime: '前天',
-    unreadCount: 1,
-  },
-])
-
-const activeConversationId = ref('conv1')
+const currentUserId = 1
+const conversations = ref<Conversation[]>([])
+const activeConversationId = ref<number | ''>('')
 const searchKeyword = ref('')
-const myAvatar = 'https://api.dicebear.com/7.x/avataaars/svg?seed=Me'
+const myAvatar = 'https://picsum.photos/seed/avatar-zhangwei/100/100'
 
-const messages = ref([
-  { id: 1, sender: 'other', content: '你好，请问这本书还在吗？', time: '10:20' },
-  { id: 2, sender: 'me', content: '在的，全新未使用', time: '10:22' },
-  { id: 3, sender: 'other', content: '可以便宜点吗？20块怎么样', time: '10:25' },
-  { id: 4, sender: 'me', content: '可以，25元不议价', time: '10:30' },
-])
+const messages = ref<Message[]>([])
 
 const inputMessage = ref('')
 const messagesContainer = ref<HTMLElement | null>(null)
@@ -73,23 +20,60 @@ const quickReplies = [
   '在哪个校区？',
 ]
 
-const selectConversation = (conv: any) => {
-  activeConversationId.value = conv.id
-  conv.unreadCount = 0
-  nextTick(() => {
-    scrollToBottom()
-  })
+const fetchConversations = async () => {
+  try {
+    const res = await getConversations({ currentUserId })
+    conversations.value = res.data
+    if (res.data.length > 0 && !activeConversationId.value) {
+      activeConversationId.value = res.data[0].id
+      fetchMessages(res.data[0].id)
+    }
+  } catch (err) {
+    console.error('获取会话列表失败:', err)
+  }
 }
 
-const sendMessage = () => {
-  if (!inputMessage.value.trim()) return
+const fetchMessages = async (conversationId: number) => {
+  try {
+    const res = await getMessages({ conversationId })
+    messages.value = res.data
+    nextTick(() => {
+      scrollToBottom()
+    })
+  } catch (err) {
+    console.error('获取消息列表失败:', err)
+  }
+}
 
-  messages.value.push({
-    id: Date.now(),
-    sender: 'me',
+const selectConversation = (conv: Conversation) => {
+  activeConversationId.value = conv.id
+  conv.unreadCount = 0
+  fetchMessages(conv.id)
+}
+
+const sendMessage = async () => {
+  if (!inputMessage.value.trim() || !activeConversationId.value) return
+
+  const newMsg: Omit<Message, 'id'> = {
+    conversationId: activeConversationId.value as number,
+    senderId: currentUserId,
     content: inputMessage.value.trim(),
-    time: new Date().toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' }),
-  })
+    time: new Date().toLocaleString('zh-CN', { hour: '2-digit', minute: '2-digit' }),
+    isMe: true,
+  }
+
+  try {
+    const res = await createMessage(newMsg)
+    messages.value.push(res.data)
+  } catch {
+    messages.value.push({ ...newMsg, id: Date.now() })
+  }
+
+  const conv = conversations.value.find(c => c.id === activeConversationId.value)
+  if (conv) {
+    conv.lastMessage = newMsg.content
+    conv.lastTime = newMsg.time
+  }
 
   inputMessage.value = ''
 
@@ -98,12 +82,18 @@ const sendMessage = () => {
   })
 
   setTimeout(() => {
-    messages.value.push({
-      id: Date.now() + 1,
-      sender: 'other',
+    const reply: Omit<Message, 'id'> = {
+      conversationId: activeConversationId.value as number,
+      senderId: conv?.otherUserId || 0,
       content: '好的，收到！',
-      time: new Date().toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' }),
-    })
+      time: new Date().toLocaleString('zh-CN', { hour: '2-digit', minute: '2-digit' }),
+      isMe: false,
+    }
+    messages.value.push({ ...reply, id: Date.now() + 1 })
+    if (conv) {
+      conv.lastMessage = reply.content
+      conv.lastTime = reply.time
+    }
     nextTick(() => {
       scrollToBottom()
     })
@@ -140,9 +130,7 @@ const handleKeyDown = (e: KeyboardEvent) => {
 }
 
 onMounted(() => {
-  nextTick(() => {
-    scrollToBottom()
-  })
+  fetchConversations()
 })
 </script>
 
@@ -211,10 +199,10 @@ onMounted(() => {
           <div
             v-for="msg in messages"
             :key="msg.id"
-            :class="['message-item', msg.sender === 'me' ? 'me' : 'other']"
+            :class="['message-item', msg.isMe ? 'me' : 'other']"
           >
             <el-avatar
-              v-if="msg.sender === 'other'"
+              v-if="!msg.isMe"
               :size="36"
               :src="activeConversation?.otherAvatar"
               class="msg-avatar"
@@ -224,7 +212,7 @@ onMounted(() => {
               <span class="msg-time">{{ msg.time }}</span>
             </div>
             <el-avatar
-              v-if="msg.sender === 'me'"
+              v-if="msg.isMe"
               :size="36"
               :src="myAvatar"
               class="msg-avatar"

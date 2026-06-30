@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
+import { useRouter } from 'vue-router'
 import { getTrades, type Trade } from '../api/trade'
 import EmptyState from '../components/EmptyState.vue'
+
+const router = useRouter()
 
 const activeCategory = ref('all')
 const loading = ref(false)
@@ -41,6 +44,10 @@ const filteredProducts = computed(() => {
 const handleCategoryChange = (key: string) => {
   activeCategory.value = key
   fetchTrades()
+}
+
+const goToDetail = (id: number) => {
+  router.push({ path: `/detail/${id}`, query: { type: 'trade' } })
 }
 
 onMounted(() => {
@@ -103,6 +110,7 @@ onMounted(() => {
           v-for="product in filteredProducts"
           :key="product.id"
           class="product-card"
+          @click="goToDetail(product.id)"
         >
           <div class="product-image-wrapper">
             <img :src="product.image" :alt="product.title" class="product-image" />

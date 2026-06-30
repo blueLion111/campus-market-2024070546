@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import { getLostFounds, type LostFound } from '../api/lostFound'
 import EmptyState from '../components/EmptyState.vue'
+
+const router = useRouter()
 
 const activeTab = ref('lost')
 const loading = ref(false)
@@ -27,6 +30,10 @@ const fetchLostFounds = async () => {
 const filteredItems = computed(() => {
   return items.value.filter(item => item.type === activeTab.value)
 })
+
+const goToDetail = (id: number) => {
+  router.push({ path: `/detail/${id}`, query: { type: 'lostFound' } })
+}
 
 onMounted(() => {
   fetchLostFounds()
@@ -90,6 +97,7 @@ onMounted(() => {
           v-for="item in filteredItems"
           :key="item.id"
           class="item-card"
+          @click="goToDetail(item.id)"
         >
           <div class="item-image-wrapper">
             <img :src="item.image" :alt="item.title" class="item-image" />

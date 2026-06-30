@@ -1,27 +1,134 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import { ref, onMounted, shallowRef } from 'vue'
 import * as echarts from 'echarts'
+import { getTrades } from '../api/trade'
+import { getLostFounds } from '../api/lostFound'
+import { getGroupBuys } from '../api/groupBuy'
+import { getErrands } from '../api/errand'
 
-const statsCards = ref([
-  { title: '信息总数', value: 128, unit: '条', icon: 'Document', color: '#409eff', bgColor: '#ecf5ff', trend: '+12%' },
-  { title: '今日新增', value: 12, unit: '条', icon: 'TrendCharts', color: '#67c23a', bgColor: '#f0f9eb', trend: '+3' },
-  { title: '待处理', value: 8, unit: '条', icon: 'Clock', color: '#e6a23c', bgColor: '#fdf6ec', trend: '-2' },
-  { title: '用户数', value: 95, unit: '人', icon: 'User', color: '#f56c6c', bgColor: '#fef0f0', trend: '+5' },
+const loading = ref(false)
+
+interface StatsCard {
+  title: string
+  value: number
+  unit: string
+  icon: string
+  color: string
+  bgColor: string
+  trend: string
+}
+
+const statsCards = ref<StatsCard[]>([
+  { title: '信息总数', value: 0, unit: '条', icon: 'Document', color: '#409eff', bgColor: '#ecf5ff', trend: '+0%' },
+  { title: '二手交易', value: 0, unit: '条', icon: 'ShoppingCart', color: '#409eff', bgColor: '#ecf5ff', trend: '+0%' },
+  { title: '失物招领', value: 0, unit: '条', icon: 'Search', color: '#e6a23c', bgColor: '#fdf6ec', trend: '+0%' },
+  { title: '拼单搭子', value: 0, unit: '条', icon: 'UserPlus', color: '#67c23a', bgColor: '#f0f9eb', trend: '+0%' },
 ])
 
-const recentRecords = ref([
-  { id: 1, title: '高等数学教材 全新', type: '二手交易', publisher: '张同学', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Zhang1', status: '已通过', time: '10分钟前' },
-  { id: 2, title: '捡到一张校园卡', type: '失物招领', publisher: '李同学', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Li1', status: '已通过', time: '25分钟前' },
-  { id: 3, title: '奶茶拼单 还差2人', type: '拼单搭子', publisher: '王同学', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Wang1', status: '待审核', time: '1小时前' },
-  { id: 4, title: '代取快递 酬劳10元', type: '跑腿委托', publisher: '陈同学', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Chen1', status: '已通过', time: '2小时前' },
-  { id: 5, title: '蓝牙耳机 漫步者', type: '二手交易', publisher: '刘同学', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Liu1', status: '待审核', time: '3小时前' },
-])
+interface RecentRecord {
+  id: number
+  title: string
+  type: string
+  publisher: string
+  avatar: string
+  status: string
+  time: string
+  typeName: string
+}
+
+const recentRecords = ref<RecentRecord[]>([])
 
 const typeChartRef = shallowRef<HTMLElement | null>(null)
 const campusChartRef = shallowRef<HTMLElement | null>(null)
 const trendChartRef = shallowRef<HTMLElement | null>(null)
 
-const initTypeChart = () => {
+const fetchDashboardData = async () => {
+  loading.value = true
+  try {
+    const [tradesRes, lostFoundsRes, groupBuysRes, errandsRes] = await Promise.all([
+      getTrades().catch(() => ({ data: [] })),
+      getLostFounds().catch(() => ({ data: [] })),
+      getGroupBuys().catch(() => ({ data: [] })),
+      getErrands().catch(() => ({ data: [] })),
+    ])
+
+    const trades = tradesRes.data || []
+    const lostFounds = lostFoundsRes.data || []
+    const groupBuys = groupBuysRes.data || []
+    const errands = errandsRes.data || []
+
+    const totalCount = trades.length + lostFounds.length + groupBuys.length + errands.length
+
+    statsCards.value = [
+      { title: '信息总数', value: totalCount, unit: '条', icon: 'Document', color: '#409eff', bgColor: '#ecf5ff', trend: '+0%' },
+      { title: '二手交易', value: trades.length, unit: '条', icon: 'ShoppingCart', color: '#409eff', bgColor: '#ecf5ff', trend: '+0%' },
+      { title: '失物招领', value: lostFounds.length, unit: '条', icon: 'Search', color: '#e6a23c', bgColor: '#fdf6ec', trend: '+0%' },
+      { title: '拼单搭子', value: groupBuys.length, unit: '条', icon: 'UserPlus', color: '#67c23a', bgColor: '#f0f9eb', trend: '+0%' },
+    ]
+
+    const getTypeName = (type: string) => {
+      if (type === 'secondhand' || type === 'trade') return '二手交易'
+      if (type === 'lost' || type === 'found') return '失物招领'
+      if (type === 'group') return '拼单搭子'
+      if (type === 'errand') return '跑腿委托'
+      return type
+    }
+
+    const allItems: RecentRecord[] = [
+      ...trades.map((item: any) => ({
+        id: item.id,
+        title: item.title,
+        type: 'secondhand',
+        typeName: '二手交易',
+        publisher: item.publisher,
+        avatar: item.publisherAvatar,
+        status: item.status === 'open' ? '进行中' : item.status === 'closed' ? '已关闭' : '已完成',
+        time: item.publishTime,
+      })),
+      ...lostFounds.map((item: any) => ({
+        id: item.id,
+        title: item.title,
+        type: item.type,
+        typeName: item.typeName,
+        publisher: item.publisher || '匿名用户',
+        avatar: 'https://picsum.photos/seed/avatar-user/100/100' + item.id,
+        status: item.status === 'open' ? '进行中' : item.status === 'closed' ? '已关闭' : '已完成',
+        time: item.time,
+      })),
+      ...groupBuys.map((item: any) => ({
+        id: item.id,
+        title: item.title,
+        type: 'group',
+        typeName: '拼单搭子',
+        publisher: item.publisher || '匿名用户',
+        avatar: 'https://picsum.photos/seed/avatar-user/100/100' + item.id,
+        status: item.status === 'open' ? '进行中' : item.status === 'closed' ? '已关闭' : '已完成',
+        time: item.deadline,
+      })),
+      ...errands.map((item: any) => ({
+        id: item.id,
+        title: item.title,
+        type: 'errand',
+        typeName: '跑腿委托',
+        publisher: item.publisher || '匿名用户',
+        avatar: 'https://picsum.photos/seed/avatar-user/100/100' + item.id,
+        status: item.status === 'open' ? '进行中' : item.status === 'closed' ? '已关闭' : '已完成',
+        time: item.deadline,
+      })),
+    ]
+
+    recentRecords.value = allItems.slice(0, 10)
+
+    initTypeChart(trades.length, lostFounds.length, groupBuys.length, errands.length)
+    initCampusChart(trades, lostFounds, groupBuys, errands)
+  } catch (err) {
+    console.error('获取看板数据失败:', err)
+  } finally {
+    loading.value = false
+  }
+}
+
+const initTypeChart = (tradesCount: number, lostFoundsCount: number, groupBuysCount: number, errandsCount: number) => {
   if (!typeChartRef.value) return
   const chart = echarts.init(typeChartRef.value)
   chart.setOption({
@@ -53,19 +160,30 @@ const initTypeChart = () => {
           scaleSize: 8
         },
         data: [
-          { value: 48, name: '二手交易', itemStyle: { color: '#409eff' } },
-          { value: 32, name: '失物招领', itemStyle: { color: '#e6a23c' } },
-          { value: 28, name: '拼单搭子', itemStyle: { color: '#67c23a' } },
-          { value: 20, name: '跑腿委托', itemStyle: { color: '#f56c6c' } },
+          { value: tradesCount, name: '二手交易', itemStyle: { color: '#409eff' } },
+          { value: lostFoundsCount, name: '失物招领', itemStyle: { color: '#e6a23c' } },
+          { value: groupBuysCount, name: '拼单搭子', itemStyle: { color: '#67c23a' } },
+          { value: errandsCount, name: '跑腿委托', itemStyle: { color: '#f56c6c' } },
         ],
       },
     ],
   })
 }
 
-const initCampusChart = () => {
+const initCampusChart = (trades: any[], lostFounds: any[], groupBuys: any[], errands: any[]) => {
   if (!campusChartRef.value) return
   const chart = echarts.init(campusChartRef.value)
+  
+  const shiziCount = [
+    ...trades.filter((t: any) => t.campus === '狮子山校区'),
+    ...lostFounds.filter((t: any) => t.campus === '狮子山校区'),
+  ].length
+  
+  const chenglongCount = [
+    ...trades.filter((t: any) => t.campus === '成龙校区'),
+    ...lostFounds.filter((t: any) => t.campus === '成龙校区'),
+  ].length
+  
   chart.setOption({
     tooltip: { 
       trigger: 'axis', 
@@ -91,8 +209,8 @@ const initCampusChart = () => {
         barWidth: '50%',
         barRadius: 8,
         data: [
-          { value: 72, itemStyle: { color: '#409eff' } },
-          { value: 56, itemStyle: { color: '#67c23a' } },
+          { value: shiziCount, itemStyle: { color: '#409eff' } },
+          { value: chenglongCount, itemStyle: { color: '#67c23a' } },
         ],
         itemStyle: {
           borderRadius: [8, 8, 0, 0]
@@ -137,7 +255,7 @@ const initTrendChart = () => {
         smooth: true,
         symbol: 'circle',
         symbolSize: 8,
-        data: [8, 12, 15, 10, 18, 22, 16],
+        data: [0, 0, 0, 0, 0, 0, 0],
         itemStyle: { color: '#409eff' },
         lineStyle: { width: 3 },
         areaStyle: { color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
@@ -151,7 +269,7 @@ const initTrendChart = () => {
         smooth: true,
         symbol: 'circle',
         symbolSize: 8,
-        data: [120, 180, 220, 160, 280, 350, 260],
+        data: [0, 0, 0, 0, 0, 0, 0],
         itemStyle: { color: '#67c23a' },
         lineStyle: { width: 3 },
         areaStyle: { color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
@@ -164,7 +282,7 @@ const initTrendChart = () => {
 }
 
 const statusTagType = (status: string) => {
-  if (status === '已通过') return 'success'
+  if (status === '进行中' || status === '已通过') return 'success'
   if (status === '待审核') return 'warning'
   return 'info'
 }
@@ -184,8 +302,7 @@ const handleAction = (action: string, row: any) => {
 }
 
 onMounted(() => {
-  initTypeChart()
-  initCampusChart()
+  fetchDashboardData()
   initTrendChart()
 })
 </script>

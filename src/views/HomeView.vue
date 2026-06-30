@@ -1,332 +1,127 @@
-<script setup lang="ts">
-import { ref, computed } from 'vue'
+﻿<script setup lang="ts">
+import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import { getTrades } from '../api/trade'
+import { getLostFounds } from '../api/lostFound'
+import { getGroupBuys } from '../api/groupBuy'
+import { getErrands } from '../api/errand'
 
 const router = useRouter()
 const searchKeyword = ref('')
+const loading = ref(false)
 
-const posts = ref([
-  {
-    id: 1,
-    type: 'secondhand',
-    typeName: '二手交易',
-    typeColor: '#409EFF',
-    title: '高等数学同济第七版 教材全新未使用',
-    price: 25,
-    campus: '狮子山校区',
-    location: '图书馆门口',
-    image: 'https://picsum.photos/seed/book/400/300',
-    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=user1',
-    publisher: '张同学',
-    time: '2小时前',
-    favoriteCount: 12,
-    isFavorite: false,
-  },
-  {
-    id: 2,
-    type: 'lost',
-    typeName: '失物招领',
-    typeColor: '#E6A23C',
-    title: '捡到一张校园卡 请失主联系',
-    price: null,
-    campus: '成龙校区',
-    location: '食堂一楼',
-    image: 'https://picsum.photos/seed/card/400/300',
-    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=user2',
-    publisher: '李同学',
-    time: '3小时前',
-    favoriteCount: 8,
-    isFavorite: false,
-  },
-  {
-    id: 3,
-    type: 'group',
-    typeName: '拼单搭子',
-    typeColor: '#67C23A',
-    title: '奶茶拼单 还差2人 露露奶茶店',
-    price: null,
-    campus: '狮子山校区',
-    location: '校门口奶茶店',
-    image: 'https://picsum.photos/seed/drink/400/300',
-    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=user3',
-    publisher: '王同学',
-    time: '1小时前',
-    favoriteCount: 5,
-    isFavorite: true,
-  },
-  {
-    id: 4,
-    type: 'errand',
-    typeName: '跑腿委托',
-    typeColor: '#F56C6C',
-    title: '代取快递 酬劳10元 西门快递点',
-    price: 10,
-    campus: '成龙校区',
-    location: '西门快递柜',
-    image: 'https://picsum.photos/seed/package/400/300',
-    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=user4',
-    publisher: '陈同学',
-    time: '30分钟前',
-    favoriteCount: 3,
-    isFavorite: false,
-  },
-  {
-    id: 5,
-    type: 'secondhand',
-    typeName: '二手交易',
-    typeColor: '#409EFF',
-    title: '蓝牙耳机 漫步者 半价出售',
-    price: 89,
-    campus: '狮子山校区',
-    location: '宿舍楼下',
-    image: 'https://picsum.photos/seed/headphones/400/300',
-    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=user5',
-    publisher: '刘同学',
-    time: '5小时前',
-    favoriteCount: 18,
-    isFavorite: false,
-  },
-  {
-    id: 6,
-    type: 'lost',
-    typeName: '失物招领',
-    typeColor: '#E6A23C',
-    title: '丢失钥匙 银色小钥匙扣',
-    price: null,
-    campus: '成龙校区',
-    location: '教学楼B区',
-    image: 'https://picsum.photos/seed/keys/400/300',
-    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=user6',
-    publisher: '赵同学',
-    time: '昨天',
-    favoriteCount: 6,
-    isFavorite: false,
-  },
-  {
-    id: 7,
-    type: 'secondhand',
-    typeName: '二手交易',
-    typeColor: '#409EFF',
-    title: '山地自行车 8成新 毕业低价出',
-    price: 380,
-    campus: '狮子山校区',
-    location: '南门车棚',
-    image: 'https://picsum.photos/seed/bike2/400/300',
-    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=user7',
-    publisher: '孙同学',
-    time: '昨天',
-    favoriteCount: 22,
-    isFavorite: false,
-  },
-  {
-    id: 8,
-    type: 'group',
-    typeName: '拼单搭子',
-    typeColor: '#67C23A',
-    title: '考研自习搭子 图书馆三楼',
-    price: null,
-    campus: '狮子山校区',
-    location: '图书馆三楼',
-    image: 'https://picsum.photos/seed/study2/400/300',
-    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=user8',
-    publisher: '周同学',
-    time: '昨天',
-    favoriteCount: 15,
-    isFavorite: false,
-  },
-  {
-    id: 9,
-    type: 'errand',
-    typeName: '跑腿委托',
-    typeColor: '#F56C6C',
-    title: '代打印资料 10张A4 送到宿舍',
-    price: 5,
-    campus: '成龙校区',
-    location: '打印店→5号楼',
-    image: 'https://picsum.photos/seed/print2/400/300',
-    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=user9',
-    publisher: '吴同学',
-    time: '昨天',
-    favoriteCount: 4,
-    isFavorite: false,
-  },
-  {
-    id: 10,
-    type: 'secondhand',
-    typeName: '二手交易',
-    typeColor: '#409EFF',
-    title: '小米手环7 NFC版 9成新',
-    price: 149,
-    campus: '狮子山校区',
-    location: '宿舍楼下',
-    image: 'https://picsum.photos/seed/watch2/400/300',
-    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=user10',
-    publisher: '郑同学',
-    time: '2天前',
-    favoriteCount: 11,
-    isFavorite: false,
-  },
-  {
-    id: 11,
-    type: 'lost',
-    typeName: '失物招领',
-    typeColor: '#E6A23C',
-    title: '捡到蓝色雨伞 图书馆门口',
-    price: null,
-    campus: '成龙校区',
-    location: '图书馆服务台',
-    image: 'https://picsum.photos/seed/umbrella2/400/300',
-    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=user11',
-    publisher: '冯同学',
-    time: '2天前',
-    favoriteCount: 3,
-    isFavorite: false,
-  },
-  {
-    id: 12,
-    type: 'group',
-    typeName: '拼单搭子',
-    typeColor: '#67C23A',
-    title: '瑞幸咖啡拼单 9.9一杯',
-    price: null,
-    campus: '狮子山校区',
-    location: '教学楼楼下',
-    image: 'https://picsum.photos/seed/coffee2/400/300',
-    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=user12',
-    publisher: '陈同学',
-    time: '2天前',
-    favoriteCount: 20,
-    isFavorite: true,
-  },
-  {
-    id: 13,
-    type: 'errand',
-    typeName: '跑腿委托',
-    typeColor: '#F56C6C',
-    title: '代取顺丰快递 大件 送到宿舍',
-    price: 15,
-    campus: '成龙校区',
-    location: '校门口→5号楼',
-    image: 'https://picsum.photos/seed/package2/400/300',
-    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=user13',
-    publisher: '褚同学',
-    time: '2天前',
-    favoriteCount: 7,
-    isFavorite: false,
-  },
-  {
-    id: 14,
-    type: 'secondhand',
-    typeName: '二手交易',
-    typeColor: '#409EFF',
-    title: '宿舍床上书桌 可折叠 几乎全新',
-    price: 35,
-    campus: '狮子山校区',
-    location: '7号楼',
-    image: 'https://picsum.photos/seed/desk2/400/300',
-    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=user14',
-    publisher: '卫同学',
-    time: '3天前',
-    favoriteCount: 9,
-    isFavorite: false,
-  },
-  {
-    id: 15,
-    type: 'lost',
-    typeName: '失物招领',
-    typeColor: '#E6A23C',
-    title: '丢失学生证 文学院2023级',
-    price: null,
-    campus: '狮子山校区',
-    location: '文学院附近',
-    image: 'https://picsum.photos/seed/idcard2/400/300',
-    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=user15',
-    publisher: '蒋同学',
-    time: '3天前',
-    favoriteCount: 5,
-    isFavorite: false,
-  },
-  {
-    id: 16,
-    type: 'group',
-    typeName: '拼单搭子',
-    typeColor: '#67C23A',
-    title: '羽毛球搭子 每周三周五晚',
-    price: null,
-    campus: '成龙校区',
-    location: '体育馆羽毛球场',
-    image: 'https://picsum.photos/seed/sports2/400/300',
-    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=user16',
-    publisher: '沈同学',
-    time: '3天前',
-    favoriteCount: 14,
-    isFavorite: false,
-  },
-  {
-    id: 17,
-    type: 'errand',
-    typeName: '跑腿委托',
-    typeColor: '#F56C6C',
-    title: '代买食堂黄焖鸡米饭 送到宿舍',
-    price: 4,
-    campus: '狮子山校区',
-    location: '食堂二楼→8号楼',
-    image: 'https://picsum.photos/seed/food3/400/300',
-    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=user17',
-    publisher: '韩同学',
-    time: '3天前',
-    favoriteCount: 2,
-    isFavorite: false,
-  },
-  {
-    id: 18,
-    type: 'secondhand',
-    typeName: '二手交易',
-    typeColor: '#409EFF',
-    title: 'Nike Air Force 1 42码 9成新',
-    price: 399,
-    campus: '成龙校区',
-    location: '篮球场旁',
-    image: 'https://picsum.photos/seed/shoes2/400/300',
-    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=user18',
-    publisher: '杨同学',
-    time: '4天前',
-    favoriteCount: 25,
-    isFavorite: false,
-  },
-  {
-    id: 19,
-    type: 'group',
-    typeName: '拼单搭子',
-    typeColor: '#67C23A',
-    title: '麦当劳全家桶拼单 4人平分',
-    price: null,
-    campus: '狮子山校区',
-    location: '校门口',
-    image: 'https://picsum.photos/seed/food4/400/300',
-    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=user19',
-    publisher: '朱同学',
-    time: '4天前',
-    favoriteCount: 17,
-    isFavorite: false,
-  },
-  {
-    id: 20,
-    type: 'secondhand',
-    typeName: '二手交易',
-    typeColor: '#409EFF',
-    title: '电热水壶 1.8L 宿舍必备',
-    price: 29,
-    campus: '成龙校区',
-    location: '6号楼',
-    image: 'https://picsum.photos/seed/kettle2/400/300',
-    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=user20',
-    publisher: '秦同学',
-    time: '4天前',
-    favoriteCount: 8,
-    isFavorite: false,
-  },
-])
+interface PostItem {
+  id: number
+  type: string
+  typeName: string
+  typeColor: string
+  title: string
+  price: number | null
+  campus: string
+  location: string
+  image: string
+  avatar: string
+  publisher: string
+  time: string
+  favoriteCount: number
+  isFavorite: boolean
+}
+
+const posts = ref<PostItem[]>([])
+
+const typeConfig: Record<string, { typeName: string; typeColor: string }> = {
+  secondhand: { typeName: '二手交易', typeColor: '#409EFF' },
+  lost: { typeName: '寻物启事', typeColor: '#E6A23C' },
+  found: { typeName: '失物招领', typeColor: '#E6A23C' },
+  group: { typeName: '拼单搭子', typeColor: '#67C23A' },
+  errand: { typeName: '跑腿委托', typeColor: '#F56C6C' },
+}
+
+const fetchAllData = async () => {
+  loading.value = true
+  try {
+    const [tradesRes, lostFoundsRes, groupBuysRes, errandsRes] = await Promise.all([
+      getTrades().catch(() => ({ data: [] })),
+      getLostFounds().catch(() => ({ data: [] })),
+      getGroupBuys().catch(() => ({ data: [] })),
+      getErrands().catch(() => ({ data: [] })),
+    ])
+
+    const tradeItems: PostItem[] = (tradesRes.data || []).map((item: any) => ({
+      id: item.id,
+      type: 'secondhand',
+      typeName: '二手交易',
+      typeColor: '#409EFF',
+      title: item.title,
+      price: item.price,
+      campus: item.campus,
+      location: item.location,
+      image: item.image,
+      avatar: item.publisherAvatar,
+      publisher: item.publisher,
+      time: item.publishTime,
+      favoriteCount: item.favoriteCount || 0,
+      isFavorite: false,
+    }))
+
+    const lostFoundItems: PostItem[] = (lostFoundsRes.data || []).map((item: any) => ({
+      id: item.id,
+      type: item.type,
+      typeName: item.typeName,
+      typeColor: '#E6A23C',
+      title: item.title,
+      price: null,
+      campus: item.campus,
+      location: item.location,
+      image: item.image,
+      avatar: 'https://picsum.photos/seed/avatar-user/100/100' + item.id,
+      publisher: item.publisher || '匿名用户',
+      time: item.time,
+      favoriteCount: 0,
+      isFavorite: false,
+    }))
+
+    const groupBuyItems: PostItem[] = (groupBuysRes.data || []).map((item: any) => ({
+      id: item.id,
+      type: 'group',
+      typeName: '拼单搭子',
+      typeColor: '#67C23A',
+      title: item.title,
+      price: null,
+      campus: item.location,
+      location: item.location,
+      image: item.image,
+      avatar: 'https://picsum.photos/seed/avatar-user/100/100' + item.id,
+      publisher: item.publisher || '匿名用户',
+      time: item.deadline,
+      favoriteCount: 0,
+      isFavorite: false,
+    }))
+
+    const errandItems: PostItem[] = (errandsRes.data || []).map((item: any) => ({
+      id: item.id,
+      type: 'errand',
+      typeName: '跑腿委托',
+      typeColor: '#F56C6C',
+      title: item.title,
+      price: item.reward,
+      campus: item.campus,
+      location: item.deliveryLocation,
+      image: item.image,
+      avatar: 'https://picsum.photos/seed/avatar-user/100/100' + item.id,
+      publisher: item.publisher || '匿名用户',
+      time: item.deadline,
+      favoriteCount: 0,
+      isFavorite: false,
+    }))
+
+    posts.value = [...tradeItems, ...lostFoundItems, ...groupBuyItems, ...errandItems]
+  } catch (err) {
+    console.error('获取数据失败:', err)
+  } finally {
+    loading.value = false
+  }
+}
 
 const notices = ref([
   { id: 1, title: '关于校园集市交易安全的温馨提示', time: '今天' },
@@ -392,8 +187,19 @@ const toggleFavorite = (post: any) => {
   post.favoriteCount += post.isFavorite ? 1 : -1
 }
 
-const goToDetail = (id: number) => {
-  router.push(`/detail/${id}`)
+const goToDetail = (item: any) => {
+  const typeMap: Record<string, string> = {
+    secondhand: 'trade',
+    lost: 'lostFound',
+    found: 'lostFound',
+    group: 'groupBuy',
+    errand: 'errand',
+  }
+  const type = typeMap[item.type] || ''
+  console.log('点击卡片，跳转到详情页:', item.id, '类型:', type)
+  router.push({ path: `/detail/${item.id}`, query: type ? { type } : {} }).catch(err => {
+    console.error('跳转失败:', err)
+  })
 }
 
 const formatPrice = (price: number | null) => {
@@ -409,6 +215,10 @@ const handleSearch = () => {
     router.push(`/list?keyword=${searchKeyword.value}`)
   }
 }
+
+onMounted(() => {
+  fetchAllData()
+})
 </script>
 
 <template>
@@ -487,7 +297,7 @@ const handleSearch = () => {
             v-for="post in paginatedPosts"
             :key="post.id"
             class="post-card"
-            @click="goToDetail(post.id)"
+            @click="goToDetail(post)"
           >
             <div class="type-tag" :style="{ backgroundColor: post.typeColor }">
               {{ post.typeName }}

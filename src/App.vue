@@ -1,10 +1,22 @@
 <script setup lang="ts">
+import { ref, provide, nextTick } from 'vue'
 import AppLayout from './components/AppLayout.vue'
+
+const isRouterAlive = ref(true)
+
+const reload = () => {
+  isRouterAlive.value = false
+  nextTick(() => {
+    isRouterAlive.value = true
+  })
+}
+
+provide('reload', reload)
 </script>
 
 <template>
   <AppLayout>
-    <router-view />
+    <router-view v-if="isRouterAlive" />
   </AppLayout>
 </template>
 

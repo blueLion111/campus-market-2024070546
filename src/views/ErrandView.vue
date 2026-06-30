@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import { getErrands, type Errand } from '../api/errand'
 import EmptyState from '../components/EmptyState.vue'
+
+const router = useRouter()
 
 const activeCategory = ref('all')
 const loading = ref(false)
@@ -66,6 +69,10 @@ const getStatusClass = (status: string) => {
   }
 }
 
+const goToDetail = (id: number) => {
+  router.push({ path: `/detail/${id}`, query: { type: 'errand' } })
+}
+
 onMounted(() => {
   fetchErrands()
 })
@@ -127,6 +134,7 @@ onMounted(() => {
           v-for="errand in filteredErrands"
           :key="errand.id"
           class="errand-card"
+          @click="goToDetail(errand.id)"
         >
           <div class="card-header">
             <div class="card-category">

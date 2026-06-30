@@ -1,33 +1,32 @@
 <script setup lang="ts">
-const avatarSvg = encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><rect width="100" height="100" fill="#409EFF"/><text x="50" y="68" font-size="48" text-anchor="middle" fill="#ffffff" font-family="Arial,sans-serif" font-weight="bold">张</text></svg>`)
+import { ref, onMounted, computed } from 'vue'
+import { useRouter } from 'vue-router'
+import { getUserById, type User } from '../api/user'
 
-const userInfo = {
-  name: '张同学',
-  avatar: `data:image/svg+xml,${avatarSvg}`,
-  college: '计算机科学学院',
-  major: '计算机科学与技术专业',
-  grade: '2024级',
-  creditScore: 98,
-  studentId: '20240101001',
-  campus: '成龙校区',
-}
+const router = useRouter()
 
-const stats = [
-  { label: '我的发布', value: 28, icon: '📝', color: '#409EFF' },
-  { label: '我的收藏', value: 56, icon: '⭐', color: '#E6A23C' },
-  { label: '我的订单', value: 12, icon: '📦', color: '#67C23A' },
-  { label: '消息通知', value: 8, icon: '💬', color: '#F56C6C' },
-]
+const loading = ref(false)
+const userInfo = ref<User | null>(null)
+
+const stats = computed(() => {
+  if (!userInfo.value) return []
+  return [
+    { label: '我的发布', value: userInfo.value.publishCount, icon: '📝', color: '#409EFF', route: '/profile', tab: 'published' },
+    { label: '我的收藏', value: userInfo.value.favoriteCount, icon: '⭐', color: '#E6A23C', route: '/profile', tab: 'favorites' },
+    { label: '我的订单', value: userInfo.value.orderCount, icon: '📦', color: '#67C23A', route: '/profile', tab: 'orders' },
+    { label: '消息通知', value: userInfo.value.messageCount, icon: '💬', color: '#F56C6C', route: '/message', tab: '' },
+  ]
+})
 
 const menuItems = [
-  { icon: '📝', label: '我的发布', desc: '查看我发布的所有信息', color: '#ECF5FF' },
-  { icon: '⭐', label: '我的收藏', desc: '收藏的商品和信息', color: '#FDF6EC' },
-  { icon: '💰', label: '我的钱包', desc: '余额和交易记录', color: '#F0F9EB' },
-  { icon: '📦', label: '我的订单', desc: '购买和出售的订单', color: '#FEF0F0' },
-  { icon: '💬', label: '消息中心', desc: '系统消息和私信', color: '#F4F4F5' },
-  { icon: '🤝', label: '我的搭子', desc: '一起拼单的小伙伴', color: '#ECF5FF' },
-  { icon: '🎯', label: '信用分', desc: '查看信用等级详情', color: '#FDF6EC' },
-  { icon: '⚙️', label: '账号设置', desc: '个人资料和隐私设置', color: '#F0F9EB' },
+  { icon: '📝', label: '我的发布', desc: '查看我发布的所有信息', color: '#ECF5FF', route: '/profile', tab: 'published' },
+  { icon: '⭐', label: '我的收藏', desc: '收藏的商品和信息', color: '#FDF6EC', route: '/profile', tab: 'favorites' },
+  { icon: '💰', label: '我的钱包', desc: '余额和交易记录', color: '#F0F9EB', route: '/profile', tab: 'wallet' },
+  { icon: '📦', label: '我的订单', desc: '购买和出售的订单', color: '#FEF0F0', route: '/profile', tab: 'orders' },
+  { icon: '💬', label: '消息中心', desc: '系统消息和私信', color: '#F4F4F5', route: '/message', tab: '' },
+  { icon: '🤝', label: '我的搭子', desc: '一起拼单的小伙伴', color: '#ECF5FF', route: '/profile', tab: 'partners' },
+  { icon: '🎯', label: '信用分', desc: '查看信用等级详情', color: '#FDF6EC', route: '/profile', tab: 'credit' },
+  { icon: '⚙️', label: '账号设置', desc: '个人资料和隐私设置', color: '#F0F9EB', route: '/profile', tab: 'settings' },
 ]
 
 const recentActivities = [
@@ -36,11 +35,39 @@ const recentActivities = [
   { type: 'favorite', title: '收藏了拼单：喜茶拼单', time: '昨天' },
   { type: 'message', title: '收到一条新消息', time: '昨天' },
 ]
+
+const handleStatClick = (stat: any) => {
+  if (stat.route) {
+    router.push(stat.tab ? { path: stat.route, query: { tab: stat.tab } } : stat.route)
+  }
+}
+
+const handleMenuClick = (item: any) => {
+  if (item.route) {
+    router.push(item.tab ? { path: item.route, query: { tab: item.tab } } : item.route)
+  }
+}
+
+const fetchUserInfo = async () => {
+  loading.value = true
+  try {
+    const res = await getUserById(1)
+    userInfo.value = res.data
+  } catch (err) {
+    console.error('获取用户信息失败:', err)
+  } finally {
+    loading.value = false
+  }
+}
+
+onMounted(() => {
+  fetchUserInfo()
+})
 </script>
 
 <template>
   <div class="user-center-page">
-    <section class="profile-hero">
+    <section class="profile-hero" v-if="userInfo">
       <div class="hero-bg">
         <div class="bg-pattern"></div>
         <div class="bg-circle c1"></div>
@@ -50,13 +77,13 @@ const recentActivities = [
       <div class="profile-content">
         <div class="profile-left">
           <div class="avatar-wrapper">
-            <img :src="userInfo.avatar" :alt="userInfo.name" class="avatar" />
+            <img :src="userInfo.avatar" :alt="userInfo.nickname" class="avatar" />
             <div class="avatar-badge">
-              <span class="badge-text">LV.5</span>
+              <span class="badge-text">{{ userInfo.level }}</span>
             </div>
           </div>
           <div class="user-info">
-            <h1 class="user-name">{{ userInfo.name }}</h1>
+            <h1 class="user-name">{{ userInfo.nickname }}</h1>
             <div class="user-detail">
               <span class="user-college">{{ userInfo.college }}</span>
               <span class="user-divider">·</span>
@@ -77,12 +104,13 @@ const recentActivities = [
             <div class="credit-score">{{ userInfo.creditScore }}</div>
             <div class="credit-level">优秀</div>
             <div class="credit-bar">
-              <div class="credit-fill" style="width: 98%"></div>
+              <div class="credit-fill" :style="{ width: userInfo.creditScore + '%' }"></div>
             </div>
           </div>
         </div>
       </div>
     </section>
+    <el-skeleton v-else :rows="5" animated />
 
     <section class="stats-section">
       <div class="stats-grid">
@@ -90,6 +118,8 @@ const recentActivities = [
           v-for="stat in stats"
           :key="stat.label"
           class="stat-card"
+          style="cursor: pointer"
+          @click="handleStatClick(stat)"
         >
           <div class="stat-icon" :style="{ backgroundColor: stat.color + '15', color: stat.color }">
             {{ stat.icon }}
@@ -109,6 +139,8 @@ const recentActivities = [
           v-for="item in menuItems"
           :key="item.label"
           class="menu-item"
+          style="cursor: pointer"
+          @click="handleMenuClick(item)"
         >
           <div class="menu-icon" :style="{ backgroundColor: item.color }">
             {{ item.icon }}

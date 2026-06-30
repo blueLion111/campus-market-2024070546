@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import { getGroupBuys, type GroupBuy } from '../api/groupBuy'
 import EmptyState from '../components/EmptyState.vue'
+
+const router = useRouter()
 
 const activeCategory = ref('all')
 const loading = ref(false)
@@ -41,6 +44,10 @@ const handleCategoryChange = (key: string) => {
 
 const getProgress = (current: number, total: number) => {
   return Math.round((current / total) * 100)
+}
+
+const goToDetail = (id: number) => {
+  router.push({ path: `/detail/${id}`, query: { type: 'groupBuy' } })
 }
 
 onMounted(() => {
@@ -104,6 +111,7 @@ onMounted(() => {
           v-for="item in filteredGroupBuys"
           :key="item.id"
           class="groupbuy-card"
+          @click="goToDetail(item.id)"
         >
           <div class="card-image-wrapper">
             <img :src="item.image" :alt="item.title" class="card-image" />

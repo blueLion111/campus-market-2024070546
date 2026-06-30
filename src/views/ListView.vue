@@ -1,8 +1,14 @@
-<script setup lang="ts">
-import { ref, computed } from 'vue'
+﻿<script setup lang="ts">
+import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import { getTrades } from '../api/trade'
+import { getLostFounds } from '../api/lostFound'
+import { getGroupBuys } from '../api/groupBuy'
+import { getErrands } from '../api/errand'
 
 const router = useRouter()
+
+const loading = ref(false)
 
 // 筛选条件
 const filters = ref({
@@ -24,8 +30,8 @@ const categories = [
 
 const campuses = [
   { value: 'all', label: '全部校区' },
-  { value: 'shizi', label: '狮子山校区' },
-  { value: 'chenglong', label: '成龙校区' },
+  { value: '狮子山校区', label: '狮子山校区' },
+  { value: '成龙校区', label: '成龙校区' },
 ]
 
 const priceRanges = [
@@ -38,9 +44,9 @@ const priceRanges = [
 
 const statuses = [
   { value: 'all', label: '全部状态' },
-  { value: 'active', label: '进行中' },
-  { value: 'completed', label: '已完成' },
+  { value: 'open', label: '进行中' },
   { value: 'closed', label: '已关闭' },
+  { value: 'done', label: '已完成' },
 ]
 
 const sortOptions = [
@@ -51,220 +57,122 @@ const sortOptions = [
 ]
 
 // 收藏状态
-const favoriteSet = ref<Set<number>>(new Set([1, 3]))
+const favoriteSet = ref<Set<number>>(new Set())
 
 // 列表数据
-const items = ref([
-  {
-    id: 1,
-    type: 'secondhand',
-    typeName: '二手交易',
-    typeColor: '#409EFF',
-    title: '高等数学同济第七版 教材全新',
-    price: 25,
-    campus: '狮子山校区',
-    location: '图书馆门口',
-    image: 'https://picsum.photos/seed/mathbook/400/300',
-    publisher: '张同学',
-    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=zhang',
-    time: '2小时前',
-    favoriteCount: 12,
-    viewCount: 156,
-    status: 'active',
-  },
-  {
-    id: 2,
-    type: 'lost',
-    typeName: '失物招领',
-    typeColor: '#E6A23C',
-    title: '捡到校园卡 请失主联系',
-    price: null,
-    campus: '成龙校区',
-    location: '食堂一楼',
-    image: 'https://picsum.photos/seed/studentcard/400/300',
-    publisher: '李同学',
-    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=li',
-    time: '3小时前',
-    favoriteCount: 8,
-    viewCount: 89,
-    status: 'active',
-  },
-  {
-    id: 3,
-    type: 'group',
-    typeName: '拼单搭子',
-    typeColor: '#67C23A',
-    title: '奶茶拼单 还差2人',
-    price: null,
-    campus: '狮子山校区',
-    location: '校门口奶茶店',
-    image: 'https://picsum.photos/seed/milktea/400/300',
-    publisher: '王同学',
-    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=wang',
-    time: '1小时前',
-    favoriteCount: 5,
-    viewCount: 67,
-    status: 'active',
-    memberInfo: '已有3人/需要5人',
-  },
-  {
-    id: 4,
-    type: 'errand',
-    typeName: '跑腿委托',
-    typeColor: '#409EFF',
-    title: '代取快递 酬劳10元',
-    price: 10,
-    campus: '成龙校区',
-    location: '西门快递柜',
-    image: 'https://picsum.photos/seed/package/400/300',
-    publisher: '陈同学',
-    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=chen',
-    time: '30分钟前',
-    favoriteCount: 3,
-    viewCount: 45,
-    status: 'active',
-    taskInfo: '期望完成时间：今天下午5点前',
-  },
-  {
-    id: 5,
-    type: 'secondhand',
-    typeName: '二手交易',
-    typeColor: '#409EFF',
-    title: '蓝牙耳机 漫步者 半价出售',
-    price: 89,
-    campus: '狮子山校区',
-    location: '宿舍楼下',
-    image: 'https://picsum.photos/seed/headphone/400/300',
-    publisher: '刘同学',
-    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=liu',
-    time: '5小时前',
-    favoriteCount: 18,
-    viewCount: 234,
-    status: 'completed',
-  },
-  {
-    id: 6,
-    type: 'lost',
-    typeName: '失物招领',
-    typeColor: '#E6A23C',
-    title: '丢失钥匙 银色小钥匙扣',
-    price: null,
-    campus: '成龙校区',
-    location: '教学楼B区',
-    image: 'https://picsum.photos/seed/key/400/300',
-    publisher: '赵同学',
-    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=zhao',
-    time: '昨天',
-    favoriteCount: 6,
-    viewCount: 78,
-    status: 'closed',
-  },
-  {
-    id: 7,
-    type: 'secondhand',
-    typeName: '二手交易',
-    typeColor: '#409EFF',
-    title: '台灯 LED护眼灯 八成新',
-    price: 35,
-    campus: '狮子山校区',
-    location: '女生宿舍区',
-    image: 'https://picsum.photos/seed/lamp/400/300',
-    publisher: '周同学',
-    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=zhou',
-    time: '1天前',
-    favoriteCount: 9,
-    viewCount: 112,
-    status: 'active',
-  },
-  {
-    id: 8,
-    type: 'group',
-    typeName: '拼单搭子',
-    typeColor: '#67C23A',
-    title: '学习搭子 图书馆自习',
-    price: null,
-    campus: '狮子山校区',
-    location: '图书馆三楼',
-    image: 'https://picsum.photos/seed/study/400/300',
-    publisher: '钱同学',
-    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=qian',
-    time: '2天前',
-    favoriteCount: 7,
-    viewCount: 95,
-    status: 'active',
-    memberInfo: '已有1人/需要3人',
-  },
-  {
-    id: 9,
-    type: 'secondhand',
-    typeName: '二手交易',
-    typeColor: '#409EFF',
-    title: '考研资料全套 包含真题',
-    price: 65,
-    campus: '成龙校区',
-    location: '教学楼A区',
-    image: 'https://picsum.photos/seed/book/400/300',
-    publisher: '孙同学',
-    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=sun',
-    time: '3天前',
-    favoriteCount: 15,
-    viewCount: 189,
-    status: 'active',
-  },
-  {
-    id: 10,
-    type: 'errand',
-    typeName: '跑腿委托',
-    typeColor: '#409EFF',
-    title: '代买水果 校门外水果店',
-    price: 5,
-    campus: '狮子山校区',
-    location: '南门',
-    image: 'https://picsum.photos/seed/fruit/400/300',
-    publisher: '吴同学',
-    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=wu',
-    time: '20分钟前',
-    favoriteCount: 2,
-    viewCount: 34,
-    status: 'active',
-    taskInfo: '需要苹果和香蕉',
-  },
-  {
-    id: 11,
-    type: 'lost',
-    typeName: '失物招领',
-    typeColor: '#E6A23C',
-    title: '捡到笔记本电脑 黑色双肩包',
-    price: null,
-    campus: '狮子山校区',
-    location: '体育馆',
-    image: 'https://picsum.photos/seed/laptop/400/300',
-    publisher: '郑同学',
-    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=zheng',
-    time: '5小时前',
-    favoriteCount: 22,
-    viewCount: 312,
-    status: 'active',
-  },
-  {
-    id: 12,
-    type: 'group',
-    typeName: '拼单搭子',
-    typeColor: '#67C23A',
-    title: '外卖拼单 满减优惠',
-    price: null,
-    campus: '成龙校区',
-    location: '东门',
-    image: 'https://picsum.photos/seed/food/400/300',
-    publisher: '冯同学',
-    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=feng',
-    time: '1小时前',
-    favoriteCount: 11,
-    viewCount: 143,
-    status: 'active',
-    memberInfo: '已有2人/需要4人',
-  },
-])
+interface ListItem {
+  id: number
+  type: string
+  typeName: string
+  typeColor: string
+  title: string
+  price: number | null
+  campus: string
+  location: string
+  image: string
+  publisher: string
+  avatar: string
+  time: string
+  favoriteCount: number
+  viewCount: number
+  status: string
+  memberInfo?: string
+  taskInfo?: string
+}
+
+const items = ref<ListItem[]>([])
+
+const fetchAllData = async () => {
+  loading.value = true
+  try {
+    const [tradesRes, lostFoundsRes, groupBuysRes, errandsRes] = await Promise.all([
+      getTrades().catch(() => ({ data: [] })),
+      getLostFounds().catch(() => ({ data: [] })),
+      getGroupBuys().catch(() => ({ data: [] })),
+      getErrands().catch(() => ({ data: [] })),
+    ])
+
+    const tradeItems: ListItem[] = (tradesRes.data || []).map((item: any) => ({
+      id: item.id,
+      type: 'secondhand',
+      typeName: '二手交易',
+      typeColor: '#409EFF',
+      title: item.title,
+      price: item.price,
+      campus: item.campus,
+      location: item.location,
+      image: item.image,
+      publisher: item.publisher,
+      avatar: item.publisherAvatar,
+      time: item.publishTime,
+      favoriteCount: item.favoriteCount || 0,
+      viewCount: item.viewCount || 0,
+      status: item.status,
+    }))
+
+    const lostFoundItems: ListItem[] = (lostFoundsRes.data || []).map((item: any) => ({
+      id: item.id,
+      type: item.type,
+      typeName: item.typeName,
+      typeColor: '#E6A23C',
+      title: item.title,
+      price: null,
+      campus: item.campus,
+      location: item.location,
+      image: item.image,
+      publisher: item.publisher || '匿名用户',
+      avatar: 'https://picsum.photos/seed/avatar-user/100/100' + item.id,
+      time: item.time,
+      favoriteCount: 0,
+      viewCount: 0,
+      status: item.status,
+    }))
+
+    const groupBuyItems: ListItem[] = (groupBuysRes.data || []).map((item: any) => ({
+      id: item.id,
+      type: 'group',
+      typeName: '拼单搭子',
+      typeColor: '#67C23A',
+      title: item.title,
+      price: null,
+      campus: item.location,
+      location: item.location,
+      image: item.image,
+      publisher: item.publisher || '匿名用户',
+      avatar: 'https://picsum.photos/seed/avatar-user/100/100' + item.id,
+      time: item.deadline,
+      favoriteCount: 0,
+      viewCount: 0,
+      status: item.status,
+      memberInfo: `已有${item.currentPeople || 1}人/需要${item.totalPeople}人`,
+    }))
+
+    const errandItems: ListItem[] = (errandsRes.data || []).map((item: any) => ({
+      id: item.id,
+      type: 'errand',
+      typeName: '跑腿委托',
+      typeColor: '#F56C6C',
+      title: item.title,
+      price: item.reward,
+      campus: item.campus,
+      location: item.deliveryLocation,
+      image: item.image,
+      publisher: item.publisher || '匿名用户',
+      avatar: 'https://picsum.photos/seed/avatar-user/100/100' + item.id,
+      time: item.deadline,
+      favoriteCount: 0,
+      viewCount: 0,
+      status: item.status,
+      taskInfo: `酬劳${item.reward}元`,
+    }))
+
+    items.value = [...tradeItems, ...lostFoundItems, ...groupBuyItems, ...errandItems]
+  } catch (err) {
+    console.error('获取列表数据失败:', err)
+  } finally {
+    loading.value = false
+  }
+}
 
 const currentPage = ref(1)
 const pageSize = ref(12)
@@ -284,18 +192,15 @@ const isPriceInRange = (price: number | null, range: string): boolean => {
 // 筛选后的数据
 const filteredItems = computed(() => {
   let result = items.value.filter(item => {
-    // 关键词搜索
+    //关键词搜索
     if (filters.value.keyword && !item.title.toLowerCase().includes(filters.value.keyword.toLowerCase())) {
       return false
     }
-    // 分类筛选
+    //分类筛选
     if (filters.value.category !== 'all' && item.type !== filters.value.category) return false
-    // 校区筛选
-    if (filters.value.campus !== 'all') {
-      const campusMap: Record<string, string> = { shizi: '狮子山校区', chenglong: '成龙校区' }
-      if (item.campus !== campusMap[filters.value.campus]) return false
-    }
-    // 价格筛选
+    //校区筛选
+    if (filters.value.campus !== 'all' && item.campus !== filters.value.campus) return false
+    //价格筛选
     if (filters.value.priceRange !== 'all' && !isPriceInRange(item.price, filters.value.priceRange)) return false
     // 状态筛选
     if (filters.value.status !== 'all' && item.status !== filters.value.status) return false
@@ -362,8 +267,16 @@ const quickFilter = (type: string) => {
 }
 
 // 跳转详情
-const goToDetail = (id: number) => {
-  router.push(`/detail/${id}`)
+const goToDetail = (item: any) => {
+  const typeMap: Record<string, string> = {
+    secondhand: 'trade',
+    lost: 'lostFound',
+    found: 'lostFound',
+    group: 'groupBuy',
+    errand: 'errand',
+  }
+  const type = typeMap[item.type] || ''
+  router.push({ path: `/detail/${item.id}`, query: type ? { type } : {} })
 }
 
 // 当前筛选数量
@@ -374,6 +287,10 @@ const activeFilterCount = computed(() => {
   if (filters.value.priceRange !== 'all') count++
   if (filters.value.status !== 'all') count++
   return count
+})
+
+onMounted(() => {
+  fetchAllData()
 })
 </script>
 
@@ -563,7 +480,7 @@ const activeFilterCount = computed(() => {
           :key="item.id"
           class="item-card"
           shadow="hover"
-          @click="goToDetail(item.id)"
+          @click="goToDetail(item)"
         >
           <!-- 业务类型标签 -->
           <el-tag

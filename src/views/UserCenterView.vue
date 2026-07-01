@@ -1,24 +1,25 @@
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, computed, watch } from 'vue'
 import { useRouter } from 'vue-router'
-import { getUserById, type User } from '../api/user'
+import { ElMessage } from 'element-plus'
 import { getTrades } from '../api/trade'
 import { getLostFounds } from '../api/lostFound'
 import { getGroupBuys } from '../api/groupBuy'
 import { getErrands } from '../api/errand'
-import { getFavorites } from '../api/favorite'
 import { getOrders } from '../api/order'
 import { getConversations } from '../api/message'
+import { deleteFavorite } from '../api/favorite'
+import { useUserStore } from '../stores/user'
+import { useFavoriteStore } from '../stores/favorite'
 
 const router = useRouter()
+const userStore = useUserStore()
+const favoriteStore = useFavoriteStore()
 
 const loading = ref(false)
-const userInfo = ref<User | null>(null)
 
-// 真实统计数据（与 ProfileView 保持一致，从实际数据中计算）
 const realStats = ref({
   published: 0,
-  favorites: 0,
   orders: 0,
   messages: 0,
 })
@@ -27,7 +28,7 @@ const recentActivities = ref<any[]>([])
 
 const stats = computed(() => [
   { label: '我的发布', value: realStats.value.published, icon: '📝', color: '#409EFF', route: '/profile', tab: 'published' },
-  { label: '我的收藏', value: realStats.value.favorites, icon: '⭐', color: '#E6A23C', route: '/profile', tab: 'favorites' },
+  { label: '我的收藏', value: favoriteStore.total, icon: '⭐', color: '#E6A23C', route: '/profile', tab: 'favorites' },
   { label: '我的订单', value: realStats.value.orders, icon: '📦', color: '#67C23A', route: '/profile', tab: 'orders' },
   { label: '消息通知', value: realStats.value.messages, icon: '💬', color: '#F56C6C', route: '/message', tab: '' },
 ])
@@ -42,6 +43,23 @@ const menuItems = [
   { icon: '🎯', label: '信用分', desc: '查看信用等级详情', color: '#FDF6EC', route: '/profile', tab: 'credit' },
   { icon: '⚙️', label: '账号设置', desc: '个人资料和隐私设置', color: '#F0F9EB', route: '/profile', tab: 'settings' },
 ]
+
+const userInfo = computed(() => userStore.currentUser)
+
+// 根据昵称生成稳定的头像背景色
+const avatarColor = computed(() => {
+  const colors = [
+    'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+    'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+    'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
+    'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)',
+    'linear-gradient(135deg, #fa709a 0%, #fee140 100%)',
+    'linear-gradient(135deg, #30cfd0 0%, #330867 100%)',
+  ]
+  const name = userInfo.value?.nickname || '用户'
+  const index = name.charCodeAt(0) % colors.length
+  return colors[index]
+})
 
 const handleStatClick = (stat: any) => {
   if (stat.route) {
@@ -59,38 +77,29 @@ const fetchAllData = async () => {
   loading.value = true
   try {
     const currentUserId = 1
-    const [userRes, tradesRes, lostFoundsRes, groupBuysRes, errandsRes, favRes, orderRes, convRes] = await Promise.all([
-      getUserById(currentUserId).catch(() => ({ data: null })),
+    const [tradesRes, lostFoundsRes, groupBuysRes, errandsRes, orderRes, convRes] = await Promise.all([
       getTrades().catch(() => ({ data: [] })),
       getLostFounds().catch(() => ({ data: [] })),
       getGroupBuys().catch(() => ({ data: [] })),
       getErrands().catch(() => ({ data: [] })),
-      getFavorites({ userId: currentUserId }).catch(() => ({ data: [] })),
       getOrders({ userId: currentUserId }).catch(() => ({ data: [] })),
       getConversations({ currentUserId }).catch(() => ({ data: [] })),
     ])
 
-    userInfo.value = userRes.data
-
-    // 与 ProfileView 同样的统计方式
     const trades = (tradesRes as any).data || []
     const lostFounds = (lostFoundsRes as any).data || []
     const groupBuys = (groupBuysRes as any).data || []
     const errands = (errandsRes as any).data || []
-    const favorites = (favRes as any).data || []
     const orders = (orderRes as any).data || []
     const conversations = (convRes as any).data || []
 
     realStats.value = {
       published: trades.length + lostFounds.length + groupBuys.length + errands.length,
-      favorites: favorites.length,
       orders: orders.length,
       messages: conversations.length,
     }
 
-    // 构造最近动态：取最新的发布、收藏、订单、消息
     const activities: any[] = []
-
     trades.slice(0, 2).forEach((t: any) => {
       activities.push({
         type: 'publish',
@@ -98,7 +107,7 @@ const fetchAllData = async () => {
         time: t.publishTime || '',
       })
     })
-    favorites.slice(0, 1).forEach((f: any) => {
+    favoriteStore.favorites.slice(0, 1).forEach((f: any) => {
       activities.push({
         type: 'favorite',
         title: `收藏了：${f.title}`,
@@ -113,7 +122,6 @@ const fetchAllData = async () => {
       })
     })
 
-    // 按时间倒序，最多展示 4 条
     recentActivities.value = activities
       .sort((a, b) => (b.time || '').localeCompare(a.time || ''))
       .slice(0, 4)
@@ -121,6 +129,39 @@ const fetchAllData = async () => {
     loading.value = false
   }
 }
+
+const handleRemoveFavorite = async (itemId: string | number, itemType: string) => {
+  const favId = favoriteStore.getItemId(itemId, itemType)
+  if (favId !== null) {
+    try {
+      await deleteFavorite(Number(favId))
+    } catch (err) {
+      console.warn('取消收藏后端同步失败:', err)
+    }
+  }
+  favoriteStore.remove(itemId, itemType)
+  ElMessage.info('已取消收藏')
+}
+
+watch(
+  () => favoriteStore.total,
+  () => {
+    if (recentActivities.value.length > 0) {
+      const activities: any[] = []
+      favoriteStore.favorites.slice(0, 2).forEach((f: any) => {
+        activities.push({
+          type: 'favorite',
+          title: `收藏了：${f.title}`,
+          time: f.favoriteTime || '',
+        })
+      })
+      const otherActivities = recentActivities.value.filter(a => a.type !== 'favorite')
+      recentActivities.value = [...activities, ...otherActivities]
+        .sort((a, b) => (b.time || '').localeCompare(a.time || ''))
+        .slice(0, 4)
+    }
+  }
+)
 
 onMounted(() => {
   fetchAllData()
@@ -139,7 +180,9 @@ onMounted(() => {
       <div class="profile-content">
         <div class="profile-left">
           <div class="avatar-wrapper">
-            <img :src="userInfo.avatar" :alt="userInfo.nickname" class="avatar" />
+            <div class="avatar" :style="{ background: avatarColor }">
+              <span class="avatar-text">{{ userInfo.nickname.charAt(0) }}</span>
+            </div>
             <div class="avatar-badge">
               <span class="badge-text">{{ userInfo.level }}</span>
             </div>
@@ -213,6 +256,32 @@ onMounted(() => {
           </div>
           <div class="menu-arrow">›</div>
         </div>
+      </div>
+    </section>
+
+    <section class="favorites-section">
+      <div class="section-header">
+        <h2 class="section-title">我的收藏 <span class="title-count">({{ favoriteStore.total }})</span></h2>
+        <span class="section-more" @click="router.push({ path: '/profile', query: { tab: 'favorites' } })">查看全部</span>
+      </div>
+      <div v-if="favoriteStore.total > 0" class="favorites-grid">
+        <div
+          v-for="item in favoriteStore.favorites.slice(0, 4)"
+          :key="item.itemType + '-' + item.itemId"
+          class="favorite-card"
+        >
+          <img :src="item.image" :alt="item.title" class="favorite-image" />
+          <div class="favorite-info">
+            <h4 class="favorite-title">{{ item.title }}</h4>
+            <p class="favorite-price" v-if="item.price">¥{{ item.price }}</p>
+            <p class="favorite-type">{{ item.itemType === 'trade' ? '二手交易' : item.itemType }}</p>
+          </div>
+          <button class="remove-btn" @click="handleRemoveFavorite(item.itemId, item.itemType)">取消</button>
+        </div>
+      </div>
+      <div v-else class="empty-favorites">
+        <span class="empty-icon">☆</span>
+        <p class="empty-text">还没有收藏的内容，去列表页看看吧~</p>
       </div>
     </section>
 
@@ -325,6 +394,17 @@ onMounted(() => {
   border-radius: 50%;
   background: #fff;
   border: 4px solid rgba(255, 255, 255, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.avatar-text {
+  font-size: 42px;
+  font-weight: 700;
+  color: #fff;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .avatar-badge {
@@ -562,10 +642,125 @@ onMounted(() => {
 }
 
 .menu-arrow {
-  font-size: 20px;
+  font-size: 22px;
   color: #C0C4CC;
   font-weight: 300;
   flex-shrink: 0;
+}
+
+.favorites-section {
+  background: #fff;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+  margin-bottom: 24px;
+}
+
+.favorites-section .section-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #303133;
+  margin: 0;
+}
+
+.title-count {
+  font-size: 14px;
+  color: #909399;
+  font-weight: 400;
+}
+
+.favorites-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+.favorite-card {
+  border: 1px solid #EBEEF5;
+  border-radius: 10px;
+  overflow: hidden;
+  transition: all 0.25s ease;
+  background: #FAFBFC;
+}
+
+.favorite-card:hover {
+  border-color: #409EFF;
+  box-shadow: 0 4px 12px rgba(64, 158, 255, 0.1);
+  transform: translateY(-2px);
+}
+
+.favorite-image {
+  width: 100%;
+  height: 120px;
+  object-fit: cover;
+  display: block;
+}
+
+.favorite-info {
+  padding: 10px 12px;
+}
+
+.favorite-title {
+  font-size: 13px;
+  font-weight: 500;
+  color: #303133;
+  margin: 0 0 6px 0;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.favorite-price {
+  font-size: 15px;
+  font-weight: 600;
+  color: #F56C6C;
+  margin: 0 0 4px 0;
+}
+
+.favorite-type {
+  font-size: 12px;
+  color: #909399;
+  margin: 0;
+}
+
+.remove-btn {
+  display: block;
+  width: calc(100% - 24px);
+  margin: 0 12px 12px 12px;
+  padding: 6px 0;
+  border: 1px solid #DCDFE6;
+  border-radius: 6px;
+  background: #fff;
+  color: #909399;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.remove-btn:hover {
+  border-color: #F56C6C;
+  color: #F56C6C;
+  background: #FEF0F0;
+}
+
+.empty-favorites {
+  text-align: center;
+  padding: 40px 0;
+  color: #909399;
+}
+
+.empty-icon {
+  font-size: 48px;
+  display: block;
+  margin-bottom: 12px;
+  opacity: 0.5;
+}
+
+.empty-text {
+  font-size: 14px;
+  margin: 0;
 }
 
 .activity-section {

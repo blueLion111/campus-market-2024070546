@@ -18,6 +18,7 @@ defineProps<Props>()
     <div v-if="tagText" class="item-tag" :style="{ backgroundColor: tagColor }">
       {{ tagText }}
     </div>
+    <slot name="action" class="item-action-slot"></slot>
     <div class="item-image">
       <img :src="image" :alt="title" loading="lazy" />
     </div>
@@ -29,11 +30,12 @@ defineProps<Props>()
           📍 {{ location }}
         </span>
       </div>
-      <div v-if="publisher" class="item-footer">
-        <div class="publisher">
+      <div v-if="publisher || $slots.footer" class="item-footer">
+        <div v-if="publisher" class="publisher">
           <img v-if="publisherAvatar" :src="publisherAvatar" :alt="publisher" class="publisher-avatar" />
           <span class="publisher-name">{{ publisher }}</span>
         </div>
+        <slot name="footer"></slot>
       </div>
     </div>
   </div>
@@ -64,7 +66,15 @@ defineProps<Props>()
   color: #fff;
   font-size: 12px;
   font-weight: 500;
-  z-index: 1;
+  z-index: 2;
+}
+
+.favorite-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 2;
+  cursor: pointer;
 }
 
 .item-image {

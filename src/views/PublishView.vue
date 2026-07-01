@@ -7,8 +7,10 @@ import { createTrade, type CreateTradeData } from '../api/trade'
 import { createLostFound, type CreateLostFoundData } from '../api/lostFound'
 import { createGroupBuy, type CreateGroupBuyData } from '../api/groupBuy'
 import { createErrand, type CreateErrandData } from '../api/errand'
+import { useUserStore } from '../stores/user'
 
 const router = useRouter()
+const userStore = useUserStore()
 const loading = ref(false)
 
 const form = reactive({
@@ -106,7 +108,7 @@ const submitPublish = async () => {
     const now = new Date().toLocaleString('zh-CN', { hour12: false }).replace(/\//g, '-')
 
     if (form.type === 'secondhand') {
-      const data: CreateTradeData = {
+      const data: CreateTradeData & { publisher: string; publisherAvatar: string; publishTime: string; status: string; viewCount: number; favoriteCount: number } = {
         title: form.title,
         price: Number(form.price),
         originalPrice: Number(form.price) * 1.5,
@@ -117,10 +119,16 @@ const submitPublish = async () => {
         location: form.location,
         image: 'https://picsum.photos/seed/new/400/400',
         description: form.description,
+        publisher: userStore.nickname,
+        publisherAvatar: userStore.avatar,
+        publishTime: now,
+        status: 'open',
+        viewCount: 0,
+        favoriteCount: 0,
       }
       await createTrade(data)
     } else if (form.type === 'lost') {
-      const data: CreateLostFoundData = {
+      const data: CreateLostFoundData & { publisher: string; publisherAvatar: string; status: string } = {
         title: form.title,
         type: form.lostOrFound,
         typeName: form.lostOrFound === 'lost' ? '寻物启事' : '失物招领',
@@ -131,10 +139,13 @@ const submitPublish = async () => {
         campus: form.campus,
         image: 'https://picsum.photos/seed/new/400/300',
         description: form.description,
+        publisher: userStore.nickname,
+        publisherAvatar: userStore.avatar,
+        status: 'open',
       }
       await createLostFound(data)
     } else if (form.type === 'group') {
-      const data: CreateGroupBuyData = {
+      const data: CreateGroupBuyData & { publisher: string; publisherAvatar: string; publishTime: string; status: string; currentPeople: number } = {
         title: form.title,
         type: 'other',
         typeName: '其他',
@@ -143,10 +154,15 @@ const submitPublish = async () => {
         deadline: form.deadline ? new Date(form.deadline).toISOString() : now,
         location: form.campus,
         image: 'https://picsum.photos/seed/new/400/300',
+        publisher: userStore.nickname,
+        publisherAvatar: userStore.avatar,
+        publishTime: now,
+        status: 'open',
+        currentPeople: 1,
       }
       await createGroupBuy(data)
     } else if (form.type === 'errand') {
-      const data: CreateErrandData = {
+      const data: CreateErrandData & { publisher: string; publisherAvatar: string; publishTime: string; status: string } = {
         title: form.title,
         type: 'other',
         typeName: '其他',
@@ -157,6 +173,10 @@ const submitPublish = async () => {
         deadline: form.expectedTime ? new Date(form.expectedTime).toISOString() : now,
         campus: form.campus,
         image: 'https://picsum.photos/seed/new/400/300',
+        publisher: userStore.nickname,
+        publisherAvatar: userStore.avatar,
+        publishTime: now,
+        status: 'open',
       }
       await createErrand(data)
     }

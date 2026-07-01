@@ -1,10 +1,16 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
+import { ElMessage } from 'element-plus'
 import { getTrades, type Trade } from '../api/trade'
+import { createFavorite, deleteFavorite } from '../api/favorite'
 import EmptyState from '../components/EmptyState.vue'
+import { useFavoriteStore } from '../stores/favorite'
 
 const router = useRouter()
+const favoriteStore = useFavoriteStore()
+
+const currentUserId = 1
 
 const activeCategory = ref('all')
 const loading = ref(false)
@@ -46,8 +52,55 @@ const handleCategoryChange = (key: string) => {
   fetchTrades()
 }
 
-const goToDetail = (id: number) => {
+const goToDetail = (id: string | number) => {
   router.push({ path: `/detail/${id}`, query: { type: 'trade' } })
+}
+
+const handleToggleFavorite = async (e: MouseEvent, product: Trade) => {
+  e.stopPropagation()
+  const isCurrentlyFavorite = favoriteStore.hasItem(product.id, 'trade')
+
+  if (isCurrentlyFavorite) {
+    // 取消收藏：先调后端 API，再更新前端 Store
+    const favId = favoriteStore.getItemId(product.id, 'trade')
+    if (favId !== null) {
+      try {
+        await deleteFavorite(Number(favId))
+      } catch (err) {
+        console.warn('取消收藏后端同步失败:', err)
+      }
+    }
+    favoriteStore.remove(product.id, 'trade')
+    ElMessage.info('已取消收藏')
+  } else {
+    // 添加收藏：先调后端 API，再更新前端 Store
+    try {
+      await createFavorite({
+        userId: currentUserId,
+        itemId: Number(product.id),
+        itemType: 'trade',
+        title: product.title,
+        price: product.price ?? null,
+        image: product.image,
+        publisher: product.publisher || '匿名用户',
+        campus: product.campus || '',
+        favoriteTime: new Date().toLocaleString('zh-CN', { hour12: false }).replace(/\//g, '-'),
+        status: 'active',
+      })
+    } catch (err) {
+      console.warn('添加收藏后端同步失败:', err)
+    }
+    favoriteStore.add({
+      itemId: product.id,
+      itemType: 'trade',
+      title: product.title,
+      price: product.price ?? null,
+      image: product.image,
+      publisher: product.publisher || '匿名用户',
+      campus: product.campus || '',
+    })
+    ElMessage.success('收藏成功')
+  }
 }
 
 onMounted(() => {
@@ -116,6 +169,9 @@ onMounted(() => {
             <img :src="product.image" :alt="product.title" class="product-image" />
             <div class="product-badge">
               <span class="badge-discount">省{{ product.originalPrice - product.price }}元</span>
+            </div>
+            <div class="favorite-btn" @click="handleToggleFavorite($event, product)">
+              <span class="star">{{ favoriteStore.hasItem(product.id, 'trade') ? '⭐' : '☆' }}</span>
             </div>
           </div>
           <div class="product-info">
@@ -352,6 +408,33 @@ onMounted(() => {
   padding: 4px 10px;
   border-radius: 12px;
   font-weight: 500;
+}
+
+.favorite-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 3;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.favorite-btn:hover {
+  transform: scale(1.1);
+  background: #fff;
+}
+
+.favorite-btn .star {
+  font-size: 18px;
+  line-height: 1;
 }
 
 .product-info {

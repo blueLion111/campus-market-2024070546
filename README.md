@@ -41,23 +41,55 @@ docs/guide/Environment_Setup.md
     ▼
 docs/guide/Getting_Started.md
 
-随后执行：
+⸻
 
+运行项目
+
+### 1. 安装依赖
+
+```bash
 git clone <课程仓库地址>
 cd campus-market-seed
-nvm use
 pnpm install
+```
+
+### 2. 启动 Mock 服务（必须先启动）
+
+```bash
+npx json-server --watch db.json --port 3001
+```
+
+Mock 服务启动后，访问 http://localhost:3001 可查看所有 API 接口。
+
+### 3. 启动前端开发服务器
+
+在新终端中执行：
+
+```bash
 pnpm dev
+```
 
 浏览器访问：
 
 http://localhost:5173
 
-如果页面显示：
+### 4. 构建生产版本
 
-项目启动成功
+```bash
+pnpm build
+```
 
-说明开发环境已经配置完成。
+构建产物输出到 `dist` 目录。
+
+### 5. 代码检查
+
+```bash
+# ESLint 检查
+pnpm lint
+
+# TypeScript 类型检查
+pnpm type-check
+```
 
 ⸻
 
@@ -66,21 +98,32 @@ http://localhost:5173
 campus-market-seed
 ├── docs
 │   ├── ai              # AI 协作规范
-│   ├── evidence        # 每日过程证据
+│   ├── evidence        # 每日过程证据（Day1-Day7）
 │   └── guide           # 学生使用指南
 ├── scripts             # 自动检测工具
-├── src                 # 项目源码
+├── src
+│   ├── api             # API 接口封装
+│   ├── components      # 公共组件
+│   ├── stores          # Pinia 状态管理
+│   │   ├── user.ts     # 用户状态 Store
+│   │   └── favorite.ts # 收藏状态 Store
+│   ├── views           # 页面组件（12个）
+│   ├── router          # 路由配置
+│   ├── App.vue         # 根组件
+│   └── main.ts         # 入口文件
+├── db.json             # Mock 数据库（含 users/favorites/trades/lostFounds/groupBuys/errands/conversations/messages）
 └── CHECK_REPORT.md     # 自动检测报告（后续版本启用）
 
 ⸻
 
 文档导航
 
-文档	说明
-docs/guide/Environment_Setup.md	配置课程开发环境
-docs/guide/Getting_Started.md	Day1 快速开始指南
-docs/ai/AI_Collaboration_Card.md	AI 协作记录规范
-docs/evidence/	每日过程性证据模板
+| 文档 | 说明 |
+|------|------|
+| docs/guide/Environment_Setup.md | 配置课程开发环境 |
+| docs/guide/Getting_Started.md | Day1 快速开始指南 |
+| docs/ai/AI_Collaboration_Card.md | AI 协作记录规范 |
+| docs/evidence/ | 每日过程性证据（Day1-Day7） |
 
 ⸻
 
@@ -91,8 +134,29 @@ docs/evidence/	每日过程性证据模板
 * Vite
 * Vue Router
 * Pinia
+* Element Plus
+* Axios
 * ESLint
 * Oxlint
+
+⸻
+
+功能模块
+
+| 模块 | 页面 | 说明 |
+|------|------|------|
+| 首页 | HomeView | 校园轻集市首页，展示分类入口 |
+| 二手交易 | TradeView | 二手商品列表与收藏功能 |
+| 失物招领 | LostFoundView | 寻物启事与失物招领列表 |
+| 拼单搭子 | GroupBuyView | 拼单、学习搭子、运动搭子 |
+| 跑腿委托 | ErrandView | 代取快递、代买物品、代办事务 |
+| 发布信息 | PublishView | 动态表单发布四类业务数据 |
+| 商品详情 | DetailView | 商品/信息详情页 |
+| 列表页 | ListView | 通用列表展示 |
+| 消息中心 | MessageView | 聊天会话与消息 |
+| 用户中心 | UserCenterView | 用户资料、我的发布、我的收藏 |
+| 个人主页 | ProfileView | 用户详细资料展示 |
+| 公告栏 | BoardView | 校园公告展示 |
 
 ⸻
 

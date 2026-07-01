@@ -1,10 +1,31 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import AppNav from './AppNav.vue'
+import { useUserStore } from '../stores/user'
+import { useFavoriteStore } from '../stores/favorite'
 
 const router = useRouter()
+const userStore = useUserStore()
+const favoriteStore = useFavoriteStore()
 const searchValue = ref('')
+
+const unreadCount = computed(() => 3)
+
+// 头像背景色（根据昵称首字母生成稳定颜色）
+const headerAvatarColor = computed(() => {
+  const colors = [
+    'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+    'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+    'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
+    'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)',
+    'linear-gradient(135deg, #fa709a 0%, #fee140 100%)',
+    'linear-gradient(135deg, #30cfd0 0%, #330867 100%)',
+  ]
+  const name = userStore.nickname || '用户'
+  const index = name.charCodeAt(0) % colors.length
+  return colors[index]
+})
 
 const handleSearch = () => {
   if (searchValue.value.trim()) {
@@ -54,12 +75,13 @@ const handleMessage = () => {
         <div class="header-actions">
           <div class="action-item message-btn" @click="handleMessage">
             <span class="action-icon">🔔</span>
-            <span class="badge">3</span>
+            <span class="badge">{{ unreadCount }}</span>
           </div>
           <div class="action-item user-avatar" @click="handleProfile">
-            <el-avatar :size="40" style="background: linear-gradient(135deg, #409EFF 0%, #66b1ff 100%);">
-              <span class="avatar-text">👤</span>
-            </el-avatar>
+            <div class="avatar-circle" :style="{ background: headerAvatarColor }">
+              <span class="avatar-text">{{ userStore.nickname.charAt(0) }}</span>
+            </div>
+            <span v-if="userStore.nickname" class="user-nickname">{{ userStore.nickname }}</span>
           </div>
         </div>
       </div>
@@ -204,19 +226,45 @@ const handleMessage = () => {
 }
 
 .user-avatar {
-  width: 44px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
   height: 44px;
-  border-radius: 50%;
+  padding: 0 8px;
+  border-radius: 22px;
   overflow: visible;
-  transition: transform 0.2s ease;
+  transition: all 0.2s ease;
 }
 
 .user-avatar:hover {
-  transform: scale(1.08);
+  background-color: #f5f7fa;
+  transform: scale(1.02);
+}
+
+.user-nickname {
+  font-size: 14px;
+  font-weight: 500;
+  color: #303133;
+  margin-right: 4px;
+}
+
+.avatar-circle {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border: 2px solid #fff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
 
 .avatar-text {
-  font-size: 20px;
+  font-size: 18px;
+  font-weight: 600;
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
   line-height: 1;
 }
 </style>

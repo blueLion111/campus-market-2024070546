@@ -206,7 +206,7 @@ onMounted(() => {
         <div class="profile-right">
           <div class="credit-card">
             <div class="credit-header">
-              <component :is="Star" class="credit-icon" />
+              <el-icon class="credit-icon"><Star /></el-icon>
               <span class="credit-label">信用分</span>
             </div>
             <div class="credit-score">{{ userInfo.creditScore }}</div>
@@ -230,7 +230,7 @@ onMounted(() => {
           @click="handleStatClick(stat)"
         >
           <div class="stat-icon" :style="{ backgroundColor: stat.color + '15', color: stat.color }">
-            <component :is="stat.icon" />
+            <el-icon :size="26"><component :is="stat.icon" /></el-icon>
           </div>
           <div class="stat-content">
             <span class="stat-value">{{ stat.value }}</span>
@@ -251,7 +251,7 @@ onMounted(() => {
           @click="handleMenuClick(item)"
         >
           <div class="menu-icon" :style="{ backgroundColor: item.color }">
-            <component :is="item.icon" />
+            <el-icon :size="22"><component :is="item.icon" /></el-icon>
           </div>
           <div class="menu-info">
             <span class="menu-label">{{ item.label }}</span>
@@ -283,7 +283,7 @@ onMounted(() => {
         </div>
       </div>
       <div v-else class="empty-favorites">
-        <Star class="empty-icon" />
+        <el-icon class="empty-icon"><Star /></el-icon>
         <p class="empty-text">还没有收藏的内容，去列表页看看吧~</p>
       </div>
     </section>
@@ -561,11 +561,6 @@ onMounted(() => {
   flex-shrink: 0;
 }
 
-.stat-icon :deep(svg) {
-  width: 26px;
-  height: 26px;
-}
-
 .stat-content {
   display: flex;
   flex-direction: column;
@@ -627,11 +622,6 @@ onMounted(() => {
   justify-content: center;
   font-size: 22px;
   flex-shrink: 0;
-}
-
-.menu-icon :deep(svg) {
-  width: 22px;
-  height: 22px;
 }
 
 .menu-info {

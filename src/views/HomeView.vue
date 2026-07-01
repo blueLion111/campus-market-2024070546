@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, markRaw } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import {
-  ShoppingCart, Search, User, Star, Bell, Fire, Plus, WarningFilled, Location
+  ShoppingCart, Search, UserFilled, Star, Bell, Fire, Plus, WarningFilled, Location
 } from '@element-plus/icons-vue'
 import { getTrades } from '../api/trade'
 import { getLostFounds } from '../api/lostFound'
@@ -131,10 +131,10 @@ const hotPosts = ref([
 ])
 
 const categoryIcons: Record<string, any> = {
-  secondhand: markRaw(ShoppingCart),
-  lost: markRaw(Search),
-  group: markRaw(User),
-  errand: markRaw(Fire),
+  secondhand: ShoppingCart,
+  lost: Search,
+  group: UserFilled,
+  errand: Fire,
 }
 
 const categories = ref([
@@ -259,7 +259,7 @@ onMounted(() => {
             @click="goToCategory(cat.key)"
           >
             <div class="category-icon" :style="{ backgroundColor: cat.bgColor }">
-              <component :is="categoryIcons[cat.key]" class="category-icon-svg" />
+              <el-icon :size="28" class="category-icon-svg"><component :is="categoryIcons[cat.key]" /></el-icon>
             </div>
             <div class="category-info">
               <h3 class="category-name" :style="{ color: cat.color }">{{ cat.name }}</h3>
@@ -556,8 +556,6 @@ onMounted(() => {
 }
 
 .category-icon-svg {
-  width: 28px;
-  height: 28px;
   color: #409EFF;
 }
 

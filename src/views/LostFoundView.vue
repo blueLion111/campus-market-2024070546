@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, markRaw } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { Search, Box, Location, School, Clock } from '@element-plus/icons-vue'
 import { getLostFounds, type LostFound } from '../api/lostFound'
@@ -12,8 +12,8 @@ const loading = ref(false)
 const items = ref<LostFound[]>([])
 
 const tabs = [
-  { key: 'lost', label: '寻物启事', icon: markRaw(Search) },
-  { key: 'found', label: '失物招领', icon: markRaw(Box) },
+  { key: 'lost', label: '寻物启事', icon: Search },
+  { key: 'found', label: '失物招领', icon: Box },
 ]
 
 const fetchLostFounds = async () => {
@@ -85,7 +85,7 @@ onMounted(() => {
           @click="activeTab = tab.key"
         >
           <span class="tab-icon">
-            <component :is="tab.icon" />
+            <el-icon :size="20"><component :is="tab.icon" /></el-icon>
           </span>
           <span class="tab-label">{{ tab.label }}</span>
         </div>

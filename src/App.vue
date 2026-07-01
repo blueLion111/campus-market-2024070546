@@ -25,7 +25,7 @@ onMounted(async () => {
     if (res.data) {
       userStore.login(res.data)
     }
-  } catch (e) {
+  } catch {
     console.warn('加载当前用户失败，使用默认模拟用户')
   }
 
@@ -35,7 +35,7 @@ onMounted(async () => {
     if (favRes.data && favRes.data.length > 0) {
       favoriteStore.initFromBackend(favRes.data)
     }
-  } catch (e) {
+  } catch {
     console.warn('加载收藏数据失败，使用空收藏列表')
   }
 })

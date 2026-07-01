@@ -1,4 +1,4 @@
-﻿<script setup lang="ts">
+<script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
@@ -244,10 +244,11 @@ const nextImage = () => {
   setTimeout(() => { isAnimating.value = false }, 300)
 }
 
-const selectImage = (index: number) => {
-  if (isAnimating.value || index === currentImageIndex.value) return
+const selectImage = (index: number | string) => {
+  const numIndex = typeof index === 'number' ? index : parseInt(index, 10)
+  if (isAnimating.value || numIndex === currentImageIndex.value) return
   isAnimating.value = true
-  currentImageIndex.value = index
+  currentImageIndex.value = numIndex
   setTimeout(() => { isAnimating.value = false }, 300)
 }
 

@@ -1,4 +1,4 @@
-﻿<script setup lang="ts">
+<script setup lang="ts">
 import { ref, nextTick, onMounted, computed, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { getConversations, getMessages, createMessage, type Conversation, type Message } from '../api/message'
@@ -28,8 +28,11 @@ const fetchConversations = async () => {
     const res = await getConversations({ currentUserId })
     conversations.value = res.data
     if (res.data.length > 0 && !activeConversationId.value) {
-      activeConversationId.value = res.data[0].id
-      fetchMessages(res.data[0].id)
+      const firstConv = res.data[0]
+      if (firstConv) {
+        activeConversationId.value = firstConv.id
+        fetchMessages(firstConv.id)
+      }
     }
   } catch (err) {
     console.error('获取会话列表失败:', err)

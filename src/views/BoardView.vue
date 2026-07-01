@@ -1,4 +1,4 @@
-﻿<script setup lang="ts">
+<script setup lang="ts">
 import { ref, onMounted, shallowRef } from 'vue'
 import * as echarts from 'echarts'
 import { getTrades } from '../api/trade'
@@ -66,14 +66,6 @@ const fetchDashboardData = async () => {
       { title: '拼单搭子', value: groupBuys.length, unit: '条', icon: 'UserPlus', color: '#67c23a', bgColor: '#f0f9eb', trend: '+0%' },
     ]
 
-    const getTypeName = (type: string) => {
-      if (type === 'secondhand' || type === 'trade') return '二手交易'
-      if (type === 'lost' || type === 'found') return '失物招领'
-      if (type === 'group') return '拼单搭子'
-      if (type === 'errand') return '跑腿委托'
-      return type
-    }
-
     const allItems: RecentRecord[] = [
       ...trades.map((item: any) => ({
         id: item.id,
@@ -120,7 +112,7 @@ const fetchDashboardData = async () => {
     recentRecords.value = allItems.slice(0, 10)
 
     initTypeChart(trades.length, lostFounds.length, groupBuys.length, errands.length)
-    initCampusChart(trades, lostFounds, groupBuys, errands)
+    initCampusChart(trades, lostFounds)
   } catch (err) {
     console.error('获取看板数据失败:', err)
   } finally {
@@ -170,7 +162,7 @@ const initTypeChart = (tradesCount: number, lostFoundsCount: number, groupBuysCo
   })
 }
 
-const initCampusChart = (trades: any[], lostFounds: any[], groupBuys: any[], errands: any[]) => {
+const initCampusChart = (trades: any[], lostFounds: any[]) => {
   if (!campusChartRef.value) return
   const chart = echarts.init(campusChartRef.value)
   

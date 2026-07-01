@@ -3,11 +3,9 @@ import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import AppNav from './AppNav.vue'
 import { useUserStore } from '../stores/user'
-import { useFavoriteStore } from '../stores/favorite'
 
 const router = useRouter()
 const userStore = useUserStore()
-const favoriteStore = useFavoriteStore()
 const searchValue = ref('')
 
 const unreadCount = computed(() => 3)

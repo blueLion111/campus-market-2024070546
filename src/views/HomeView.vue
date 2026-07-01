@@ -1,4 +1,4 @@
-﻿<script setup lang="ts">
+<script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { getTrades } from '../api/trade'
@@ -28,14 +28,6 @@ interface PostItem {
 }
 
 const posts = ref<PostItem[]>([])
-
-const typeConfig: Record<string, { typeName: string; typeColor: string }> = {
-  secondhand: { typeName: '二手交易', typeColor: '#409EFF' },
-  lost: { typeName: '寻物启事', typeColor: '#E6A23C' },
-  found: { typeName: '失物招领', typeColor: '#E6A23C' },
-  group: { typeName: '拼单搭子', typeColor: '#67C23A' },
-  errand: { typeName: '跑腿委托', typeColor: '#F56C6C' },
-}
 
 const fetchAllData = async () => {
   loading.value = true
@@ -181,11 +173,6 @@ const paginatedPosts = computed(() => {
   const end = start + pageSize.value
   return posts.value.slice(start, end)
 })
-
-const toggleFavorite = (post: any) => {
-  post.isFavorite = !post.isFavorite
-  post.favoriteCount += post.isFavorite ? 1 : -1
-}
 
 const goToDetail = (item: any) => {
   const typeMap: Record<string, string> = {

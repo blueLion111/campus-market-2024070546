@@ -2,6 +2,9 @@
 import { ref, onMounted, computed, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
+import {
+  Document, Star, Box, ChatDotRound, Wallet, Users, Medal, Setting
+} from '@element-plus/icons-vue'
 import { getTrades } from '../api/trade'
 import { getLostFounds } from '../api/lostFound'
 import { getGroupBuys } from '../api/groupBuy'
@@ -27,21 +30,21 @@ const realStats = ref({
 const recentActivities = ref<any[]>([])
 
 const stats = computed(() => [
-  { label: '我的发布', value: realStats.value.published, icon: '📝', color: '#409EFF', route: '/profile', tab: 'published' },
-  { label: '我的收藏', value: favoriteStore.total, icon: '⭐', color: '#E6A23C', route: '/profile', tab: 'favorites' },
-  { label: '我的订单', value: realStats.value.orders, icon: '📦', color: '#67C23A', route: '/profile', tab: 'orders' },
-  { label: '消息通知', value: realStats.value.messages, icon: '💬', color: '#F56C6C', route: '/message', tab: '' },
+  { label: '我的发布', value: realStats.value.published, icon: Document, color: '#409EFF', route: '/profile', tab: 'published' },
+  { label: '我的收藏', value: favoriteStore.total, icon: Star, color: '#E6A23C', route: '/profile', tab: 'favorites' },
+  { label: '我的订单', value: realStats.value.orders, icon: Box, color: '#67C23A', route: '/profile', tab: 'orders' },
+  { label: '消息通知', value: realStats.value.messages, icon: ChatDotRound, color: '#F56C6C', route: '/message', tab: '' },
 ])
 
 const menuItems = [
-  { icon: '📝', label: '我的发布', desc: '查看我发布的所有信息', color: '#ECF5FF', route: '/profile', tab: 'published' },
-  { icon: '⭐', label: '我的收藏', desc: '收藏的商品和信息', color: '#FDF6EC', route: '/profile', tab: 'favorites' },
-  { icon: '💰', label: '我的钱包', desc: '余额和交易记录', color: '#F0F9EB', route: '/profile', tab: 'wallet' },
-  { icon: '📦', label: '我的订单', desc: '购买和出售的订单', color: '#FEF0F0', route: '/profile', tab: 'orders' },
-  { icon: '💬', label: '消息中心', desc: '系统消息和私信', color: '#F4F4F5', route: '/message', tab: '' },
-  { icon: '🤝', label: '我的搭子', desc: '一起拼单的小伙伴', color: '#ECF5FF', route: '/profile', tab: 'partners' },
-  { icon: '🎯', label: '信用分', desc: '查看信用等级详情', color: '#FDF6EC', route: '/profile', tab: 'credit' },
-  { icon: '⚙️', label: '账号设置', desc: '个人资料和隐私设置', color: '#F0F9EB', route: '/profile', tab: 'settings' },
+  { icon: Document, label: '我的发布', desc: '查看我发布的所有信息', color: '#ECF5FF', route: '/profile', tab: 'published' },
+  { icon: Star, label: '我的收藏', desc: '收藏的商品和信息', color: '#FDF6EC', route: '/profile', tab: 'favorites' },
+  { icon: Wallet, label: '我的钱包', desc: '余额和交易记录', color: '#F0F9EB', route: '/profile', tab: 'wallet' },
+  { icon: Box, label: '我的订单', desc: '购买和出售的订单', color: '#FEF0F0', route: '/profile', tab: 'orders' },
+  { icon: ChatDotRound, label: '消息中心', desc: '系统消息和私信', color: '#F4F4F5', route: '/message', tab: '' },
+  { icon: Users, label: '我的搭子', desc: '一起拼单的小伙伴', color: '#ECF5FF', route: '/profile', tab: 'partners' },
+  { icon: Medal, label: '信用分', desc: '查看信用等级详情', color: '#FDF6EC', route: '/profile', tab: 'credit' },
+  { icon: Setting, label: '账号设置', desc: '个人资料和隐私设置', color: '#F0F9EB', route: '/profile', tab: 'settings' },
 ]
 
 const userInfo = computed(() => userStore.currentUser)
@@ -203,7 +206,7 @@ onMounted(() => {
         <div class="profile-right">
           <div class="credit-card">
             <div class="credit-header">
-              <span class="credit-icon">★</span>
+              <component :is="Star" class="credit-icon" />
               <span class="credit-label">信用分</span>
             </div>
             <div class="credit-score">{{ userInfo.creditScore }}</div>
@@ -227,7 +230,7 @@ onMounted(() => {
           @click="handleStatClick(stat)"
         >
           <div class="stat-icon" :style="{ backgroundColor: stat.color + '15', color: stat.color }">
-            {{ stat.icon }}
+            <component :is="stat.icon" />
           </div>
           <div class="stat-content">
             <span class="stat-value">{{ stat.value }}</span>
@@ -248,7 +251,7 @@ onMounted(() => {
           @click="handleMenuClick(item)"
         >
           <div class="menu-icon" :style="{ backgroundColor: item.color }">
-            {{ item.icon }}
+            <component :is="item.icon" />
           </div>
           <div class="menu-info">
             <span class="menu-label">{{ item.label }}</span>
@@ -280,7 +283,7 @@ onMounted(() => {
         </div>
       </div>
       <div v-else class="empty-favorites">
-        <span class="empty-icon">☆</span>
+        <Star class="empty-icon" />
         <p class="empty-text">还没有收藏的内容，去列表页看看吧~</p>
       </div>
     </section>
@@ -484,6 +487,8 @@ onMounted(() => {
 .credit-icon {
   font-size: 20px;
   color: #fff;
+  width: 20px;
+  height: 20px;
 }
 
 .credit-label {
@@ -556,6 +561,11 @@ onMounted(() => {
   flex-shrink: 0;
 }
 
+.stat-icon :deep(svg) {
+  width: 26px;
+  height: 26px;
+}
+
 .stat-content {
   display: flex;
   flex-direction: column;
@@ -617,6 +627,11 @@ onMounted(() => {
   justify-content: center;
   font-size: 22px;
   flex-shrink: 0;
+}
+
+.menu-icon :deep(svg) {
+  width: 22px;
+  height: 22px;
 }
 
 .menu-info {
@@ -756,6 +771,10 @@ onMounted(() => {
   display: block;
   margin-bottom: 12px;
   opacity: 0.5;
+  width: 48px;
+  height: 48px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .empty-text {

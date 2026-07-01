@@ -9,9 +9,7 @@ const navItems = [
   { path: '/lost-found', label: '失物招领' },
   { path: '/group-buy', label: '拼单搭子' },
   { path: '/errand', label: '跑腿委托' },
-  { path: '/publish', label: '发布信息' },
-  { path: '/message', label: '消息' },
-  { path: '/user', label: '个人中心' },
+  { path: '/publish', label: '发布' },
 ]
 
 const isActive = (path: string) => {
@@ -38,37 +36,29 @@ const isActive = (path: string) => {
 <style scoped>
 .nav-menu {
   display: flex;
-  gap: 8px;
+  gap: var(--space-1);
   align-items: center;
 }
 
 .nav-item {
-  padding: 10px 20px;
-  color: #4b5563;
-  font-size: 16px;
-  font-weight: 500;
+  padding: 6px 12px;
+  color: var(--color-text-secondary);
+  font-size: 13px;
+  font-weight: 400;
   text-decoration: none;
-  border-radius: 10px;
-  transition: all 0.25s ease;
-  position: relative;
+  border-radius: var(--radius-md);
+  transition: all var(--transition-fast);
   white-space: nowrap;
 }
 
 .nav-item:hover {
-  color: #409EFF;
-  background-color: #ecf5ff;
-  transform: translateY(-1px);
+  color: var(--color-text-primary);
+  background-color: var(--color-bg);
 }
 
 .nav-item.active {
-  color: #fff;
-  background: linear-gradient(135deg, #409EFF 0%, #66b1ff 100%);
-  font-weight: 600;
-  box-shadow: 0 4px 12px rgba(64, 158, 255, 0.35);
-}
-
-.nav-item.active:hover {
-  background: linear-gradient(135deg, #409EFF 0%, #66b1ff 100%);
-  color: #fff;
+  color: var(--color-text-primary);
+  background-color: var(--color-bg);
+  font-weight: 500;
 }
 </style>

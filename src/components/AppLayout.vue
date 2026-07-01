@@ -18,7 +18,7 @@ import AppHeader from './AppHeader.vue'
 <style scoped>
 .app-layout {
   min-height: 100vh;
-  background-color: #f5f7fa;
+  background-color: var(--color-bg);
 }
 
 .layout-header {
@@ -27,12 +27,10 @@ import AppHeader from './AppHeader.vue'
 }
 
 .layout-main {
-  padding: 32px 0;
+  padding: 0;
 }
 
 .main-content {
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 0 32px;
+  width: 100%;
 }
 </style>

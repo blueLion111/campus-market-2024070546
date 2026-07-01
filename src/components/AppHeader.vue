@@ -11,21 +11,6 @@ const searchValue = ref('')
 
 const unreadCount = computed(() => 3)
 
-// 头像背景色（根据昵称首字母生成稳定颜色）
-const headerAvatarColor = computed(() => {
-  const colors = [
-    'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-    'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
-    'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
-    'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)',
-    'linear-gradient(135deg, #fa709a 0%, #fee140 100%)',
-    'linear-gradient(135deg, #30cfd0 0%, #330867 100%)',
-  ]
-  const name = userStore.nickname || '用户'
-  const index = name.charCodeAt(0) % colors.length
-  return colors[index]
-})
-
 const handleSearch = () => {
   if (searchValue.value.trim()) {
     router.push(`/list?keyword=${encodeURIComponent(searchValue.value)}`)
@@ -45,12 +30,6 @@ const handleMessage = () => {
   <header class="app-header">
     <div class="header-content">
       <div class="brand" @click="router.push('/home')">
-        <div class="brand-logo">
-          <svg width="36" height="36" viewBox="0 0 32 32" fill="none">
-            <rect width="32" height="32" rx="8" fill="#409EFF"/>
-            <path d="M8 12h16M8 16h12M8 20h8" stroke="white" stroke-width="2" stroke-linecap="round"/>
-          </svg>
-        </div>
         <span class="brand-name">校园轻集市</span>
       </div>
 
@@ -60,7 +39,7 @@ const handleMessage = () => {
         <div class="search-box">
           <el-input
             v-model="searchValue"
-            placeholder="搜索商品、失物、拼单..."
+            placeholder="搜索..."
             class="search-input"
             clearable
             @keyup.enter="handleSearch"
@@ -74,13 +53,12 @@ const handleMessage = () => {
         <div class="header-actions">
           <div class="action-item message-btn" @click="handleMessage">
             <el-icon class="action-icon"><Bell /></el-icon>
-            <span class="badge">{{ unreadCount }}</span>
+            <span v-if="unreadCount > 0" class="badge">{{ unreadCount }}</span>
           </div>
-          <div class="action-item user-avatar" @click="handleProfile">
-            <div class="avatar-circle" :style="{ background: headerAvatarColor }">
+          <div class="user-avatar" @click="handleProfile">
+            <div class="avatar-circle">
               <span class="avatar-text">{{ userStore.nickname.charAt(0) }}</span>
             </div>
-            <span v-if="userStore.nickname" class="user-nickname">{{ userStore.nickname }}</span>
           </div>
         </div>
       </div>
@@ -90,93 +68,80 @@ const handleMessage = () => {
 
 <style scoped>
 .app-header {
-  background: #fff;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
   position: sticky;
   top: 0;
   z-index: 100;
-  border-bottom: 1px solid #f0f2f5;
 }
 
 .header-content {
-  max-width: 1400px;
+  max-width: var(--container-width);
   margin: 0 auto;
-  padding: 0 32px;
+  padding: 0 var(--space-5);
   display: flex;
   align-items: center;
-  gap: 48px;
-  height: 72px;
+  gap: var(--space-8);
+  height: var(--header-height);
 }
 
 .brand {
   display: flex;
   align-items: center;
-  gap: 12px;
   cursor: pointer;
   flex-shrink: 0;
 }
 
-.brand-logo {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
 .brand-name {
-  font-size: 22px;
-  font-weight: 700;
-  color: #409EFF;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--color-text-primary);
   white-space: nowrap;
-  letter-spacing: -0.5px;
-  background: linear-gradient(135deg, #409EFF 0%, #66b1ff 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  letter-spacing: -0.01em;
 }
 
 .header-right {
   display: flex;
   align-items: center;
-  gap: 24px;
+  gap: var(--space-5);
   margin-left: auto;
   flex-shrink: 0;
 }
 
 .search-box {
-  width: 320px;
+  width: 280px;
 }
 
 .search-input :deep(.el-input__wrapper) {
-  border-radius: 24px;
-  background-color: #f5f7fa;
-  box-shadow: none;
-  padding: 4px 16px;
-  transition: all 0.3s ease;
+  background-color: var(--color-bg);
+  box-shadow: 0 0 0 1px var(--color-border) inset;
+  padding: 0 var(--space-3);
+  transition: all var(--transition-fast);
 }
 
 .search-input :deep(.el-input__wrapper:hover) {
-  background-color: #ecf5ff;
-  box-shadow: 0 0 0 2px rgba(64, 158, 255, 0.2);
+  box-shadow: 0 0 0 1px var(--color-text-tertiary) inset;
 }
 
 .search-input :deep(.el-input__wrapper.is-focus) {
-  background-color: #fff;
-  box-shadow: 0 0 0 2px rgba(64, 158, 255, 0.3);
+  background-color: var(--color-surface);
+  box-shadow: 0 0 0 1px var(--color-accent) inset;
 }
 
 .search-input :deep(.el-input__inner) {
-  font-size: 14px;
+  font-size: 13px;
+  height: 32px;
 }
 
 .search-icon {
-  font-size: 16px;
-  margin-right: 4px;
+  font-size: 14px;
+  color: var(--color-text-tertiary);
 }
 
 .header-actions {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: var(--space-2);
 }
 
 .action-item {
@@ -185,85 +150,70 @@ const handleMessage = () => {
   justify-content: center;
   cursor: pointer;
   position: relative;
-  transition: all 0.2s ease;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-md);
+  color: var(--color-text-secondary);
+  transition: all var(--transition-fast);
+}
+
+.action-item:hover {
+  background-color: var(--color-bg);
+  color: var(--color-text-primary);
 }
 
 .action-icon {
-  font-size: 22px;
+  font-size: 18px;
   line-height: 1;
-}
-
-.message-btn {
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  color: #606266;
-}
-
-.message-btn:hover {
-  background-color: #ecf5ff;
-  color: #409EFF;
 }
 
 .badge {
   position: absolute;
-  top: 2px;
-  right: 2px;
-  min-width: 18px;
-  height: 18px;
-  padding: 0 5px;
-  font-size: 11px;
-  font-weight: 600;
+  top: 4px;
+  right: 4px;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  font-size: 10px;
+  font-weight: 500;
   color: #fff;
-  background: #f56c6c;
-  border-radius: 9px;
+  background: var(--color-danger);
+  border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
   line-height: 1;
-  border: 2px solid #fff;
+  border: 2px solid var(--color-surface);
 }
 
 .user-avatar {
   display: flex;
   align-items: center;
-  gap: 8px;
-  height: 44px;
-  padding: 0 8px;
-  border-radius: 22px;
-  overflow: visible;
-  transition: all 0.2s ease;
+  cursor: pointer;
+  padding: 2px;
+  border-radius: var(--radius-md);
+  transition: background-color var(--transition-fast);
 }
 
 .user-avatar:hover {
-  background-color: #f5f7fa;
-  transform: scale(1.02);
-}
-
-.user-nickname {
-  font-size: 14px;
-  font-weight: 500;
-  color: #303133;
-  margin-right: 4px;
+  background-color: var(--color-bg);
 }
 
 .avatar-circle {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-md);
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  border: 2px solid #fff;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  background-color: var(--color-text-primary);
 }
 
 .avatar-text {
-  font-size: 18px;
-  font-weight: 600;
+  font-size: 13px;
+  font-weight: 500;
   color: #fff;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
   line-height: 1;
 }
 </style>

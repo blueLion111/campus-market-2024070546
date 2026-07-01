@@ -30,39 +30,24 @@ const realStats = ref({
 const recentActivities = ref<any[]>([])
 
 const stats = computed(() => [
-  { label: '我的发布', value: realStats.value.published, icon: Document, color: '#409EFF', route: '/profile', tab: 'published' },
-  { label: '我的收藏', value: favoriteStore.total, icon: Star, color: '#E6A23C', route: '/profile', tab: 'favorites' },
-  { label: '我的订单', value: realStats.value.orders, icon: Box, color: '#67C23A', route: '/profile', tab: 'orders' },
-  { label: '消息通知', value: realStats.value.messages, icon: ChatDotRound, color: '#F56C6C', route: '/message', tab: '' },
+  { label: '我的发布', value: realStats.value.published, icon: Document, route: '/profile', tab: 'published' },
+  { label: '我的收藏', value: favoriteStore.total, icon: Star, route: '/profile', tab: 'favorites' },
+  { label: '我的订单', value: realStats.value.orders, icon: Box, route: '/profile', tab: 'orders' },
+  { label: '消息通知', value: realStats.value.messages, icon: ChatDotRound, route: '/message', tab: '' },
 ])
 
 const menuItems = [
-  { icon: Document, label: '我的发布', desc: '查看我发布的所有信息', color: '#ECF5FF', route: '/profile', tab: 'published' },
-  { icon: Star, label: '我的收藏', desc: '收藏的商品和信息', color: '#FDF6EC', route: '/profile', tab: 'favorites' },
-  { icon: Wallet, label: '我的钱包', desc: '余额和交易记录', color: '#F0F9EB', route: '/profile', tab: 'wallet' },
-  { icon: Box, label: '我的订单', desc: '购买和出售的订单', color: '#FEF0F0', route: '/profile', tab: 'orders' },
-  { icon: ChatDotRound, label: '消息中心', desc: '系统消息和私信', color: '#F4F4F5', route: '/message', tab: '' },
-  { icon: UserFilled, label: '我的搭子', desc: '一起拼单的小伙伴', color: '#ECF5FF', route: '/profile', tab: 'partners' },
-  { icon: Medal, label: '信用分', desc: '查看信用等级详情', color: '#FDF6EC', route: '/profile', tab: 'credit' },
-  { icon: Setting, label: '账号设置', desc: '个人资料和隐私设置', color: '#F0F9EB', route: '/profile', tab: 'settings' },
+  { icon: Document, label: '我的发布', route: '/profile', tab: 'published' },
+  { icon: Star, label: '我的收藏', route: '/profile', tab: 'favorites' },
+  { icon: Wallet, label: '我的钱包', route: '/profile', tab: 'wallet' },
+  { icon: Box, label: '我的订单', route: '/profile', tab: 'orders' },
+  { icon: ChatDotRound, label: '消息中心', route: '/message', tab: '' },
+  { icon: UserFilled, label: '我的搭子', route: '/profile', tab: 'partners' },
+  { icon: Medal, label: '信用分', route: '/profile', tab: 'credit' },
+  { icon: Setting, label: '账号设置', route: '/profile', tab: 'settings' },
 ]
 
 const userInfo = computed(() => userStore.currentUser)
-
-// 根据昵称生成稳定的头像背景色
-const avatarColor = computed(() => {
-  const colors = [
-    'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-    'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
-    'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
-    'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)',
-    'linear-gradient(135deg, #fa709a 0%, #fee140 100%)',
-    'linear-gradient(135deg, #30cfd0 0%, #330867 100%)',
-  ]
-  const name = userInfo.value?.nickname || '用户'
-  const index = name.charCodeAt(0) % colors.length
-  return colors[index]
-})
 
 const handleStatClick = (stat: any) => {
   if (stat.route) {
@@ -106,7 +91,7 @@ const fetchAllData = async () => {
     trades.slice(0, 2).forEach((t: any) => {
       activities.push({
         type: 'publish',
-        title: `发布了二手商品：${t.title}`,
+        title: `发布了：${t.title}`,
         time: t.publishTime || '',
       })
     })
@@ -173,675 +158,439 @@ onMounted(() => {
 
 <template>
   <div class="user-center-page">
-    <section class="profile-hero" v-if="userInfo">
-      <div class="hero-bg">
-        <div class="bg-pattern"></div>
-        <div class="bg-circle c1"></div>
-        <div class="bg-circle c2"></div>
-        <div class="bg-circle c3"></div>
-      </div>
-      <div class="profile-content">
-        <div class="profile-left">
-          <div class="avatar-wrapper">
-            <div class="avatar" :style="{ background: avatarColor }">
-              <span class="avatar-text">{{ userInfo.nickname.charAt(0) }}</span>
-            </div>
-            <div class="avatar-badge">
-              <span class="badge-text">{{ userInfo.level }}</span>
-            </div>
+    <div class="container">
+      <section class="profile-section" v-if="userInfo">
+        <div class="profile-header">
+          <div class="avatar">
+            <span class="avatar-text">{{ userInfo.nickname.charAt(0) }}</span>
           </div>
           <div class="user-info">
             <h1 class="user-name">{{ userInfo.nickname }}</h1>
-            <div class="user-detail">
-              <span class="user-college">{{ userInfo.college }}</span>
-              <span class="user-divider">·</span>
-              <span class="user-major">{{ userInfo.major }}</span>
-            </div>
-            <div class="user-meta">
-              <span class="meta-tag">{{ userInfo.grade }}</span>
-              <span class="meta-tag">{{ userInfo.campus }}</span>
-            </div>
+            <p class="user-detail">
+              {{ userInfo.college }} · {{ userInfo.major }} · {{ userInfo.grade }}
+            </p>
+            <p class="user-campus">{{ userInfo.campus }}</p>
           </div>
         </div>
-        <div class="profile-right">
-          <div class="credit-card">
-            <div class="credit-header">
-              <el-icon class="credit-icon"><Star /></el-icon>
-              <span class="credit-label">信用分</span>
-            </div>
-            <div class="credit-score">{{ userInfo.creditScore }}</div>
-            <div class="credit-level">优秀</div>
-            <div class="credit-bar">
-              <div class="credit-fill" :style="{ width: userInfo.creditScore + '%' }"></div>
-            </div>
-          </div>
+        <div class="credit-info">
+          <span class="credit-score">{{ userInfo.creditScore }}</span>
+          <span class="credit-label">信用分</span>
         </div>
-      </div>
-    </section>
-    <el-skeleton v-else :rows="5" animated />
+      </section>
 
-    <section class="stats-section">
-      <div class="stats-grid">
-        <div
-          v-for="stat in stats"
-          :key="stat.label"
-          class="stat-card"
-          style="cursor: pointer"
-          @click="handleStatClick(stat)"
-        >
-          <div class="stat-icon" :style="{ backgroundColor: stat.color + '15', color: stat.color }">
-            <el-icon :size="26"><component :is="stat.icon" /></el-icon>
-          </div>
-          <div class="stat-content">
+      <section class="stats-section">
+        <div class="stats-grid">
+          <div
+            v-for="stat in stats"
+            :key="stat.label"
+            class="stat-item"
+            @click="handleStatClick(stat)"
+          >
+            <el-icon :size="18" class="stat-icon"><component :is="stat.icon" /></el-icon>
             <span class="stat-value">{{ stat.value }}</span>
             <span class="stat-label">{{ stat.label }}</span>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
 
-    <section class="menu-section">
-      <h2 class="section-title">功能入口</h2>
-      <div class="menu-grid">
-        <div
-          v-for="item in menuItems"
-          :key="item.label"
-          class="menu-item"
-          style="cursor: pointer"
-          @click="handleMenuClick(item)"
-        >
-          <div class="menu-icon" :style="{ backgroundColor: item.color }">
-            <el-icon :size="22"><component :is="item.icon" /></el-icon>
+      <section class="menu-section">
+        <h2 class="section-title">功能入口</h2>
+        <div class="menu-list">
+          <div
+            v-for="item in menuItems"
+            :key="item.label"
+            class="menu-item"
+            @click="handleMenuClick(item)"
+          >
+            <div class="menu-left">
+              <el-icon :size="18" class="menu-icon"><component :is="item.icon" /></el-icon>
+              <span class="menu-label">{{ item.label }}</span>
+            </div>
+            <span class="menu-arrow">›</span>
           </div>
-          <div class="menu-info">
-            <span class="menu-label">{{ item.label }}</span>
-            <span class="menu-desc">{{ item.desc }}</span>
-          </div>
-          <div class="menu-arrow">›</div>
         </div>
-      </div>
-    </section>
+      </section>
 
-    <section class="favorites-section">
-      <div class="section-header">
-        <h2 class="section-title">我的收藏 <span class="title-count">({{ favoriteStore.total }})</span></h2>
-        <span class="section-more" @click="router.push({ path: '/profile', query: { tab: 'favorites' } })">查看全部</span>
-      </div>
-      <div v-if="favoriteStore.total > 0" class="favorites-grid">
-        <div
-          v-for="item in favoriteStore.favorites.slice(0, 4)"
-          :key="item.itemType + '-' + item.itemId"
-          class="favorite-card"
-        >
-          <img :src="item.image" :alt="item.title" class="favorite-image" />
-          <div class="favorite-info">
-            <h4 class="favorite-title">{{ item.title }}</h4>
-            <p class="favorite-price" v-if="item.price">¥{{ item.price }}</p>
-            <p class="favorite-type">{{ item.itemType === 'trade' ? '二手交易' : item.itemType }}</p>
-          </div>
-          <button class="remove-btn" @click="handleRemoveFavorite(item.itemId, item.itemType)">取消</button>
+      <section class="favorites-section">
+        <div class="section-header">
+          <h2 class="section-title">我的收藏 <span class="title-count">({{ favoriteStore.total }})</span></h2>
+          <span class="section-more" @click="router.push({ path: '/profile', query: { tab: 'favorites' } })">查看全部</span>
         </div>
-      </div>
-      <div v-else class="empty-favorites">
-        <el-icon class="empty-icon"><Star /></el-icon>
-        <p class="empty-text">还没有收藏的内容，去列表页看看吧~</p>
-      </div>
-    </section>
+        <div v-if="favoriteStore.total > 0" class="favorites-grid">
+          <div
+            v-for="item in favoriteStore.favorites.slice(0, 4)"
+            :key="item.itemType + '-' + item.itemId"
+            class="favorite-card"
+          >
+            <img :src="item.image" :alt="item.title" class="favorite-image" />
+            <div class="favorite-info">
+              <h4 class="favorite-title">{{ item.title }}</h4>
+              <p class="favorite-price" v-if="item.price">¥{{ item.price }}</p>
+            </div>
+            <button class="remove-btn" @click="handleRemoveFavorite(item.itemId, item.itemType)">取消</button>
+          </div>
+        </div>
+        <div v-else class="empty-state">
+          <el-icon :size="32" class="empty-icon"><Star /></el-icon>
+          <p class="empty-text">暂无收藏</p>
+        </div>
+      </section>
 
-    <section class="activity-section">
-      <div class="section-header">
-        <h2 class="section-title">最近动态</h2>
-        <span class="section-more">查看全部</span>
-      </div>
-      <div class="activity-list">
-        <div
-          v-for="activity in recentActivities"
-          :key="activity.title"
-          class="activity-item"
-        >
-          <div class="activity-dot"></div>
-          <div class="activity-content">
+      <section class="activity-section">
+        <div class="section-header">
+          <h2 class="section-title">最近动态</h2>
+        </div>
+        <div class="activity-list">
+          <div
+            v-for="(activity, index) in recentActivities"
+            :key="index"
+            class="activity-item"
+          >
             <span class="activity-title">{{ activity.title }}</span>
             <span class="activity-time">{{ activity.time }}</span>
           </div>
+          <div v-if="recentActivities.length === 0" class="empty-state small">
+            <p class="empty-text">暂无动态</p>
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
+    </div>
   </div>
 </template>
 
 <style scoped>
 .user-center-page {
-  padding-bottom: 48px;
+  min-height: 100vh;
+  background: var(--color-bg);
 }
 
-.profile-hero {
-  position: relative;
-  border-radius: 16px;
-  padding: 48px 56px;
-  margin-bottom: 24px;
-  overflow: hidden;
-  background: linear-gradient(135deg, #409EFF 0%, #66B1FF 40%, #79BBFF 100%);
+.container {
+  max-width: var(--container-width);
+  margin: 0 auto;
+  padding: var(--space-7) var(--space-5);
 }
 
-.hero-bg {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  overflow: hidden;
-}
-
-.bg-pattern {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-image: 
-    radial-gradient(circle at 20% 80%, rgba(255,255,255,0.1) 0%, transparent 50%),
-    radial-gradient(circle at 80% 20%, rgba(255,255,255,0.15) 0%, transparent 40%);
-}
-
-.bg-circle {
-  position: absolute;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.1);
-}
-
-.bg-circle.c1 {
-  width: 200px;
-  height: 200px;
-  top: -80px;
-  right: -50px;
-}
-
-.bg-circle.c2 {
-  width: 120px;
-  height: 120px;
-  bottom: -40px;
-  left: 60%;
-}
-
-.bg-circle.c3 {
-  width: 80px;
-  height: 80px;
-  top: 30%;
-  left: 30%;
-  background: rgba(255, 255, 255, 0.08);
-}
-
-.profile-content {
-  position: relative;
-  z-index: 2;
+.profile-section {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
+  padding: var(--space-6) 0;
+  border-bottom: 1px solid var(--color-border);
+  margin-bottom: var(--space-7);
 }
 
-.profile-left {
+.profile-header {
   display: flex;
   align-items: center;
-  gap: 28px;
-}
-
-.avatar-wrapper {
-  position: relative;
-  flex-shrink: 0;
+  gap: var(--space-5);
 }
 
 .avatar {
-  width: 100px;
-  height: 100px;
-  border-radius: 50%;
-  background: #fff;
-  border: 4px solid rgba(255, 255, 255, 0.3);
+  width: 64px;
+  height: 64px;
+  border-radius: var(--radius-md);
+  background: var(--color-text-primary);
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow: hidden;
-}
-
-.avatar-text {
-  font-size: 42px;
-  font-weight: 700;
-  color: #fff;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-}
-
-.avatar-badge {
-  position: absolute;
-  bottom: -2px;
-  right: -2px;
-  background: linear-gradient(135deg, #E6A23C, #F0C78E);
-  padding: 3px 10px;
-  border-radius: 12px;
-  border: 2px solid #fff;
-}
-
-.badge-text {
-  font-size: 11px;
-  font-weight: 700;
-  color: #fff;
-}
-
-.user-info {
-  color: #fff;
-}
-
-.user-name {
-  font-size: 30px;
-  font-weight: 700;
-  margin: 0 0 10px 0;
-  letter-spacing: -0.5px;
-}
-
-.user-detail {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 12px;
-  font-size: 15px;
-  opacity: 0.95;
-}
-
-.user-divider {
-  opacity: 0.6;
-}
-
-.user-meta {
-  display: flex;
-  gap: 10px;
-}
-
-.meta-tag {
-  font-size: 13px;
-  padding: 4px 12px;
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 14px;
-}
-
-.profile-right {
   flex-shrink: 0;
 }
 
-.credit-card {
-  background: rgba(255, 255, 255, 0.2);
-  backdrop-filter: blur(10px);
-  border-radius: 16px;
-  padding: 24px 32px;
-  text-align: center;
+.avatar-text {
+  font-size: 24px;
+  font-weight: 600;
   color: #fff;
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  line-height: 1;
 }
 
-.credit-header {
+.user-info {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  margin-bottom: 8px;
+  flex-direction: column;
+  gap: var(--space-1);
 }
 
-.credit-icon {
-  font-size: 20px;
-  color: #fff;
-  width: 20px;
-  height: 20px;
+.user-name {
+  font-size: 22px;
+  font-weight: 600;
+  margin: 0;
+  letter-spacing: -0.01em;
 }
 
-.credit-label {
-  font-size: 14px;
-  opacity: 0.9;
+.user-detail {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  margin: 0;
+}
+
+.user-campus {
+  font-size: 12px;
+  color: var(--color-text-tertiary);
+  margin: 0;
+}
+
+.credit-info {
+  text-align: right;
 }
 
 .credit-score {
-  font-size: 42px;
-  font-weight: 700;
+  display: block;
+  font-size: 32px;
+  font-weight: 600;
   line-height: 1.2;
-  margin-bottom: 4px;
+  letter-spacing: -0.01em;
 }
 
-.credit-level {
-  font-size: 14px;
-  opacity: 0.9;
-  margin-bottom: 12px;
-}
-
-.credit-bar {
-  width: 140px;
-  height: 6px;
-  background: rgba(255, 255, 255, 0.3);
-  border-radius: 3px;
-  overflow: hidden;
-}
-
-.credit-fill {
-  height: 100%;
-  background: #fff;
-  border-radius: 3px;
+.credit-label {
+  font-size: 12px;
+  color: var(--color-text-tertiary);
 }
 
 .stats-section {
-  margin-bottom: 24px;
+  margin-bottom: var(--space-7);
 }
 
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 16px;
+  gap: var(--space-4);
 }
 
-.stat-card {
-  background: #fff;
-  border-radius: 12px;
-  padding: 24px;
+.stat-item {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-5);
   display: flex;
-  align-items: center;
-  gap: 16px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
-  transition: all 0.3s ease;
+  flex-direction: column;
+  gap: var(--space-2);
   cursor: pointer;
+  transition: all var(--transition-fast);
 }
 
-.stat-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+.stat-item:hover {
+  border-color: var(--color-text-tertiary);
 }
 
 .stat-icon {
-  width: 56px;
-  height: 56px;
-  border-radius: 14px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 26px;
-  flex-shrink: 0;
-}
-
-.stat-content {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
+  color: var(--color-text-tertiary);
 }
 
 .stat-value {
   font-size: 28px;
-  font-weight: 700;
-  color: #303133;
+  font-weight: 600;
   line-height: 1.2;
+  letter-spacing: -0.01em;
 }
 
 .stat-label {
-  font-size: 14px;
-  color: #909399;
+  font-size: 12px;
+  color: var(--color-text-tertiary);
 }
 
 .menu-section {
-  margin-bottom: 24px;
+  margin-bottom: var(--space-7);
 }
 
 .section-title {
-  font-size: 20px;
-  font-weight: 600;
-  color: #303133;
-  margin: 0 0 16px 0;
+  font-size: 16px;
+  font-weight: 500;
+  margin: 0 0 var(--space-4) 0;
 }
 
-.menu-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 16px;
+.menu-list {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
 }
 
 .menu-item {
-  background: #fff;
-  border-radius: 12px;
-  padding: 20px;
   display: flex;
   align-items: center;
-  gap: 16px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
-  transition: all 0.3s ease;
+  justify-content: space-between;
+  padding: var(--space-4) var(--space-5);
+  border-bottom: 1px solid var(--color-border-light);
   cursor: pointer;
+  transition: background-color var(--transition-fast);
+}
+
+.menu-item:last-child {
+  border-bottom: none;
 }
 
 .menu-item:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+  background-color: var(--color-bg);
+}
+
+.menu-left {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
 }
 
 .menu-icon {
-  width: 48px;
-  height: 48px;
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 22px;
-  flex-shrink: 0;
-}
-
-.menu-info {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  min-width: 0;
+  color: var(--color-text-tertiary);
 }
 
 .menu-label {
-  font-size: 15px;
-  font-weight: 600;
-  color: #303133;
-}
-
-.menu-desc {
-  font-size: 12px;
-  color: #909399;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  font-size: 14px;
+  color: var(--color-text-primary);
 }
 
 .menu-arrow {
-  font-size: 22px;
-  color: #C0C4CC;
+  font-size: 18px;
+  color: var(--color-text-muted);
   font-weight: 300;
-  flex-shrink: 0;
 }
 
 .favorites-section {
-  background: #fff;
-  border-radius: 12px;
-  padding: 24px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
-  margin-bottom: 24px;
-}
-
-.favorites-section .section-title {
-  font-size: 18px;
-  font-weight: 600;
-  color: #303133;
-  margin: 0;
-}
-
-.title-count {
-  font-size: 14px;
-  color: #909399;
-  font-weight: 400;
-}
-
-.favorites-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 16px;
-}
-
-.favorite-card {
-  border: 1px solid #EBEEF5;
-  border-radius: 10px;
-  overflow: hidden;
-  transition: all 0.25s ease;
-  background: #FAFBFC;
-}
-
-.favorite-card:hover {
-  border-color: #409EFF;
-  box-shadow: 0 4px 12px rgba(64, 158, 255, 0.1);
-  transform: translateY(-2px);
-}
-
-.favorite-image {
-  width: 100%;
-  height: 120px;
-  object-fit: cover;
-  display: block;
-}
-
-.favorite-info {
-  padding: 10px 12px;
-}
-
-.favorite-title {
-  font-size: 13px;
-  font-weight: 500;
-  color: #303133;
-  margin: 0 0 6px 0;
-  line-height: 1.4;
-  display: -webkit-box;
-  -webkit-line-clamp: 1;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-.favorite-price {
-  font-size: 15px;
-  font-weight: 600;
-  color: #F56C6C;
-  margin: 0 0 4px 0;
-}
-
-.favorite-type {
-  font-size: 12px;
-  color: #909399;
-  margin: 0;
-}
-
-.remove-btn {
-  display: block;
-  width: calc(100% - 24px);
-  margin: 0 12px 12px 12px;
-  padding: 6px 0;
-  border: 1px solid #DCDFE6;
-  border-radius: 6px;
-  background: #fff;
-  color: #909399;
-  font-size: 12px;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.remove-btn:hover {
-  border-color: #F56C6C;
-  color: #F56C6C;
-  background: #FEF0F0;
-}
-
-.empty-favorites {
-  text-align: center;
-  padding: 40px 0;
-  color: #909399;
-}
-
-.empty-icon {
-  font-size: 48px;
-  display: block;
-  margin-bottom: 12px;
-  opacity: 0.5;
-  width: 48px;
-  height: 48px;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.empty-text {
-  font-size: 14px;
-  margin: 0;
-}
-
-.activity-section {
-  background: #fff;
-  border-radius: 12px;
-  padding: 24px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+  margin-bottom: var(--space-7);
 }
 
 .section-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: var(--space-4);
 }
 
 .section-header .section-title {
   margin: 0;
 }
 
+.title-count {
+  font-size: 13px;
+  color: var(--color-text-tertiary);
+  font-weight: 400;
+}
+
 .section-more {
-  font-size: 14px;
-  color: #409EFF;
+  font-size: 13px;
+  color: var(--color-text-secondary);
   cursor: pointer;
-  transition: color 0.2s;
+  transition: color var(--transition-fast);
 }
 
 .section-more:hover {
-  color: #66B1FF;
+  color: var(--color-text-primary);
+}
+
+.favorites-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-4);
+}
+
+.favorite-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  transition: all var(--transition-fast);
+}
+
+.favorite-card:hover {
+  border-color: var(--color-text-tertiary);
+}
+
+.favorite-image {
+  width: 100%;
+  height: 120px;
+  object-fit: cover;
+}
+
+.favorite-info {
+  padding: var(--space-3);
+}
+
+.favorite-title {
+  font-size: 13px;
+  font-weight: 500;
+  margin: 0 0 var(--space-2) 0;
+  line-height: 1.4;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.favorite-price {
+  font-size: 14px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.remove-btn {
+  display: block;
+  width: calc(100% - 16px);
+  margin: 0 8px 8px 8px;
+  padding: 6px 0;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
+  font-size: 12px;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  font-family: inherit;
+}
+
+.remove-btn:hover {
+  border-color: var(--color-danger);
+  color: var(--color-danger);
+}
+
+.activity-section {
+  margin-bottom: var(--space-7);
 }
 
 .activity-list {
-  display: flex;
-  flex-direction: column;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
 }
 
 .activity-item {
   display: flex;
-  align-items: flex-start;
-  gap: 16px;
-  padding: 14px 0;
-  border-bottom: 1px solid #F2F6FC;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-4) var(--space-5);
+  border-bottom: 1px solid var(--color-border-light);
+  font-size: 13px;
 }
 
 .activity-item:last-child {
   border-bottom: none;
 }
 
-.activity-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: #409EFF;
-  margin-top: 6px;
-  flex-shrink: 0;
-}
-
-.activity-content {
-  flex: 1;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
 .activity-title {
-  font-size: 14px;
-  color: #606266;
+  color: var(--color-text-secondary);
 }
 
 .activity-time {
+  color: var(--color-text-muted);
+  font-size: 12px;
+}
+
+.empty-state {
+  text-align: center;
+  padding: var(--space-7) 0;
+  color: var(--color-text-tertiary);
+}
+
+.empty-state.small {
+  padding: var(--space-5) 0;
+}
+
+.empty-icon {
+  display: block;
+  margin: 0 auto var(--space-3);
+  color: var(--color-text-muted);
+}
+
+.empty-text {
   font-size: 13px;
-  color: #C0C4CC;
-  flex-shrink: 0;
+  margin: 0;
+  color: var(--color-text-tertiary);
 }
 </style>

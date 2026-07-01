@@ -26,29 +26,28 @@ withDefaults(defineProps<Props>(), {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 60px 20px;
+  padding: var(--space-9) var(--space-5);
   text-align: center;
 }
 
 .empty-icon {
-  font-size: 64px;
-  width: 64px;
-  height: 64px;
-  margin-bottom: 16px;
-  opacity: 0.5;
-  color: #c0c4cc;
+  font-size: 40px;
+  width: 40px;
+  height: 40px;
+  margin-bottom: var(--space-4);
+  color: var(--color-text-muted);
 }
 
 .empty-title {
-  font-size: 18px;
-  color: #606266;
-  margin: 0 0 8px 0;
+  font-size: 14px;
+  color: var(--color-text-secondary);
+  margin: 0 0 var(--space-2) 0;
   font-weight: 500;
 }
 
 .empty-desc {
-  font-size: 14px;
-  color: #909399;
+  font-size: 12px;
+  color: var(--color-text-tertiary);
   margin: 0;
 }
 </style>

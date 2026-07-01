@@ -46,66 +46,67 @@ defineProps<Props>()
 
 <style scoped>
 .item-card {
-  background: #fff;
-  border-radius: 12px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
   overflow: hidden;
   cursor: pointer;
-  transition: all 0.3s;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  transition: all var(--transition-base);
   position: relative;
 }
 
 .item-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 24px rgba(64, 158, 255, 0.15);
+  border-color: var(--color-text-tertiary);
 }
 
 .item-tag {
   position: absolute;
-  top: 12px;
-  left: 12px;
-  padding: 4px 10px;
-  border-radius: 12px;
+  top: var(--space-3);
+  left: var(--space-3);
+  padding: 2px 8px;
+  background: rgba(26, 26, 26, 0.85);
   color: #fff;
-  font-size: 12px;
-  font-weight: 500;
+  font-size: 11px;
+  font-weight: 400;
+  border-radius: var(--radius-sm);
   z-index: 2;
 }
 
 .favorite-btn {
   position: absolute;
-  top: 10px;
-  right: 10px;
+  top: var(--space-3);
+  right: var(--space-3);
   z-index: 2;
   cursor: pointer;
 }
 
 .item-image {
-  height: 180px;
+  height: 160px;
   overflow: hidden;
-  background: #f0f2f5;
+  background: var(--color-border-light);
 }
 
 .item-image img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.3s;
+  transition: transform var(--transition-base);
 }
 
 .item-card:hover .item-image img {
-  transform: scale(1.05);
+  transform: scale(1.02);
 }
 
 .item-body {
-  padding: 14px;
+  padding: var(--space-4);
 }
 
 .item-title {
-  font-size: 15px;
-  color: #303133;
-  margin: 0 0 10px 0;
-  line-height: 1.4;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-text-primary);
+  margin: 0 0 var(--space-3) 0;
+  line-height: 1.5;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -115,18 +116,18 @@ defineProps<Props>()
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 10px;
+  margin-bottom: var(--space-3);
 }
 
 .item-price {
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 600;
-  color: #F56C6C;
+  color: var(--color-text-primary);
 }
 
 .item-location {
   font-size: 12px;
-  color: #909399;
+  color: var(--color-text-tertiary);
   display: flex;
   align-items: center;
   gap: 4px;
@@ -137,25 +138,25 @@ defineProps<Props>()
 }
 
 .item-footer {
-  padding-top: 10px;
-  border-top: 1px solid #f5f7fa;
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--color-border-light);
 }
 
 .publisher {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--space-2);
 }
 
 .publisher-avatar {
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  background: #e4e7ed;
+  width: 20px;
+  height: 20px;
+  border-radius: var(--radius-sm);
+  background: var(--color-border);
 }
 
 .publisher-name {
   font-size: 12px;
-  color: #606266;
+  color: var(--color-text-secondary);
 }
 </style>

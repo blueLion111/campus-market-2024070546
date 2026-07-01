@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { getGroupBuys, type GroupBuy } from '../api/groupBuy'
@@ -165,14 +165,15 @@ onMounted(() => {
 
 <style scoped>
 .groupbuy-page {
-  padding-bottom: 48px;
+  background: var(--color-bg);
+  min-height: 100vh;
 }
 
 .hero-section {
-  background: linear-gradient(135deg, #67C23A 0%, #85CE61 50%, #A7D98A 100%);
-  border-radius: 16px;
-  padding: 56px 64px;
-  margin-bottom: 32px;
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+  padding: 80px 0 64px;
+  margin-bottom: 0;
   position: relative;
   overflow: hidden;
 }
@@ -180,32 +181,35 @@ onMounted(() => {
 .hero-content {
   position: relative;
   z-index: 2;
+  max-width: var(--container-width);
+  margin: 0 auto;
+  padding: 0 var(--space-5);
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
 .hero-text {
-  color: #fff;
+  color: var(--color-text-primary);
 }
 
 .hero-title {
-  font-size: 48px;
-  font-weight: 700;
-  margin: 0 0 12px 0;
-  letter-spacing: -1px;
+  font-size: 40px;
+  font-weight: 600;
+  margin: 0 0 var(--space-3) 0;
+  letter-spacing: -0.02em;
 }
 
 .hero-subtitle {
-  font-size: 18px;
-  margin: 0 0 32px 0;
-  opacity: 0.95;
+  font-size: 15px;
+  margin: 0 0 40px 0;
+  color: var(--color-text-tertiary);
 }
 
 .hero-stats {
   display: flex;
   align-items: center;
-  gap: 32px;
+  gap: 48px;
 }
 
 .stat-item {
@@ -216,145 +220,115 @@ onMounted(() => {
 
 .stat-number {
   font-size: 28px;
-  font-weight: 700;
+  font-weight: 600;
+  letter-spacing: -0.01em;
 }
 
 .stat-label {
-  font-size: 14px;
-  opacity: 0.9;
+  font-size: 13px;
+  color: var(--color-text-tertiary);
 }
 
 .stat-divider {
   width: 1px;
-  height: 36px;
-  background: rgba(255, 255, 255, 0.4);
+  height: 32px;
+  background: var(--color-border);
 }
 
 .hero-decor {
-  position: relative;
-  width: 200px;
-  height: 200px;
-}
-
-.decor-circle {
-  position: absolute;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.2);
-}
-
-.decor-circle.c1 {
-  width: 140px;
-  height: 140px;
-  top: 0;
-  right: 0;
-}
-
-.decor-circle.c2 {
-  width: 70px;
-  height: 70px;
-  bottom: 10px;
-  right: 80px;
-}
-
-.decor-circle.c3 {
-  width: 40px;
-  height: 40px;
-  top: 50px;
-  right: 120px;
-}
-
-.decor-icon {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  font-size: 64px;
-  z-index: 3;
+  display: none;
 }
 
 .category-section {
-  background: #fff;
-  border-radius: 12px;
-  padding: 20px 24px;
-  margin-bottom: 24px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+  padding: 24px 0;
+  margin-bottom: 0;
 }
 
 .category-tabs {
   display: flex;
-  gap: 12px;
+  gap: var(--space-2);
   flex-wrap: wrap;
+  max-width: var(--container-width);
+  margin: 0 auto;
+  padding: 0 var(--space-5);
 }
 
 .category-tab {
-  padding: 10px 24px;
-  border-radius: 24px;
-  font-size: 15px;
-  color: #606266;
+  padding: 8px 20px;
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  color: var(--color-text-secondary);
   cursor: pointer;
-  transition: all 0.25s ease;
-  background: #F5F7FA;
+  transition: all var(--transition-fast);
+  background: transparent;
+  border: 1px solid var(--color-border);
 }
 
 .category-tab:hover {
-  color: #67C23A;
-  background: #F0F9EB;
+  border-color: var(--color-text-tertiary);
+  color: var(--color-text-primary);
 }
 
 .category-tab.active {
-  background: #67C23A;
+  background: var(--color-text-primary);
   color: #fff;
+  border-color: var(--color-text-primary);
   font-weight: 500;
 }
 
 .groupbuys-section {
-  margin-top: 24px;
+  max-width: var(--container-width);
+  margin: 0 auto;
+  padding: 48px var(--space-5) 64px;
 }
 
 .section-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 32px;
 }
 
 .section-title {
-  font-size: 22px;
-  font-weight: 600;
-  color: #303133;
+  font-size: 20px;
+  font-weight: 500;
+  color: var(--color-text-primary);
   margin: 0;
+  letter-spacing: -0.01em;
 }
 
 .section-count {
-  font-size: 14px;
-  color: #909399;
+  font-size: 13px;
+  color: var(--color-text-tertiary);
 }
 
 .groupbuys-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 20px;
+  gap: 24px;
 }
 
 .groupbuy-card {
   display: flex;
-  background: #fff;
-  border-radius: 12px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
   overflow: hidden;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
-  transition: all 0.3s ease;
+  transition: all var(--transition-base);
   cursor: pointer;
 }
 
 .groupbuy-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  border-color: var(--color-text-tertiary);
 }
 
 .card-image-wrapper {
   position: relative;
   width: 200px;
   flex-shrink: 0;
+  background: var(--color-border-light);
 }
 
 .card-image {
@@ -367,11 +341,11 @@ onMounted(() => {
   position: absolute;
   top: 12px;
   left: 12px;
-  padding: 4px 12px;
-  border-radius: 16px;
-  font-size: 13px;
-  font-weight: 500;
-  background: rgba(0, 0, 0, 0.6);
+  padding: 3px 8px;
+  border-radius: var(--radius-sm);
+  font-size: 11px;
+  font-weight: 400;
+  background: var(--color-text-primary);
   color: #fff;
 }
 
@@ -383,16 +357,16 @@ onMounted(() => {
 }
 
 .card-title {
-  font-size: 17px;
-  font-weight: 600;
-  color: #303133;
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--color-text-primary);
   margin: 0 0 8px 0;
   line-height: 1.4;
 }
 
 .card-description {
   font-size: 13px;
-  color: #606266;
+  color: var(--color-text-secondary);
   line-height: 1.5;
   margin: 0 0 14px 0;
   display: -webkit-box;
@@ -413,29 +387,29 @@ onMounted(() => {
 }
 
 .progress-text {
-  font-size: 13px;
-  color: #606266;
+  font-size: 12px;
+  color: var(--color-text-secondary);
 }
 
 .progress-percent {
-  font-size: 13px;
-  font-weight: 600;
-  color: #67C23A;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--color-text-primary);
 }
 
 .progress-bar {
   width: 100%;
-  height: 6px;
-  background: #F0F9EB;
-  border-radius: 3px;
+  height: 4px;
+  background: var(--color-border-light);
+  border-radius: var(--radius-sm);
   overflow: hidden;
 }
 
 .progress-fill {
   height: 100%;
-  background: linear-gradient(90deg, #67C23A, #85CE61);
-  border-radius: 3px;
-  transition: width 0.3s ease;
+  background: var(--color-text-primary);
+  border-radius: var(--radius-sm);
+  transition: width var(--transition-base);
 }
 
 .card-meta {
@@ -449,54 +423,53 @@ onMounted(() => {
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 13px;
-  color: #909399;
+  font-size: 12px;
+  color: var(--color-text-tertiary);
 }
 
 .meta-icon {
-  font-size: 14px;
+  font-size: 13px;
 }
 
 .card-footer {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding-top: 14px;
-  border-top: 1px solid #F2F6FC;
+  padding-top: 12px;
+  border-top: 1px solid var(--color-border-light);
 }
 
 .publisher-info {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--space-2);
 }
 
 .publisher-avatar {
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  background: #F5F7FA;
+  width: 20px;
+  height: 20px;
+  border-radius: var(--radius-sm);
+  background: var(--color-border);
 }
 
 .publisher-name {
-  font-size: 13px;
-  color: #606266;
+  font-size: 12px;
+  color: var(--color-text-secondary);
 }
 
 .join-btn {
-  padding: 8px 20px;
-  border: none;
-  background: linear-gradient(135deg, #67C23A, #85CE61);
+  padding: 6px 16px;
+  border: 1px solid var(--color-text-primary);
+  background: var(--color-text-primary);
   color: #fff;
-  border-radius: 20px;
-  font-size: 14px;
+  border-radius: var(--radius-md);
+  font-size: 12px;
   font-weight: 500;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all var(--transition-fast);
 }
 
 .join-btn:hover {
   opacity: 0.9;
-  transform: scale(1.02);
 }
 </style>

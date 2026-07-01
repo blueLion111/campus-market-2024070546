@@ -2,7 +2,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import {
-  ShoppingCart, Search, UserFilled, Star, Bell, Fire, Plus, WarningFilled, Location
+  ShoppingCart, Search, UserFilled, Star, Bell, Sunny, Plus, WarningFilled, Location
 } from '@element-plus/icons-vue'
 import { getTrades } from '../api/trade'
 import { getLostFounds } from '../api/lostFound'
@@ -134,7 +134,7 @@ const categoryIcons: Record<string, any> = {
   secondhand: ShoppingCart,
   lost: Search,
   group: UserFilled,
-  errand: Fire,
+  errand: Sunny,
 }
 
 const categories = ref([
@@ -354,7 +354,7 @@ onMounted(() => {
 
         <div class="sidebar-card hot-card">
           <div class="card-header">
-            <el-icon class="sidebar-icon hot-icon"><Fire /></el-icon>
+            <el-icon class="sidebar-icon hot-icon"><Sunny /></el-icon>
             <span>热门推荐</span>
           </div>
           <div class="hot-list">

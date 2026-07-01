@@ -3,7 +3,7 @@ import { ref, onMounted, computed, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import {
-  Document, Star, Box, ChatDotRound, Wallet, Users, Medal, Setting
+  Document, Star, Box, ChatDotRound, Wallet, UserFilled, Medal, Setting
 } from '@element-plus/icons-vue'
 import { getTrades } from '../api/trade'
 import { getLostFounds } from '../api/lostFound'
@@ -42,7 +42,7 @@ const menuItems = [
   { icon: Wallet, label: '我的钱包', desc: '余额和交易记录', color: '#F0F9EB', route: '/profile', tab: 'wallet' },
   { icon: Box, label: '我的订单', desc: '购买和出售的订单', color: '#FEF0F0', route: '/profile', tab: 'orders' },
   { icon: ChatDotRound, label: '消息中心', desc: '系统消息和私信', color: '#F4F4F5', route: '/message', tab: '' },
-  { icon: Users, label: '我的搭子', desc: '一起拼单的小伙伴', color: '#ECF5FF', route: '/profile', tab: 'partners' },
+  { icon: UserFilled, label: '我的搭子', desc: '一起拼单的小伙伴', color: '#ECF5FF', route: '/profile', tab: 'partners' },
   { icon: Medal, label: '信用分', desc: '查看信用等级详情', color: '#FDF6EC', route: '/profile', tab: 'credit' },
   { icon: Setting, label: '账号设置', desc: '个人资料和隐私设置', color: '#F0F9EB', route: '/profile', tab: 'settings' },
 ]

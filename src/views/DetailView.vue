@@ -2,6 +2,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
+import { ChatDotRound, Wallet, Star } from '@element-plus/icons-vue'
 import { getTradeById } from '../api/trade'
 import { getLostFoundById } from '../api/lostFound'
 import { getGroupBuyById } from '../api/groupBuy'
@@ -414,7 +415,7 @@ onMounted(() => {
 
             <div class="action-buttons">
               <el-button type="primary" size="large" @click="goToMessage">
-                <span class="btn-emoji">💬</span>
+                <el-icon class="btn-icon"><ChatDotRound /></el-icon>
                 联系发布者
               </el-button>
               <el-button
@@ -423,7 +424,7 @@ onMounted(() => {
                 size="large"
                 @click="openBargainDialog"
               >
-                <span class="btn-emoji">💰</span>
+                <el-icon class="btn-icon"><Wallet /></el-icon>
                 发起砍价
               </el-button>
               <el-button
@@ -431,7 +432,7 @@ onMounted(() => {
                 size="large"
                 @click="toggleFavorite"
               >
-                <span class="btn-emoji">{{ itemDetail.isFavorite ? '⭐' : '☆' }}</span>
+                <el-icon class="btn-icon"><Star /></el-icon>
                 {{ itemDetail.isFavorite ? '已收藏' : '收藏' }}
               </el-button>
             </div>
@@ -473,7 +474,7 @@ onMounted(() => {
             </el-button>
 
             <div class="favorite-count">
-              <span class="favorite-star">⭐</span>
+              <el-icon class="favorite-star"><Star /></el-icon>
               <span>{{ itemDetail.favoriteCount || 0 }} 人收藏</span>
             </div>
 
@@ -507,7 +508,7 @@ onMounted(() => {
           <template #prefix>¥</template>
         </el-input>
         <p class="bargain-tip">
-          <span class="bargain-icon">💬</span>
+          <el-icon class="bargain-icon"><ChatDotRound /></el-icon>
           砍价请求将发送至发布者，对方可以选择接受或拒绝
         </p>
       </div>

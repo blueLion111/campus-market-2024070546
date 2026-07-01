@@ -2,6 +2,7 @@
 import { ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
+import { Star } from '@element-plus/icons-vue'
 import { getTrades, type Trade } from '../api/trade'
 import { createFavorite, deleteFavorite } from '../api/favorite'
 import EmptyState from '../components/EmptyState.vue'
@@ -171,7 +172,7 @@ onMounted(() => {
               <span class="badge-discount">省{{ product.originalPrice - product.price }}元</span>
             </div>
             <div class="favorite-btn" @click="handleToggleFavorite($event, product)">
-              <span class="star">{{ favoriteStore.hasItem(product.id, 'trade') ? '⭐' : '☆' }}</span>
+              <el-icon class="star" :class="{ active: favoriteStore.hasItem(product.id, 'trade') }"><Star /></el-icon>
             </div>
           </div>
           <div class="product-info">
@@ -435,6 +436,12 @@ onMounted(() => {
 .favorite-btn .star {
   font-size: 18px;
   line-height: 1;
+  color: #c0c4cc;
+}
+
+.favorite-btn .star.active {
+  color: #F56C6C;
+  fill: #F56C6C;
 }
 
 .product-info {

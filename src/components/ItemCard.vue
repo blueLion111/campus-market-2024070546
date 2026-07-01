@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { Location } from '@element-plus/icons-vue'
+
 interface Props {
   title: string
   image: string
@@ -27,7 +29,8 @@ defineProps<Props>()
       <div class="item-meta">
         <span v-if="price !== undefined" class="item-price">¥{{ price }}</span>
         <span v-if="location" class="item-location">
-          📍 {{ location }}
+          <el-icon class="location-icon"><Location /></el-icon>
+          {{ location }}
         </span>
       </div>
       <div v-if="publisher || $slots.footer" class="item-footer">
@@ -124,6 +127,13 @@ defineProps<Props>()
 .item-location {
   font-size: 12px;
   color: #909399;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.item-location .location-icon {
+  font-size: 12px;
 }
 
 .item-footer {

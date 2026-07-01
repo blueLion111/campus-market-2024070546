@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
+import { Search, Bell } from '@element-plus/icons-vue'
 import AppNav from './AppNav.vue'
 import { useUserStore } from '../stores/user'
 
@@ -65,14 +66,14 @@ const handleMessage = () => {
             @keyup.enter="handleSearch"
           >
             <template #prefix>
-              <span class="search-icon">🔍</span>
+              <el-icon class="search-icon"><Search /></el-icon>
             </template>
           </el-input>
         </div>
 
         <div class="header-actions">
           <div class="action-item message-btn" @click="handleMessage">
-            <span class="action-icon">🔔</span>
+            <el-icon class="action-icon"><Bell /></el-icon>
             <span class="badge">{{ unreadCount }}</span>
           </div>
           <div class="action-item user-avatar" @click="handleProfile">

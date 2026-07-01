@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { Document } from '@element-plus/icons-vue'
+
 interface Props {
   title?: string
   description?: string
@@ -12,7 +14,7 @@ withDefaults(defineProps<Props>(), {
 
 <template>
   <div class="empty-state">
-    <div class="empty-icon">📭</div>
+    <el-icon class="empty-icon"><Document /></el-icon>
     <h3 class="empty-title">{{ title }}</h3>
     <p class="empty-desc">{{ description }}</p>
   </div>
@@ -30,8 +32,11 @@ withDefaults(defineProps<Props>(), {
 
 .empty-icon {
   font-size: 64px;
+  width: 64px;
+  height: 64px;
   margin-bottom: 16px;
   opacity: 0.5;
+  color: #c0c4cc;
 }
 
 .empty-title {

@@ -1,6 +1,9 @@
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, markRaw } from 'vue'
 import { useRouter } from 'vue-router'
+import {
+  ShoppingCart, Search, User, Star, Bell, Fire, Plus, WarningFilled, Location
+} from '@element-plus/icons-vue'
 import { getTrades } from '../api/trade'
 import { getLostFounds } from '../api/lostFound'
 import { getGroupBuys } from '../api/groupBuy'
@@ -127,11 +130,11 @@ const hotPosts = ref([
   { id: 3, title: '代取快递长期接单', views: 142 },
 ])
 
-const categoryIcons: Record<string, string> = {
-  secondhand: '🛒',
-  lost: '🔍',
-  group: '🤝',
-  errand: '🏃',
+const categoryIcons: Record<string, any> = {
+  secondhand: markRaw(ShoppingCart),
+  lost: markRaw(Search),
+  group: markRaw(User),
+  errand: markRaw(Fire),
 }
 
 const categories = ref([
@@ -238,7 +241,7 @@ onMounted(() => {
             @keyup.enter="handleSearch"
           >
             <template #prefix>
-              <span class="search-prefix-icon">🔍</span>
+              <el-icon class="search-prefix-icon"><Search /></el-icon>
             </template>
             <template #append>
               <el-button type="primary" size="large" @click="handleSearch">
@@ -256,7 +259,7 @@ onMounted(() => {
             @click="goToCategory(cat.key)"
           >
             <div class="category-icon" :style="{ backgroundColor: cat.bgColor }">
-              <span class="category-emoji">{{ categoryIcons[cat.key] }}</span>
+              <component :is="categoryIcons[cat.key]" class="category-icon-svg" />
             </div>
             <div class="category-info">
               <h3 class="category-name" :style="{ color: cat.color }">{{ cat.name }}</h3>
@@ -301,7 +304,7 @@ onMounted(() => {
                 <span class="price" v-if="post.price">{{ formatPrice(post.price) }}</span>
                 <span class="price free" v-else>免费</span>
                 <span class="location">
-                  <span class="location-icon">📍</span>
+                  <el-icon class="location-icon"><Location /></el-icon>
                   {{ post.campus }}
                 </span>
               </div>
@@ -314,7 +317,7 @@ onMounted(() => {
 
                 <div class="actions">
                   <span class="favorite-count" :class="{ active: post.isFavorite }">
-                    <span class="favorite-icon">{{ post.isFavorite ? '⭐' : '☆' }}</span>
+                    <el-icon class="favorite-icon"><Star /></el-icon>
                     {{ post.favoriteCount }}
                   </span>
                 </div>
@@ -338,7 +341,7 @@ onMounted(() => {
       <aside class="sidebar">
         <div class="sidebar-card notice-card">
           <div class="card-header">
-            <span class="sidebar-icon notice-icon">🔔</span>
+            <el-icon class="sidebar-icon notice-icon"><Bell /></el-icon>
             <span>校园公告</span>
           </div>
           <div class="notice-list">
@@ -351,7 +354,7 @@ onMounted(() => {
 
         <div class="sidebar-card hot-card">
           <div class="card-header">
-            <span class="sidebar-icon hot-icon">🔥</span>
+            <el-icon class="sidebar-icon hot-icon"><Fire /></el-icon>
             <span>热门推荐</span>
           </div>
           <div class="hot-list">
@@ -365,7 +368,7 @@ onMounted(() => {
 
         <div class="sidebar-card quick-publish">
           <div class="publish-header">
-            <span class="publish-icon">➕</span>
+            <el-icon class="publish-icon"><Plus /></el-icon>
             <span>快速发布</span>
           </div>
           <el-button type="primary" size="large" class="publish-btn" @click="router.push('/publish')">
@@ -389,7 +392,7 @@ onMounted(() => {
 
         <div class="sidebar-card safety-card">
           <div class="card-header">
-            <span class="sidebar-icon safety-icon">⚠️</span>
+            <el-icon class="sidebar-icon safety-icon"><WarningFilled /></el-icon>
             <span>交易安全提示</span>
           </div>
           <ul class="safety-tips">
@@ -550,6 +553,12 @@ onMounted(() => {
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+}
+
+.category-icon-svg {
+  width: 28px;
+  height: 28px;
+  color: #409EFF;
 }
 
 .category-info {

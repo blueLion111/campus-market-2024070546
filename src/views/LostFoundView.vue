@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, markRaw } from 'vue'
 import { useRouter } from 'vue-router'
+import { Search, Box, Location, School, Clock } from '@element-plus/icons-vue'
 import { getLostFounds, type LostFound } from '../api/lostFound'
 import EmptyState from '../components/EmptyState.vue'
 
@@ -11,8 +12,8 @@ const loading = ref(false)
 const items = ref<LostFound[]>([])
 
 const tabs = [
-  { key: 'lost', label: '寻物启事', icon: '🔍' },
-  { key: 'found', label: '失物招领', icon: '📦' },
+  { key: 'lost', label: '寻物启事', icon: markRaw(Search) },
+  { key: 'found', label: '失物招领', icon: markRaw(Box) },
 ]
 
 const fetchLostFounds = async () => {
@@ -68,7 +69,9 @@ onMounted(() => {
           <div class="decor-circle c1"></div>
           <div class="decor-circle c2"></div>
           <div class="decor-circle c3"></div>
-          <div class="decor-icon">🔍</div>
+          <div class="decor-icon">
+            <el-icon :size="64"><Search /></el-icon>
+          </div>
         </div>
       </div>
     </section>
@@ -81,7 +84,9 @@ onMounted(() => {
           :class="['tab-item', { active: activeTab === tab.key }]"
           @click="activeTab = tab.key"
         >
-          <span class="tab-icon">{{ tab.icon }}</span>
+          <span class="tab-icon">
+            <component :is="tab.icon" />
+          </span>
           <span class="tab-label">{{ tab.label }}</span>
         </div>
       </div>
@@ -110,15 +115,15 @@ onMounted(() => {
             <p class="item-description">{{ item.description }}</p>
             <div class="item-meta">
               <div class="meta-item">
-                <span class="meta-icon">📍</span>
+                <el-icon class="meta-icon"><Location /></el-icon>
                 <span class="meta-text">{{ item.location }}</span>
               </div>
               <div class="meta-item">
-                <span class="meta-icon">🏫</span>
+                <el-icon class="meta-icon"><School /></el-icon>
                 <span class="meta-text">{{ item.campus }}</span>
               </div>
               <div class="meta-item">
-                <span class="meta-icon">⏰</span>
+                <el-icon class="meta-icon"><Clock /></el-icon>
                 <span class="meta-text">{{ item.time }}</span>
               </div>
             </div>

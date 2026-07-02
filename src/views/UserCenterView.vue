@@ -3,7 +3,7 @@ import { ref, onMounted, computed, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import {
-  Document, Star, Box, ChatDotRound, Wallet, UserFilled, Medal, Setting
+  Document, Star, Box, ChatDotRound, Wallet, UserFilled, Medal, Setting, User
 } from '@element-plus/icons-vue'
 import { getTrades } from '../api/trade'
 import { getLostFounds } from '../api/lostFound'
@@ -47,7 +47,7 @@ const menuItems = [
   { icon: Setting, label: '账号设置', route: '/profile', tab: 'settings' },
 ]
 
-const userInfo = computed(() => userStore.currentUser)
+const userInfo = computed(() => userStore.currentUser!)
 
 const handleStatClick = (stat: any) => {
   if (stat.route) {
@@ -159,7 +159,19 @@ onMounted(() => {
 <template>
   <div class="user-center-page">
     <div class="container">
-      <section class="profile-section" v-if="userInfo">
+      <section v-if="!userStore.isLoggedIn" class="not-logged-in">
+        <div class="not-logged-in-card">
+          <div class="not-logged-in-icon">
+            <el-icon :size="48"><User /></el-icon>
+          </div>
+          <h2 class="not-logged-in-title">请先登录</h2>
+          <p class="not-logged-in-desc">登录后查看个人资料、收藏信息和发布记录</p>
+          <el-button type="primary" @click="router.push('/login')">去登录</el-button>
+        </div>
+      </section>
+
+      <template v-else>
+      <section class="profile-section">
         <div class="profile-header">
           <div class="avatar">
             <span class="avatar-text">{{ userInfo.nickname.charAt(0) }}</span>
@@ -254,6 +266,7 @@ onMounted(() => {
           </div>
         </div>
       </section>
+      </template>
     </div>
   </div>
 </template>
@@ -592,5 +605,37 @@ onMounted(() => {
   font-size: 13px;
   margin: 0;
   color: var(--color-text-tertiary);
+}
+
+.not-logged-in {
+  padding: var(--space-8) 0;
+}
+
+.not-logged-in-card {
+  max-width: 400px;
+  margin: 0 auto;
+  text-align: center;
+  padding: var(--space-8) var(--space-6);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+}
+
+.not-logged-in-icon {
+  margin-bottom: var(--space-4);
+  color: var(--color-text-muted);
+}
+
+.not-logged-in-title {
+  font-size: 20px;
+  font-weight: 600;
+  margin: 0 0 var(--space-2) 0;
+  color: var(--color-text-primary);
+}
+
+.not-logged-in-desc {
+  font-size: 14px;
+  color: var(--color-text-secondary);
+  margin: 0 0 var(--space-5) 0;
 }
 </style>

@@ -6,6 +6,9 @@ import { Star } from '@element-plus/icons-vue'
 import { getTrades, type Trade } from '../api/trade'
 import { createFavorite, deleteFavorite } from '../api/favorite'
 import EmptyState from '../components/EmptyState.vue'
+import LoadingState from '../components/LoadingState.vue'
+import ErrorState from '../components/ErrorState.vue'
+import SearchBar from '../components/SearchBar.vue'
 import { useFavoriteStore } from '../stores/favorite'
 
 const router = useRouter()
@@ -15,6 +18,9 @@ const currentUserId = 1
 
 const activeCategory = ref('all')
 const loading = ref(false)
+const error = ref(false)
+const errorMsg = ref('')
+const searchKeyword = ref('')
 const products = ref<Trade[]>([])
 
 const categories = [
@@ -28,6 +34,7 @@ const categories = [
 
 const fetchTrades = async () => {
   loading.value = true
+  error.value = false
   try {
     const params = activeCategory.value !== 'all'
       ? { category: activeCategory.value }
@@ -36,20 +43,40 @@ const fetchTrades = async () => {
     products.value = res.data
   } catch (err) {
     console.error('获取二手商品列表失败:', err)
+    error.value = true
+    errorMsg.value = '获取数据失败，请检查网络或服务器是否启动'
   } finally {
     loading.value = false
   }
 }
 
 const filteredProducts = computed(() => {
-  if (activeCategory.value === 'all') {
-    return products.value
+  let result = products.value
+  if (activeCategory.value !== 'all') {
+    result = result.filter(p => p.category === activeCategory.value)
   }
-  return products.value.filter(p => p.category === activeCategory.value)
+  if (searchKeyword.value) {
+    const keyword = searchKeyword.value.toLowerCase()
+    result = result.filter(p =>
+      p.title.toLowerCase().includes(keyword) ||
+      p.description.toLowerCase().includes(keyword) ||
+      p.campus.toLowerCase().includes(keyword) ||
+      p.location.toLowerCase().includes(keyword)
+    )
+  }
+  return result
 })
 
 const handleCategoryChange = (key: string) => {
   activeCategory.value = key
+  fetchTrades()
+}
+
+const handleSearch = (keyword: string) => {
+  searchKeyword.value = keyword
+}
+
+const handleRetry = () => {
   fetchTrades()
 }
 
@@ -159,7 +186,23 @@ onMounted(() => {
         <h2 class="section-title">精选好物</h2>
         <span class="section-count">共 {{ filteredProducts.length }} 件商品</span>
       </div>
-      <div class="products-grid">
+      <div class="search-wrapper">
+        <SearchBar
+          v-model="searchKeyword"
+          @search="handleSearch"
+          placeholder="搜索商品名称、描述、地点..."
+        />
+      </div>
+      <LoadingState v-if="loading" text="商品加载中..." />
+      <ErrorState
+        v-else-if="error"
+        title="加载失败"
+        :description="errorMsg"
+        retry-text="重新加载"
+        @retry="handleRetry"
+      />
+      <EmptyState v-else-if="filteredProducts.length === 0" title="暂无商品" description="换个关键词试试吧~" />
+      <div v-else class="products-grid">
         <div
           v-for="product in filteredProducts"
           :key="product.id"
@@ -191,7 +234,6 @@ onMounted(() => {
           </div>
         </div>
       </div>
-      <EmptyState v-if="!loading && filteredProducts.length === 0" title="暂无商品" description="快来发布第一件闲置物品吧~" />
     </section>
   </div>
 </template>

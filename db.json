@@ -18,7 +18,8 @@
       "messageCount": 3,
       "joinDate": "2024-09-01",
       "phone": "138****8888",
-      "email": "zhangwei@campus.edu"
+      "email": "zhangwei@campus.edu",
+      "password": "123456"
     },
     {
       "id": "2",
@@ -38,7 +39,29 @@
       "messageCount": 12,
       "joinDate": "2023-09-01",
       "phone": "139****6666",
-      "email": "liming@campus.edu"
+      "email": "liming@campus.edu",
+      "password": "123456"
+    },
+    {
+      "username": "zhanghaowen",
+      "password": "123456",
+      "nickname": "lishi",
+      "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=zhanghaowen",
+      "college": "未设置",
+      "major": "未设置",
+      "grade": "2024级",
+      "studentId": "",
+      "campus": "成龙校区",
+      "creditScore": 100,
+      "level": "LV.1",
+      "publishCount": 0,
+      "favoriteCount": 0,
+      "orderCount": 0,
+      "messageCount": 0,
+      "joinDate": "2026-07-02",
+      "phone": "",
+      "email": "",
+      "id": "SU1Kix78nGY"
     }
   ],
   "favorites": [
@@ -49,7 +72,7 @@
       "itemType": "trade",
       "title": "高等数学同济第七版 教材全新未使用",
       "price": 25,
-      "image": "https://picsum.photos/seed/book1/400/400",
+      "image": "https://picsum.photos/seed/math-textbook/400/400",
       "publisher": "张同学",
       "campus": "狮子山校区",
       "favoriteTime": "2026-06-28 10:30",
@@ -62,7 +85,7 @@
       "itemType": "trade",
       "title": "iPad 2021款 64G 9成新 带原装充电器",
       "price": 1899,
-      "image": "https://picsum.photos/seed/ipad/400/400",
+      "image": "https://picsum.photos/seed/ipad-tablet/400/400",
       "publisher": "李同学",
       "campus": "成龙校区",
       "favoriteTime": "2026-06-28 09:15",
@@ -75,7 +98,7 @@
       "itemType": "trade",
       "title": "Nike Air Force 1 42码 穿了两次",
       "price": 399,
-      "image": "https://picsum.photos/seed/shoes/400/400",
+      "image": "https://picsum.photos/seed/white-sneakers/400/400",
       "publisher": "陈同学",
       "campus": "狮子山校区",
       "favoriteTime": "2026-06-27 14:30",
@@ -88,7 +111,7 @@
       "itemType": "groupBuy",
       "title": "喜茶拼单 还差2人 免配送费",
       "price": null,
-      "image": "https://picsum.photos/seed/tea1/400/300",
+      "image": "https://picsum.photos/seed/bubble-milktea/400/300",
       "publisher": "小红同学",
       "campus": "狮子山校区",
       "favoriteTime": "2026-06-28 15:30",
@@ -101,7 +124,7 @@
       "itemType": "errand",
       "title": "代取快递 菜鸟驿站 送到7号楼",
       "price": 5,
-      "image": "https://picsum.photos/seed/express1/400/300",
+      "image": "https://picsum.photos/seed/parcel-delivery/400/300",
       "publisher": "小芳同学",
       "campus": "狮子山校区",
       "favoriteTime": "2026-06-28 15:00",
@@ -122,7 +145,7 @@
       "publishTime": "2026-06-28 10:30",
       "campus": "狮子山校区",
       "location": "图书馆门口",
-      "image": "https://picsum.photos/seed/book1/400/400",
+      "image": "https://picsum.photos/seed/math-textbook/400/400",
       "description": "高等数学同济第七版上下册，全新未使用，原价45元买的，现25元出售。适合大一新生或需要考研复习的同学。",
       "status": "open",
       "viewCount": 156,
@@ -141,7 +164,7 @@
       "publishTime": "2026-06-28 09:15",
       "campus": "成龙校区",
       "location": "宿舍楼下",
-      "image": "https://picsum.photos/seed/ipad/400/400",
+      "image": "https://picsum.photos/seed/ipad-tablet/400/400",
       "description": "iPad 2021款 64G，9成新，带原装充电器和数据线，平时用来上网课，屏幕完好无划痕。",
       "status": "open",
       "viewCount": 328,
@@ -160,7 +183,7 @@
       "publishTime": "2026-06-27 18:20",
       "campus": "狮子山校区",
       "location": "南门车棚",
-      "image": "https://picsum.photos/seed/bike/400/400",
+      "image": "https://picsum.photos/seed/mountain-bike/400/400",
       "description": "捷安特山地自行车，毕业出，骑了两年，送车锁和挡泥板，骑行顺畅，刹车灵敏。",
       "status": "open",
       "viewCount": 215,
@@ -179,7 +202,7 @@
       "publishTime": "2026-06-27 16:45",
       "campus": "成龙校区",
       "location": "8号楼",
-      "image": "https://picsum.photos/seed/desk/400/400",
+      "image": "https://picsum.photos/seed/dorm-desk/400/400",
       "description": "宿舍床上书桌，可折叠，9成新，木质桌面，稳固耐用，放电脑写作业都很方便。",
       "status": "open",
       "viewCount": 98,
@@ -198,7 +221,7 @@
       "publishTime": "2026-06-27 14:30",
       "campus": "狮子山校区",
       "location": "篮球场旁",
-      "image": "https://picsum.photos/seed/shoes/400/400",
+      "image": "https://picsum.photos/seed/white-sneakers/400/400",
       "description": "Nike Air Force 1 白色经典款，42码，只穿了两次，鞋底几乎没有磨损，买大了一码所以出。",
       "status": "open",
       "viewCount": 267,
@@ -217,7 +240,7 @@
       "publishTime": "2026-06-27 11:20",
       "campus": "成龙校区",
       "location": "教学楼C区",
-      "image": "https://picsum.photos/seed/watch/400/400",
+      "image": "https://picsum.photos/seed/fitness-tracker/400/400",
       "description": "小米手环7 NFC版，功能正常，可以刷门禁卡和公交卡，续航大约一周，送原装充电器。",
       "status": "closed",
       "viewCount": 145,
@@ -236,7 +259,7 @@
       "publishTime": "2026-06-26 20:15",
       "campus": "狮子山校区",
       "location": "5号楼",
-      "image": "https://picsum.photos/seed/kettle/400/400",
+      "image": "https://picsum.photos/seed/electric-kettle/400/400",
       "description": "电热水壶1.8L，304不锈钢内胆，烧水快，自动断电，宿舍必备，9成新，毕业出。",
       "status": "open",
       "viewCount": 87,
@@ -255,7 +278,7 @@
       "publishTime": "2026-06-26 15:40",
       "campus": "成龙校区",
       "location": "图书馆",
-      "image": "https://picsum.photos/seed/bag/400/400",
+      "image": "https://picsum.photos/seed/black-backpack/400/400",
       "description": "阿迪达斯双肩背包，大容量，可以装15.6寸电脑，多隔层设计，上学通勤都适用。",
       "status": "open",
       "viewCount": 176,
@@ -276,7 +299,7 @@
       "publisher": "王同学",
       "publisherAvatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=xiaoming",
       "campus": "狮子山校区",
-      "image": "https://picsum.photos/seed/bag1/400/300",
+      "image": "https://picsum.photos/seed/lost-backpack/400/300",
       "status": "open"
     },
     {
@@ -292,7 +315,7 @@
       "publisher": "李同学",
       "publisherAvatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=lili",
       "campus": "成龙校区",
-      "image": "https://picsum.photos/seed/card1/400/300",
+      "image": "https://picsum.photos/seed/student-id-card/400/300",
       "status": "open"
     },
     {
@@ -308,7 +331,7 @@
       "publisher": "张同学",
       "publisherAvatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=zhanghua",
       "campus": "狮子山校区",
-      "image": "https://picsum.photos/seed/earbuds/400/300",
+      "image": "https://picsum.photos/seed/wireless-earbuds/400/300",
       "status": "open"
     },
     {
@@ -324,7 +347,7 @@
       "publisher": "赵同学",
       "publisherAvatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=zhaolei",
       "campus": "成龙校区",
-      "image": "https://picsum.photos/seed/keys1/400/300",
+      "image": "https://picsum.photos/seed/keychain-keys/400/300",
       "status": "closed"
     },
     {
@@ -340,7 +363,7 @@
       "publisher": "李同学",
       "publisherAvatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=lixin",
       "campus": "狮子山校区",
-      "image": "https://picsum.photos/seed/idcard/400/300",
+      "image": "https://picsum.photos/seed/student-card/400/300",
       "status": "open"
     },
     {
@@ -356,7 +379,7 @@
       "publisher": "陈同学",
       "publisherAvatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=chenyu",
       "campus": "狮子山校区",
-      "image": "https://picsum.photos/seed/umbrella/400/300",
+      "image": "https://picsum.photos/seed/blue-umbrella/400/300",
       "status": "open"
     }
   ],
@@ -374,7 +397,7 @@
       "publisher": "小红同学",
       "publisherAvatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=xiaohong",
       "publishTime": "2026-06-28 15:30",
-      "image": "https://picsum.photos/seed/tea1/400/300",
+      "image": "https://picsum.photos/seed/bubble-milktea/400/300",
       "status": "open"
     },
     {
@@ -390,7 +413,7 @@
       "publisher": "小明同学",
       "publisherAvatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=xiaoming",
       "publishTime": "2026-06-28 11:00",
-      "image": "https://picsum.photos/seed/food1/400/300",
+      "image": "https://picsum.photos/seed/fast-food-meal/400/300",
       "status": "closed"
     },
     {
@@ -406,7 +429,7 @@
       "publisher": "小李同学",
       "publisherAvatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=xiaoli",
       "publishTime": "2026-06-28 08:00",
-      "image": "https://picsum.photos/seed/study1/400/300",
+      "image": "https://picsum.photos/seed/library-study/400/300",
       "status": "open"
     },
     {
@@ -422,7 +445,7 @@
       "publisher": "小张同学",
       "publisherAvatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=xiaozhang",
       "publishTime": "2026-06-27 20:00",
-      "image": "https://picsum.photos/seed/sports1/400/300",
+      "image": "https://picsum.photos/seed/badminton-sport/400/300",
       "status": "open"
     },
     {
@@ -438,7 +461,7 @@
       "publisher": "小王同学",
       "publisherAvatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=xiaowang",
       "publishTime": "2026-06-28 09:00",
-      "image": "https://picsum.photos/seed/coffee1/400/300",
+      "image": "https://picsum.photos/seed/coffee-cup/400/300",
       "status": "closed"
     },
     {
@@ -454,7 +477,7 @@
       "publisher": "小赵同学",
       "publisherAvatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=xiaozhao",
       "publishTime": "2026-06-27 16:00",
-      "image": "https://picsum.photos/seed/math1/400/300",
+      "image": "https://picsum.photos/seed/exam-study/400/300",
       "status": "open"
     },
     {
@@ -470,7 +493,7 @@
       "publisher": "小陈同学",
       "publisherAvatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=xiaochen",
       "publishTime": "2026-06-27 14:00",
-      "image": "https://picsum.photos/seed/gym1/400/300",
+      "image": "https://picsum.photos/seed/gym-fitness/400/300",
       "status": "open"
     },
     {
@@ -486,7 +509,7 @@
       "publisher": "小刘同学",
       "publisherAvatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=xiaoliu",
       "publishTime": "2026-06-27 10:00",
-      "image": "https://picsum.photos/seed/hotpot/400/300",
+      "image": "https://picsum.photos/seed/hotpot-dinner/400/300",
       "status": "open"
     }
   ],
@@ -505,7 +528,7 @@
       "publisherAvatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=xiaofang",
       "publishTime": "2026-06-28 15:00",
       "campus": "狮子山校区",
-      "image": "https://picsum.photos/seed/express1/400/300",
+      "image": "https://picsum.photos/seed/parcel-delivery/400/300",
       "status": "open"
     },
     {
@@ -522,7 +545,7 @@
       "publisherAvatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=xiaolei",
       "publishTime": "2026-06-28 14:00",
       "campus": "成龙校区",
-      "image": "https://picsum.photos/seed/tea2/400/300",
+      "image": "https://picsum.photos/seed/boba-tea/400/300",
       "status": "open"
     },
     {
@@ -539,7 +562,7 @@
       "publisherAvatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=xiaomei",
       "publishTime": "2026-06-28 13:00",
       "campus": "狮子山校区",
-      "image": "https://picsum.photos/seed/print1/400/300",
+      "image": "https://picsum.photos/seed/printer-paper/400/300",
       "status": "accepted"
     },
     {
@@ -556,7 +579,7 @@
       "publisherAvatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=xiaoting",
       "publishTime": "2026-06-28 12:00",
       "campus": "成龙校区",
-      "image": "https://picsum.photos/seed/express2/400/300",
+      "image": "https://picsum.photos/seed/shipping-box/400/300",
       "status": "open"
     },
     {
@@ -573,7 +596,7 @@
       "publisherAvatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=xiaobin",
       "publishTime": "2026-06-28 10:00",
       "campus": "狮子山校区",
-      "image": "https://picsum.photos/seed/paper1/400/300",
+      "image": "https://picsum.photos/seed/office-form/400/300",
       "status": "accepted"
     },
     {
@@ -590,7 +613,7 @@
       "publisherAvatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=xiaojie",
       "publishTime": "2026-06-28 11:30",
       "campus": "成龙校区",
-      "image": "https://picsum.photos/seed/food2/400/300",
+      "image": "https://picsum.photos/seed/chicken-rice/400/300",
       "status": "done"
     },
     {
@@ -607,7 +630,7 @@
       "publisherAvatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=xiaodan",
       "publishTime": "2026-06-28 09:00",
       "campus": "狮子山校区",
-      "image": "https://picsum.photos/seed/express3/400/300",
+      "image": "https://picsum.photos/seed/package-locker/400/300",
       "status": "open"
     },
     {
@@ -624,17 +647,17 @@
       "publisherAvatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=xiaoyang",
       "publishTime": "2026-06-28 08:00",
       "campus": "成龙校区",
-      "image": "https://picsum.photos/seed/book2/400/300",
+      "image": "https://picsum.photos/seed/english-textbook/400/300",
       "status": "open"
     }
   ],
   "conversations": [
     {
-      "id": 1,
+      "id": "1",
       "itemId": 2,
       "itemType": "trade",
       "itemTitle": "iPad 2021款 64G 9成新 带原装充电器",
-      "itemImage": "https://picsum.photos/seed/ipad/400/400",
+      "itemImage": "https://picsum.photos/seed/ipad-tablet/400/400",
       "buyerId": 1,
       "sellerId": 2,
       "otherUserId": 2,
@@ -646,11 +669,11 @@
       "currentUserId": 1
     },
     {
-      "id": 2,
+      "id": "2",
       "itemId": 5,
       "itemType": "trade",
       "itemTitle": "Nike Air Force 1 42码 穿了两次",
-      "itemImage": "https://picsum.photos/seed/shoes/400/400",
+      "itemImage": "https://picsum.photos/seed/white-sneakers/400/400",
       "buyerId": 1,
       "sellerId": 3,
       "otherUserId": 3,
@@ -662,11 +685,11 @@
       "currentUserId": 1
     },
     {
-      "id": 3,
+      "id": "3",
       "itemId": 1,
       "itemType": "lostFound",
       "itemTitle": "丢失黑色双肩包 内有笔记本电脑",
-      "itemImage": "https://picsum.photos/seed/bag1/400/300",
+      "itemImage": "https://picsum.photos/seed/lost-backpack/400/300",
       "buyerId": 1,
       "sellerId": 4,
       "otherUserId": 4,
@@ -678,11 +701,11 @@
       "currentUserId": 1
     },
     {
-      "id": 4,
+      "id": "4",
       "itemId": 1,
       "itemType": "errand",
       "itemTitle": "代取快递 菜鸟驿站 送到7号楼",
-      "itemImage": "https://picsum.photos/seed/express1/400/300",
+      "itemImage": "https://picsum.photos/seed/parcel-delivery/400/300",
       "buyerId": 1,
       "sellerId": 5,
       "otherUserId": 5,
@@ -696,7 +719,7 @@
   ],
   "messages": [
     {
-      "id": 1,
+      "id": "1",
       "conversationId": 1,
       "senderId": 1,
       "content": "你好，这个iPad还在吗？",
@@ -704,7 +727,7 @@
       "isMe": true
     },
     {
-      "id": 2,
+      "id": "2",
       "conversationId": 1,
       "senderId": 2,
       "content": "在的，还没出掉",
@@ -712,7 +735,7 @@
       "isMe": false
     },
     {
-      "id": 3,
+      "id": "3",
       "conversationId": 1,
       "senderId": 1,
       "content": "可以便宜点吗？我是学生",
@@ -720,7 +743,7 @@
       "isMe": true
     },
     {
-      "id": 4,
+      "id": "4",
       "conversationId": 1,
       "senderId": 2,
       "content": "最低1800，原装充电器都在，9成新",
@@ -728,7 +751,7 @@
       "isMe": false
     },
     {
-      "id": 5,
+      "id": "5",
       "conversationId": 1,
       "senderId": 1,
       "content": "行，那什么时候方便交易？",
@@ -736,7 +759,7 @@
       "isMe": true
     },
     {
-      "id": 6,
+      "id": "6",
       "conversationId": 1,
       "senderId": 2,
       "content": "明天下午可以吗？",
@@ -744,7 +767,7 @@
       "isMe": false
     },
     {
-      "id": 7,
+      "id": "7",
       "conversationId": 1,
       "senderId": 2,
       "content": "好的，那明天下午图书馆门口见",
@@ -752,7 +775,7 @@
       "isMe": false
     },
     {
-      "id": 8,
+      "id": "8",
       "conversationId": 2,
       "senderId": 1,
       "content": "这双鞋还在吗？",
@@ -760,7 +783,7 @@
       "isMe": true
     },
     {
-      "id": 9,
+      "id": "9",
       "conversationId": 2,
       "senderId": 3,
       "content": "鞋子还在的，随时可以看货",
@@ -768,7 +791,7 @@
       "isMe": false
     },
     {
-      "id": 10,
+      "id": "10",
       "conversationId": 3,
       "senderId": 4,
       "content": "你好，我好像捡到你的包了",
@@ -776,7 +799,7 @@
       "isMe": false
     },
     {
-      "id": 11,
+      "id": "11",
       "conversationId": 3,
       "senderId": 1,
       "content": "真的吗！太感谢了！里面有我的笔记本电脑",
@@ -784,7 +807,7 @@
       "isMe": true
     },
     {
-      "id": 12,
+      "id": "12",
       "conversationId": 3,
       "senderId": 4,
       "content": "对，是黑色双肩包，我在图书馆捡到的",
@@ -792,7 +815,7 @@
       "isMe": false
     },
     {
-      "id": 13,
+      "id": "13",
       "conversationId": 3,
       "senderId": 1,
       "content": "太感谢你了！明天我过来拿",
@@ -800,7 +823,7 @@
       "isMe": true
     },
     {
-      "id": 14,
+      "id": "14",
       "conversationId": 4,
       "senderId": 1,
       "content": "你好，能现在帮我取快递吗？",
@@ -808,7 +831,7 @@
       "isMe": true
     },
     {
-      "id": 15,
+      "id": "15",
       "conversationId": 4,
       "senderId": 5,
       "content": "可以的，快递号发我一下",
@@ -816,7 +839,7 @@
       "isMe": false
     },
     {
-      "id": 16,
+      "id": "16",
       "conversationId": 4,
       "senderId": 5,
       "content": "好的，大概10分钟后到",

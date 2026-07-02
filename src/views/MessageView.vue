@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, nextTick, onMounted, computed, watch } from 'vue'
+import { ref, nextTick, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { getConversations, getMessages, createMessage, type Conversation, type Message } from '../api/message'
 

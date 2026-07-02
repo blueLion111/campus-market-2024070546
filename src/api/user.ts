@@ -19,6 +19,19 @@ export interface User {
   joinDate: string
   phone: string
   email: string
+  password?: string
+}
+
+export interface LoginParams {
+  username: string
+  password: string
+}
+
+export interface RegisterParams {
+  username: string
+  password: string
+  nickname: string
+  campus: string
 }
 
 export const getUsers = () => {
@@ -27,6 +40,10 @@ export const getUsers = () => {
 
 export const getUserById = (id: number) => {
   return http.get<User>(`/users/${id}`)
+}
+
+export const getUserByUsername = (username: string) => {
+  return http.get<User[]>(`/users?username=${username}`)
 }
 
 export const createUser = (data: Partial<User>) => {

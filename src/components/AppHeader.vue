@@ -1,12 +1,15 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
+import { ElMessage } from 'element-plus'
 import { Search, Bell } from '@element-plus/icons-vue'
 import AppNav from './AppNav.vue'
 import { useUserStore } from '../stores/user'
+import { useFavoriteStore } from '../stores/favorite'
 
 const router = useRouter()
 const userStore = useUserStore()
+const favoriteStore = useFavoriteStore()
 const searchValue = ref('')
 
 const unreadCount = computed(() => 3)
@@ -18,11 +21,22 @@ const handleSearch = () => {
 }
 
 const handleProfile = () => {
+  if (!userStore.isLoggedIn) {
+    router.push('/login')
+    return
+  }
   router.push('/user')
 }
 
 const handleMessage = () => {
   router.push('/message')
+}
+
+const handleLogout = () => {
+  userStore.logout()
+  favoriteStore.clear()
+  ElMessage.success('已退出登录')
+  router.push('/login')
 }
 </script>
 
@@ -57,8 +71,14 @@ const handleMessage = () => {
           </div>
           <div class="user-avatar" @click="handleProfile">
             <div class="avatar-circle">
-              <span class="avatar-text">{{ userStore.nickname.charAt(0) }}</span>
+              <span class="avatar-text">{{ userStore.isLoggedIn ? userStore.nickname.charAt(0) : '?' }}</span>
             </div>
+          </div>
+          <div v-if="userStore.isLoggedIn" class="logout-btn" @click="handleLogout">
+            退出
+          </div>
+          <div v-else class="login-btn" @click="router.push('/login')">
+            登录
           </div>
         </div>
       </div>
@@ -215,5 +235,33 @@ const handleMessage = () => {
   font-weight: 500;
   color: #fff;
   line-height: 1;
+}
+
+.login-btn,
+.logout-btn {
+  padding: 6px 14px;
+  font-size: 13px;
+  cursor: pointer;
+  border-radius: var(--radius-md);
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.login-btn {
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-border);
+}
+
+.login-btn:hover {
+  border-color: var(--color-text-secondary);
+}
+
+.logout-btn {
+  color: var(--color-text-tertiary);
+}
+
+.logout-btn:hover {
+  color: var(--color-text-primary);
 }
 </style>

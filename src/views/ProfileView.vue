@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
+import { ElMessage } from 'element-plus'
 import { getTrades } from '@/api/trade'
 import { getLostFounds } from '@/api/lostFound'
 import { getGroupBuys } from '@/api/groupBuy'
@@ -14,7 +15,7 @@ import { getUserById, type User } from '@/api/user'
 import {
   Document, Star, Wallet as WalletIcon, Box, UserFilled, Medal, Setting,
   School, Location, Edit, Plus, InfoFilled, MagicStick,
-  ShoppingCart, Sell
+  ShoppingCart
 } from '@element-plus/icons-vue'
 
 const router = useRouter()
@@ -156,6 +157,24 @@ const creditLevel = computed(() => {
   if (score >= 60) return { text: '一般', color: '#e6a23c' }
   return { text: '较差', color: '#f56c6c' }
 })
+
+const avatarUrlInput = ref('')
+
+const handleAvatarUpload = (url: string) => {
+  const trimmed = url.trim()
+  if (!trimmed) {
+    ElMessage.warning('请输入头像地址')
+    return
+  }
+  if (!/^https?:\/\//.test(trimmed)) {
+    ElMessage.warning('请输入有效的图片 URL（以 http:// 或 https:// 开头）')
+    return
+  }
+  if (userInfo.value) {
+    userInfo.value.avatar = trimmed
+    ElMessage.success('头像已更新')
+  }
+}
 </script>
 
 <template>
@@ -198,8 +217,8 @@ const creditLevel = computed(() => {
         </el-card>
 
         <div class="function-grid">
-          <el-card shadow="hover" class="func-card" @click="switchTab('published')">
-            <div class="func-icon" style="background: #ecf5ff; color: #409eff">
+          <el-card shadow="never" class="func-card" @click="switchTab('published')">
+            <div class="func-icon">
               <el-icon :size="24"><Document /></el-icon>
             </div>
             <div class="func-info">
@@ -208,8 +227,8 @@ const creditLevel = computed(() => {
             </div>
           </el-card>
 
-          <el-card shadow="hover" class="func-card" @click="switchTab('favorites')">
-            <div class="func-icon" style="background: #fef0f0; color: #f56c6c">
+          <el-card shadow="never" class="func-card" @click="switchTab('favorites')">
+            <div class="func-icon">
               <el-icon :size="24"><Star /></el-icon>
             </div>
             <div class="func-info">
@@ -218,8 +237,8 @@ const creditLevel = computed(() => {
             </div>
           </el-card>
 
-          <el-card shadow="hover" class="func-card" @click="switchTab('orders')">
-            <div class="func-icon" style="background: #f0f9eb; color: #67c23a">
+          <el-card shadow="never" class="func-card" @click="switchTab('orders')">
+            <div class="func-icon">
               <el-icon :size="24"><ShoppingCart /></el-icon>
             </div>
             <div class="func-info">
@@ -228,8 +247,8 @@ const creditLevel = computed(() => {
             </div>
           </el-card>
 
-          <el-card shadow="hover" class="func-card" @click="switchTab('wallet')">
-            <div class="func-icon" style="background: #fdf6ec; color: #e6a23c">
+          <el-card shadow="never" class="func-card" @click="switchTab('wallet')">
+            <div class="func-icon">
               <el-icon :size="24"><WalletIcon /></el-icon>
             </div>
             <div class="func-info">
@@ -238,8 +257,8 @@ const creditLevel = computed(() => {
             </div>
           </el-card>
 
-          <el-card shadow="hover" class="func-card" @click="switchTab('partners')">
-            <div class="func-icon" style="background: #ecf5ff; color: #409eff">
+          <el-card shadow="never" class="func-card" @click="switchTab('partners')">
+            <div class="func-icon">
               <el-icon :size="24"><UserFilled /></el-icon>
             </div>
             <div class="func-info">
@@ -248,8 +267,8 @@ const creditLevel = computed(() => {
             </div>
           </el-card>
 
-          <el-card shadow="hover" class="func-card" @click="switchTab('credit')">
-            <div class="func-icon" style="background: #fef0f0; color: #f56c6c">
+          <el-card shadow="never" class="func-card" @click="switchTab('credit')">
+            <div class="func-icon">
               <el-icon :size="24"><Medal /></el-icon>
             </div>
             <div class="func-info">
@@ -258,8 +277,8 @@ const creditLevel = computed(() => {
             </div>
           </el-card>
 
-          <el-card shadow="hover" class="func-card" @click="router.push('/publish')">
-            <div class="func-icon" style="background: #f0f9eb; color: #67c23a">
+          <el-card shadow="never" class="func-card" @click="router.push('/publish')">
+            <div class="func-icon">
               <el-icon :size="24"><Plus /></el-icon>
             </div>
             <div class="func-info">
@@ -268,8 +287,8 @@ const creditLevel = computed(() => {
             </div>
           </el-card>
 
-          <el-card shadow="hover" class="func-card" @click="switchTab('settings')">
-            <div class="func-icon" style="background: #f4f4f5; color: #909399">
+          <el-card shadow="never" class="func-card" @click="switchTab('settings')">
+            <div class="func-icon">
               <el-icon :size="24"><Setting /></el-icon>
             </div>
             <div class="func-info">
@@ -289,7 +308,7 @@ const creditLevel = computed(() => {
                   class="list-item"
                   @click="goToDetail(item)"
                 >
-                  <el-image :src="item.image" style="width: 100px; height: 100px; border-radius: 10px; flex-shrink: 0" fit="cover" />
+                  <el-image :src="item.image" class="item-image" fit="cover" />
                   <div class="item-info">
                     <div class="item-header">
                       <el-tag :color="item.typeColor" effect="dark" size="small">{{ item.type }}</el-tag>
@@ -357,7 +376,7 @@ const creditLevel = computed(() => {
                     class="list-item"
                     @click="goToDetail(order)"
                   >
-                    <el-image :src="order.image" style="width: 100px; height: 100px; border-radius: 10px; flex-shrink: 0" fit="cover" />
+                    <el-image :src="order.image" class="item-image" fit="cover" />
                     <div class="item-info">
                       <div class="item-header">
                         <el-tag type="info" size="small">{{ order.typeName }}</el-tag>
@@ -498,7 +517,15 @@ const creditLevel = computed(() => {
                 <el-form label-width="100px" class="settings-form">
                   <el-form-item label="头像">
                     <el-avatar :size="64" :src="userInfo.avatar" />
-                    <el-button type="primary" link style="margin-left: 16px">更换头像</el-button>
+                    <div class="avatar-upload-row">
+                      <el-input
+                        v-model="avatarUrlInput"
+                        placeholder="输入头像图片 URL"
+                        size="default"
+                        @keyup.enter="handleAvatarUpload(avatarUrlInput)"
+                      />
+                      <el-button type="primary" @click="handleAvatarUpload(avatarUrlInput)">更换</el-button>
+                    </div>
                   </el-form-item>
                   <el-form-item label="昵称">
                     <el-input v-model="userInfo.nickname" style="width: 300px" />
@@ -539,7 +566,7 @@ const creditLevel = computed(() => {
         <el-card shadow="never" class="sidebar-card">
           <template #header>
             <div class="sidebar-header">
-              <el-icon color="#409eff"><InfoFilled /></el-icon>
+              <el-icon class="sidebar-icon"><InfoFilled /></el-icon>
               <span>账户信息</span>
             </div>
           </template>
@@ -565,7 +592,7 @@ const creditLevel = computed(() => {
             </div>
             <div class="info-row">
               <span class="info-label">钱包余额</span>
-              <span class="info-value" style="color: #f56c6c; font-weight: 600">¥{{ wallet?.balance?.toFixed(2) || '0.00' }}</span>
+              <span class="info-value wallet-balance-text">¥{{ wallet?.balance?.toFixed(2) || '0.00' }}</span>
             </div>
           </div>
         </el-card>
@@ -573,7 +600,7 @@ const creditLevel = computed(() => {
         <el-card shadow="never" class="sidebar-card tips-card">
           <template #header>
             <div class="sidebar-header">
-              <el-icon color="#67c23a"><MagicStick /></el-icon>
+              <el-icon class="sidebar-icon"><MagicStick /></el-icon>
               <span>使用建议</span>
             </div>
           </template>
@@ -593,17 +620,21 @@ const creditLevel = computed(() => {
 .profile-page {
   display: flex;
   flex-direction: column;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
 }
 
 .page-title {
   font-size: 20px;
-  color: #303133;
-  margin: 0 0 20px 0;
+  font-weight: 500;
+  color: #1A1A1A;
+  margin: 0 0 24px 0;
+  letter-spacing: 0.5px;
 }
 
 .profile-container {
   display: flex;
   gap: 24px;
+  align-items: flex-start;
 }
 
 .main-content {
@@ -615,24 +646,26 @@ const creditLevel = computed(() => {
 }
 
 .user-card {
-  border-radius: 16px;
-  background: linear-gradient(135deg, #409eff 0%, #66b1ff 100%);
+  border-radius: 6px;
+  background: #ffffff;
+  border: 1px solid #BFBFBF;
 }
 
 .user-card :deep(.el-card__body) {
-  padding: 32px;
+  padding: 28px 32px;
 }
 
 .user-info {
   display: flex;
   align-items: center;
   gap: 24px;
-  color: #fff;
+  color: #1A1A1A;
 }
 
 .user-avatar {
-  border: 4px solid rgba(255, 255, 255, 0.3);
-  background: #fff;
+  border: 1px solid #BFBFBF;
+  background: #f5f5f5;
+  border-radius: 4px;
 }
 
 .user-details {
@@ -640,16 +673,18 @@ const creditLevel = computed(() => {
 }
 
 .user-name {
-  font-size: 26px;
-  margin: 0 0 12px 0;
+  font-size: 22px;
+  margin: 0 0 10px 0;
   font-weight: 600;
+  color: #1A1A1A;
+  letter-spacing: 0.5px;
 }
 
 .user-college,
 .user-campus {
-  font-size: 14px;
+  font-size: 13px;
   margin: 0 0 6px 0;
-  opacity: 0.9;
+  color: #666;
   display: flex;
   align-items: center;
   gap: 6px;
@@ -658,65 +693,78 @@ const creditLevel = computed(() => {
 .user-stats {
   display: flex;
   align-items: center;
-  gap: 32px;
-  margin-top: 16px;
+  gap: 40px;
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid #BFBFBF;
 }
 
 .stat {
   display: flex;
   flex-direction: column;
   gap: 4px;
+  cursor: pointer;
+  transition: opacity 0.15s ease;
+}
+
+.stat:hover {
+  opacity: 0.7;
 }
 
 .stat-value {
-  font-size: 24px;
+  font-size: 22px;
   font-weight: 600;
-  color: #ffffff;
+  color: #1A1A1A;
 }
 
 .stat-label {
   font-size: 12px;
-  color: rgba(255, 255, 255, 0.9);
+  color: #999;
+  letter-spacing: 0.5px;
 }
 
 .user-actions {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
 }
 
 .function-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 16px;
+  gap: 12px;
 }
 
 .func-card {
-  border-radius: 12px;
+  border-radius: 6px;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+  border: 1px solid #BFBFBF;
 }
 
 .func-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border-color: #1A1A1A;
+  background: #fafafa;
 }
 
 .func-card :deep(.el-card__body) {
   display: flex;
   align-items: center;
   gap: 14px;
-  padding: 18px;
+  padding: 18px 20px;
 }
 
 .func-icon {
-  width: 52px;
-  height: 52px;
-  border-radius: 10px;
+  width: 40px;
+  height: 40px;
+  border-radius: 4px;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  background: #f5f5f5;
+  color: #666;
+  border: 1px solid #BFBFBF;
 }
 
 .func-info {
@@ -728,37 +776,47 @@ const creditLevel = computed(() => {
 .func-title {
   font-size: 14px;
   font-weight: 500;
-  color: #303133;
+  color: #1A1A1A;
 }
 
 .func-desc {
   font-size: 12px;
-  color: #909399;
+  color: #999;
 }
 
 .tab-card {
-  border-radius: 12px;
+  border-radius: 6px;
+  border: 1px solid #BFBFBF;
+}
+
+.item-image {
+  width: 100px;
+  height: 100px;
+  border-radius: 4px;
+  flex-shrink: 0;
+  overflow: hidden;
 }
 
 .list-content {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 12px;
 }
 
 .list-item {
   display: flex;
   gap: 16px;
-  padding: 18px;
-  border: 1px solid #ebeef5;
-  border-radius: 12px;
+  padding: 16px;
+  border: 1px solid #BFBFBF;
+  border-radius: 6px;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+  background: #fff;
 }
 
 .list-item:hover {
-  border-color: #409eff;
-  box-shadow: 0 2px 12px rgba(64, 158, 255, 0.15);
+  border-color: #1A1A1A;
+  background: #fafafa;
 }
 
 .item-info {
@@ -766,6 +824,7 @@ const creditLevel = computed(() => {
   display: flex;
   flex-direction: column;
   gap: 8px;
+  min-width: 0;
 }
 
 .item-header {
@@ -777,24 +836,27 @@ const creditLevel = computed(() => {
 .item-title {
   font-size: 15px;
   font-weight: 500;
-  color: #303133;
+  color: #1A1A1A;
   margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .item-desc {
   font-size: 13px;
-  color: #606266;
+  color: #666;
   margin: 0;
 }
 
 .price {
   font-weight: 600;
-  color: #f56c6c;
+  color: #1A1A1A;
 }
 
 .item-time {
   font-size: 12px;
-  color: #909399;
+  color: #999;
   margin: 0;
 }
 
@@ -812,16 +874,15 @@ const creditLevel = computed(() => {
 }
 
 .favorite-card {
-  border: 1px solid #ebeef5;
-  border-radius: 12px;
+  border: 1px solid #BFBFBF;
+  border-radius: 6px;
   overflow: hidden;
-  transition: all 0.2s;
+  transition: border-color 0.15s ease;
+  background: #fff;
 }
 
 .favorite-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
-  border-color: #409eff;
+  border-color: #1A1A1A;
 }
 
 .fav-image {
@@ -829,17 +890,13 @@ const creditLevel = computed(() => {
   position: relative;
   overflow: hidden;
   cursor: pointer;
+  background: #f5f5f5;
 }
 
 .fav-image img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.3s;
-}
-
-.fav-image:hover img {
-  transform: scale(1.05);
 }
 
 .fav-type {
@@ -852,22 +909,23 @@ const creditLevel = computed(() => {
   padding: 14px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
 }
 
 .fav-title {
   font-size: 14px;
   font-weight: 500;
-  color: #303133;
+  color: #1A1A1A;
   margin: 0;
   cursor: pointer;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  transition: opacity 0.15s ease;
 }
 
 .fav-title:hover {
-  color: #409eff;
+  opacity: 0.7;
 }
 
 .fav-meta {
@@ -879,7 +937,7 @@ const creditLevel = computed(() => {
 .fav-price {
   font-size: 16px;
   font-weight: 600;
-  color: #f56c6c;
+  color: #1A1A1A;
 }
 
 .fav-publisher {
@@ -887,7 +945,7 @@ const creditLevel = computed(() => {
   align-items: center;
   gap: 6px;
   font-size: 12px;
-  color: #909399;
+  color: #999;
 }
 
 .fav-remove {
@@ -896,14 +954,15 @@ const creditLevel = computed(() => {
 }
 
 .wallet-card {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border: none;
-  color: #fff;
+  background: #ffffff;
+  border: 1px solid #BFBFBF;
+  border-radius: 6px;
+  color: #1A1A1A;
   margin-bottom: 20px;
 }
 
 .wallet-card :deep(.el-card__body) {
-  padding: 28px;
+  padding: 28px 32px;
 }
 
 .wallet-balance {
@@ -912,23 +971,25 @@ const creditLevel = computed(() => {
 }
 
 .balance-label {
-  font-size: 14px;
-  opacity: 0.9;
-  margin-bottom: 8px;
+  font-size: 13px;
+  color: #999;
+  margin-bottom: 10px;
+  letter-spacing: 0.5px;
 }
 
 .balance-amount {
-  font-size: 48px;
-  font-weight: 700;
-  letter-spacing: 2px;
+  font-size: 40px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  color: #1A1A1A;
 }
 
 .wallet-stats {
   display: flex;
   justify-content: space-around;
-  margin-bottom: 20px;
-  padding-top: 16px;
-  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  margin-bottom: 24px;
+  padding-top: 20px;
+  border-top: 1px solid #BFBFBF;
 }
 
 .wallet-stat {
@@ -940,20 +1001,21 @@ const creditLevel = computed(() => {
 
 .ws-label {
   font-size: 12px;
-  opacity: 0.85;
+  color: #999;
 }
 
 .ws-value {
   font-size: 18px;
   font-weight: 600;
+  color: #1A1A1A;
 }
 
 .ws-value.income {
-  color: #67c23a;
+  color: #1A1A1A;
 }
 
 .ws-value.expense {
-  color: #f56c6c;
+  color: #666;
 }
 
 .wallet-actions {
@@ -966,29 +1028,31 @@ const creditLevel = computed(() => {
   display: flex;
   align-items: center;
   gap: 14px;
-  padding: 16px;
-  border: 1px solid #ebeef5;
-  border-radius: 12px;
+  padding: 14px 16px;
+  border: 1px solid #BFBFBF;
+  border-radius: 6px;
+  background: #fff;
 }
 
 .wr-icon {
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  border-radius: 4px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: 700;
-  font-size: 18px;
+  font-weight: 600;
+  font-size: 16px;
   flex-shrink: 0;
-  background: #fef0f0;
-  color: #f56c6c;
+  background: #f5f5f5;
+  color: #666;
+  border: 1px solid #BFBFBF;
 }
 
 .wr-icon.income,
 .wr-icon.recharge {
-  background: #f0f9eb;
-  color: #67c23a;
+  background: #f5f5f5;
+  color: #1A1A1A;
 }
 
 .wr-info {
@@ -996,36 +1060,38 @@ const creditLevel = computed(() => {
   display: flex;
   flex-direction: column;
   gap: 4px;
+  min-width: 0;
 }
 
 .wr-title {
   font-size: 14px;
-  color: #303133;
+  color: #1A1A1A;
   font-weight: 500;
 }
 
 .wr-time {
   font-size: 12px;
-  color: #909399;
+  color: #999;
 }
 
 .wr-amount {
   font-size: 16px;
   font-weight: 600;
-  color: #f56c6c;
+  color: #666;
 }
 
 .wr-amount.income {
-  color: #67c23a;
+  color: #1A1A1A;
 }
 
 .partner-item {
   display: flex;
   align-items: center;
   gap: 16px;
-  padding: 18px;
-  border: 1px solid #ebeef5;
-  border-radius: 12px;
+  padding: 16px;
+  border: 1px solid #BFBFBF;
+  border-radius: 6px;
+  background: #fff;
 }
 
 .partner-info {
@@ -1033,6 +1099,7 @@ const creditLevel = computed(() => {
   display: flex;
   flex-direction: column;
   gap: 6px;
+  min-width: 0;
 }
 
 .partner-header {
@@ -1042,33 +1109,34 @@ const creditLevel = computed(() => {
 }
 
 .partner-name {
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 500;
-  color: #303133;
+  color: #1A1A1A;
   margin: 0;
 }
 
 .partner-type {
   font-size: 13px;
-  color: #606266;
+  color: #666;
   margin: 0;
 }
 
 .partner-meta {
   font-size: 12px;
-  color: #909399;
+  color: #999;
   margin: 0;
 }
 
 .credit-card {
-  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-  border: none;
-  color: #fff;
+  background: #ffffff;
+  border: 1px solid #BFBFBF;
+  border-radius: 6px;
+  color: #1A1A1A;
   margin-bottom: 20px;
 }
 
 .credit-card :deep(.el-card__body) {
-  padding: 28px;
+  padding: 28px 32px;
 }
 
 .credit-header {
@@ -1082,15 +1150,17 @@ const creditLevel = computed(() => {
 }
 
 .cs-value {
-  font-size: 56px;
-  font-weight: 700;
+  font-size: 48px;
+  font-weight: 600;
   line-height: 1;
+  color: #1A1A1A;
 }
 
 .cs-label {
-  font-size: 14px;
-  opacity: 0.9;
-  margin-top: 8px;
+  font-size: 13px;
+  color: #999;
+  margin-top: 10px;
+  letter-spacing: 0.5px;
 }
 
 .credit-level {
@@ -1099,34 +1169,38 @@ const creditLevel = computed(() => {
 
 .credit-tip {
   font-size: 12px;
-  opacity: 0.85;
-  margin-top: 8px;
+  color: #999;
+  margin-top: 10px;
 }
 
 .credit-record-item {
   display: flex;
   align-items: center;
   gap: 14px;
-  padding: 16px;
-  border: 1px solid #ebeef5;
-  border-radius: 12px;
+  padding: 14px 16px;
+  border: 1px solid #BFBFBF;
+  border-radius: 6px;
+  background: #fff;
 }
 
 .cr-icon {
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  border-radius: 4px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: 700;
-  font-size: 18px;
+  font-weight: 600;
+  font-size: 16px;
   flex-shrink: 0;
+  background: #f5f5f5;
+  color: #1A1A1A;
+  border: 1px solid #BFBFBF;
 }
 
 .cr-icon.plus {
-  background: #f0f9eb;
-  color: #67c23a;
+  background: #f5f5f5;
+  color: #1A1A1A;
 }
 
 .cr-info {
@@ -1134,26 +1208,28 @@ const creditLevel = computed(() => {
   display: flex;
   flex-direction: column;
   gap: 4px;
+  min-width: 0;
 }
 
 .cr-reason {
   font-size: 14px;
-  color: #303133;
+  color: #1A1A1A;
   font-weight: 500;
 }
 
 .cr-time {
   font-size: 12px;
-  color: #909399;
+  color: #999;
 }
 
 .cr-change {
   font-size: 18px;
   font-weight: 600;
+  color: #1A1A1A;
 }
 
 .cr-change.plus {
-  color: #67c23a;
+  color: #1A1A1A;
 }
 
 .settings-content {
@@ -1164,22 +1240,33 @@ const creditLevel = computed(() => {
   max-width: 500px;
 }
 
+.avatar-upload-row {
+  display: flex;
+  gap: 8px;
+  margin-left: 16px;
+  flex: 1;
+  max-width: 360px;
+}
+
 .section-subtitle {
-  font-size: 16px;
-  color: #303133;
+  font-size: 15px;
+  color: #1A1A1A;
   margin: 0 0 16px 0;
   font-weight: 500;
+  letter-spacing: 0.5px;
 }
 
 .sidebar {
-  width: 300px;
+  width: 280px;
   display: flex;
   flex-direction: column;
   gap: 16px;
+  flex-shrink: 0;
 }
 
 .sidebar-card {
-  border-radius: 12px;
+  border-radius: 6px;
+  border: 1px solid #BFBFBF;
 }
 
 .sidebar-header {
@@ -1187,7 +1274,12 @@ const creditLevel = computed(() => {
   align-items: center;
   gap: 8px;
   font-weight: 500;
-  color: #303133;
+  color: #1A1A1A;
+  font-size: 14px;
+}
+
+.sidebar-icon {
+  color: #666;
 }
 
 .account-info {
@@ -1204,23 +1296,28 @@ const creditLevel = computed(() => {
 }
 
 .info-label {
-  color: #909399;
+  color: #999;
 }
 
 .info-value {
-  color: #303133;
+  color: #1A1A1A;
+}
+
+.wallet-balance-text {
+  color: #1A1A1A;
+  font-weight: 600;
 }
 
 .tips-card {
-  background: #f0f9eb;
-  border: none;
+  background: #ffffff;
+  border: 1px solid #BFBFBF;
 }
 
 .tips-list {
   margin: 0;
   padding-left: 18px;
   font-size: 13px;
-  color: #606266;
+  color: #666;
   line-height: 1.8;
 }
 

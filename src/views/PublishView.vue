@@ -1,8 +1,7 @@
 <script setup lang="ts">
-import { ref, reactive, computed } from 'vue'
+import { ref, reactive, computed, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
-import FormField from '../components/FormField.vue'
 import { createTrade, type CreateTradeData } from '../api/trade'
 import { createLostFound, type CreateLostFoundData } from '../api/lostFound'
 import { createGroupBuy, type CreateGroupBuyData } from '../api/groupBuy'
@@ -71,6 +70,25 @@ const removeImage = (id: number) => {
   imageList.value = imageList.value.filter(img => img.id !== id)
 }
 
+const imageUrlInput = ref('')
+
+const handleAddImageByUrl = () => {
+  const url = imageUrlInput.value.trim()
+  if (!url) {
+    ElMessage.warning('请输入图片地址')
+    return
+  }
+  if (!/^https?:\/\//.test(url)) {
+    ElMessage.warning('请输入有效的图片 URL（以 http:// 或 https:// 开头）')
+    return
+  }
+  imageList.value.push({
+    id: Date.now(),
+    url,
+  })
+  imageUrlInput.value = ''
+}
+
 const validateForm = () => {
   if (!form.title.trim()) {
     ElMessage.warning('请填写标题')
@@ -101,6 +119,11 @@ const getRedirectRoute = () => {
 }
 
 const submitPublish = async () => {
+  if (!userStore.isLoggedIn) {
+    ElMessage.warning('请先登录后再发布')
+    router.push('/login')
+    return
+  }
   if (!validateForm()) return
 
   loading.value = true
@@ -197,6 +220,24 @@ const saveDraft = () => {
   ElMessage.info('草稿已保存')
 }
 
+watch(
+  () => form.type,
+  (newType, oldType) => {
+    if (newType === oldType) return
+    form.price = ''
+    form.condition = '九成新'
+    form.lostOrFound = 'lost'
+    form.eventTime = ''
+    form.itemFeature = ''
+    form.targetCount = 3
+    form.currentCount = 1
+    form.deadline = ''
+    form.reward = ''
+    form.taskPlace = ''
+    form.expectedTime = ''
+  }
+)
+
 const currentType = computed(() => typeOptions.find(t => t.value === form.type))
 </script>
 
@@ -234,25 +275,31 @@ const currentType = computed(() => typeOptions.find(t => t.value === form.type))
                   </el-button>
                 </div>
               </div>
-              <div class="upload-trigger">
-                <el-icon :size="32"><Plus /></el-icon>
-                <span>添加图片</span>
+              <div class="image-url-input">
+                <el-input
+                  v-model="imageUrlInput"
+                  placeholder="输入图片 URL 地址，例如 https://..."
+                  size="default"
+                  @keyup.enter="handleAddImageByUrl"
+                />
+                <el-button type="primary" @click="handleAddImageByUrl">添加</el-button>
               </div>
             </div>
           </div>
 
           <div class="form-row">
-            <div class="form-label">标题</div>
+            <div class="form-label"><span class="required-mark">*</span>标题</div>
             <el-input
               v-model="form.title"
-              placeholder="请输入标题，简洁明了描述您的信息"
+              placeholder="请输入清晰的标题，例如：iPad 2021款 64G 9成新"
               maxlength="50"
               show-word-limit
             />
+            <p class="field-hint">好的标题能让更多人看到你的信息</p>
           </div>
 
           <div class="form-row">
-            <div class="form-label">校区与地点</div>
+            <div class="form-label"><span class="required-mark">*</span>校区与地点</div>
             <div class="location-row">
               <el-select v-model="form.campus" style="width: 160px">
                 <el-option
@@ -262,16 +309,18 @@ const currentType = computed(() => typeOptions.find(t => t.value === form.type))
                   :value="camp.value"
                 />
               </el-select>
-              <el-input v-model="form.location" placeholder="具体地点，如：图书馆、食堂等" />
+              <el-input v-model="form.location" placeholder="请输入具体地点，例如：图书馆门口、宿舍楼下" />
             </div>
+            <p class="field-hint">准确的地点方便买家或失主快速找到你</p>
           </div>
 
           <template v-if="form.type === 'secondhand'">
             <div class="form-row">
-              <div class="form-label">价格</div>
-              <el-input v-model="form.price" placeholder="请输入价格" style="width: 200px">
+              <div class="form-label"><span class="required-mark">*</span>价格</div>
+              <el-input v-model="form.price" placeholder="请输入期望的售价" style="width: 200px">
                 <template #prefix>¥</template>
               </el-input>
+              <p class="field-hint">建议参考市场价，合理定价更容易成交</p>
             </div>
             <div class="form-row">
               <div class="form-label">成色</div>
@@ -307,7 +356,7 @@ const currentType = computed(() => typeOptions.find(t => t.value === form.type))
               <div class="form-label">物品特征</div>
               <el-input
                 v-model="form.itemFeature"
-                placeholder="描述物品的显著特征，方便确认"
+                placeholder="请描述物品的显著特征，如颜色、品牌、特殊标记等，方便确认"
                 type="textarea"
                 :rows="3"
               />
@@ -337,14 +386,15 @@ const currentType = computed(() => typeOptions.find(t => t.value === form.type))
 
           <template v-if="form.type === 'errand'">
             <div class="form-row">
-              <div class="form-label">酬劳</div>
-              <el-input v-model="form.reward" placeholder="请输入酬劳金额" style="width: 200px">
+              <div class="form-label"><span class="required-mark">*</span>酬劳</div>
+              <el-input v-model="form.reward" placeholder="请输入你愿意支付的酬劳金额" style="width: 200px">
                 <template #prefix>¥</template>
               </el-input>
+              <p class="field-hint">合理的酬劳更容易找到帮你跑腿的同学</p>
             </div>
             <div class="form-row">
               <div class="form-label">任务地点</div>
-              <el-input v-model="form.taskPlace" placeholder="任务执行的具体地点" />
+              <el-input v-model="form.taskPlace" placeholder="请输入任务执行的具体地点，如：快递站、超市等" />
             </div>
             <div class="form-row">
               <div class="form-label">期望完成时间</div>
@@ -358,15 +408,16 @@ const currentType = computed(() => typeOptions.find(t => t.value === form.type))
           </template>
 
           <div class="form-row">
-            <div class="form-label">详细描述</div>
+            <div class="form-label"><span class="required-mark">*</span>详细描述</div>
             <el-input
               v-model="form.description"
-              placeholder="详细描述您的信息，让其他同学更了解详情"
+              placeholder="请详细描述物品情况，包括使用时间、新旧程度、交易方式、联系方式等"
               type="textarea"
               :rows="6"
               maxlength="500"
               show-word-limit
             />
+            <p class="field-hint">描述越详细，越容易获得信任</p>
           </div>
 
           <div class="form-row">
@@ -394,8 +445,8 @@ const currentType = computed(() => typeOptions.find(t => t.value === form.type))
 
           <div class="form-actions">
             <el-button size="large" @click="saveDraft">保存草稿</el-button>
-            <el-button type="primary" size="large" :loading="loading" @click="submitPublish">
-              立即发布
+            <el-button type="primary" size="large" :loading="loading" :disabled="loading" @click="submitPublish">
+              {{ loading ? '发布中...' : '立即发布' }}
             </el-button>
           </div>
         </el-card>
@@ -510,6 +561,18 @@ const currentType = computed(() => typeOptions.find(t => t.value === form.type))
   margin-bottom: 12px;
 }
 
+.required-mark {
+  color: var(--color-danger);
+  margin-right: 2px;
+}
+
+.field-hint {
+  font-size: 12px;
+  color: var(--color-text-tertiary);
+  margin: 8px 0 0 0;
+  line-height: 1.5;
+}
+
 .type-selector {
   display: flex;
   gap: 12px;
@@ -576,28 +639,11 @@ const currentType = computed(() => typeOptions.find(t => t.value === form.type))
   opacity: 1;
 }
 
-.upload-trigger {
-  width: 120px;
-  height: 120px;
-  border: 2px dashed #dcdfe6;
-  border-radius: 8px;
+.image-url-input {
+  width: 100%;
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
   gap: 8px;
-  cursor: pointer;
-  color: #909399;
-  transition: all 0.2s;
-}
-
-.upload-trigger:hover {
-  border-color: #409eff;
-  color: #409eff;
-}
-
-.upload-trigger span {
-  font-size: 12px;
+  align-items: center;
 }
 
 .location-row {

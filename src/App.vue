@@ -3,7 +3,6 @@ import { ref, provide, nextTick, onMounted } from 'vue'
 import AppLayout from './components/AppLayout.vue'
 import { useUserStore } from './stores/user'
 import { useFavoriteStore } from './stores/favorite'
-import { getUserById } from './api/user'
 import { getFavorites } from './api/favorite'
 
 const isRouterAlive = ref(true)
@@ -20,22 +19,19 @@ const reload = () => {
 provide('reload', reload)
 
 onMounted(async () => {
-  try {
-    const res = await getUserById(1)
-    if (res.data) {
-      userStore.login(res.data)
-    }
-  } catch {
-    console.warn('加载当前用户失败，使用默认模拟用户')
-  }
+  // 从 localStorage 恢复登录状态
+  userStore.restoreLogin()
 
-  try {
-    const favRes = await getFavorites({ userId: 1 })
-    if (favRes.data && favRes.data.length > 0) {
-      favoriteStore.initFromBackend(favRes.data)
+  // 如果已登录，加载该用户的收藏
+  if (userStore.isLoggedIn && userStore.currentUser) {
+    try {
+      const favRes = await getFavorites({ userId: userStore.currentUser.id })
+      if (favRes.data) {
+        favoriteStore.initFromBackend(favRes.data)
+      }
+    } catch {
+      console.warn('加载收藏数据失败')
     }
-  } catch {
-    console.warn('加载收藏数据失败，使用空收藏列表')
   }
 })
 </script>
